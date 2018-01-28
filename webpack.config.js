@@ -35,6 +35,9 @@ var config = {
       }
     ]
   },
+  resolve: {
+    extensions: ['.js', '.jsx']
+  },
   devServer: {
     contentBase: path.join(__dirname,"builddir"),
     compress: true,
