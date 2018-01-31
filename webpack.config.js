@@ -39,7 +39,7 @@ var config = {
     extensions: ['.js', '.jsx']
   },
   devServer: {
-    contentBase: path.join(__dirname,"builddir"),
+    contentBase: path.join(__dirname,"dist"),
     compress: true,
     historyApiFallback: true,
     port: 9000,

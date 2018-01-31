@@ -9,6 +9,8 @@ import {
   ControlLabel,
   Collapse,
   HelpBlock } from 'react-bootstrap';
+import { sendWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
+import { getBestImageURL } from '../../util';
 
 export default class AddRecord extends React.Component {
   constructor(props) {
@@ -20,12 +22,38 @@ export default class AddRecord extends React.Component {
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.toggleLargeForm = this.toggleLargeForm.bind(this);
   }
 
   handleChange(e) {
     e.preventDefault();
     this.setState({ title: e.target.value });
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    const searchRequest = sendWikiSearchRequest('en', this.state.title);
+
+    let result;
+    searchRequest
+      .then((res) => {
+        result = res.data;
+        console.log(result[2][0]);
+        if (result[1][0] !== '') {
+          const imgRequest = sendWikiImageRequest(result[1][0]);
+          imgRequest
+            .then((innerRes) => {
+              getBestImageURL(result[1][0], JSON.parse(innerRes.request.response));
+            })
+            .catch((innerErr) => {
+              console.error(innerErr);
+            });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   toggleLargeForm(e) {
@@ -36,7 +64,7 @@ export default class AddRecord extends React.Component {
   render() {
     const { largeForm } = this.state;
     return (
-      <form>
+      <form onSubmit={this.handleSubmit}>
         <TitleFormGroup
           value={this.state.title}
           label={largeForm ? 'The name of your record:' : 'Add a record to your collection:'}
@@ -60,6 +88,9 @@ export default class AddRecord extends React.Component {
             />
           </div>
         </Collapse>
+        <Button bsStyle="primary" type="submit" block>
+          Add record to collection
+        </Button>
       </form>
     );
   }
