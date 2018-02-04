@@ -9,7 +9,7 @@ import {
   ControlLabel,
   Collapse,
   HelpBlock } from 'react-bootstrap';
-import { sendWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
+import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
 import { getBestImageURL } from '../../util';
 
 export default class AddRecord extends React.Component {
@@ -33,18 +33,19 @@ export default class AddRecord extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    const searchRequest = sendWikiSearchRequest('en', this.state.title);
+    const searchRequest = sendDoubleWikiSearchRequest('en', this.state.title);
 
     let result;
+    let img;
     searchRequest
       .then((res) => {
-        result = res.data;
-        console.log(result[2][0]);
+        result = res;
+        console.log(res);
         if (result[1][0] !== '') {
-          const imgRequest = sendWikiImageRequest(result[1][0]);
-          imgRequest
+          sendWikiImageRequest(result[1][0])
             .then((innerRes) => {
-              getBestImageURL(result[1][0], JSON.parse(innerRes.request.response));
+              img = getBestImageURL(result[1][0], JSON.parse(innerRes.request.response));
+              console.log(img);
             })
             .catch((innerErr) => {
               console.error(innerErr);

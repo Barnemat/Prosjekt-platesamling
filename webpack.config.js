@@ -27,11 +27,6 @@ var config = {
         test : /\.css$/,
         include : path.resolve(__dirname, 'node_modules'),
         loader : 'style-loader!css-loader'
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: ['babel-loader', 'eslint-loader']
       }
     ]
   },
@@ -42,8 +37,7 @@ var config = {
     contentBase: path.join(__dirname,"dist"),
     compress: true,
     historyApiFallback: true,
-    port: 9000,
-    open: true
+    port: 9000
   },
   plugins : [
       new HtmlWebpackPlugin({

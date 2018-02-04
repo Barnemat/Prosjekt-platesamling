@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getValidLanugages } from '../util';
+import { getValidLanugages, getBestSearchResult } from '../util';
 
 const sendWikiRequest = (params, lang) => {
   const validLang = getValidLanugages().includes(lang) ? lang : 'en';
@@ -33,4 +33,21 @@ export const sendWikiImageRequest = (query) => {
     origin: '*',
   };
   return sendWikiRequest(params);
+};
+
+export const sendDoubleWikiSearchRequest = (lang, query) => {
+  const wikiRequest1 = sendWikiSearchRequest(lang, query);
+  const wikiRequest2 = sendWikiSearchRequest(lang, `${query} (album)`);
+
+  return new Promise((resolve, reject) => {
+    let bestResult;
+    Promise.all([wikiRequest1, wikiRequest2])
+      .then((res) => {
+        bestResult = getBestSearchResult(res[0].data, res[1].data);
+        resolve(bestResult);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 };

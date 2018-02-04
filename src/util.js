@@ -8,7 +8,6 @@ export const getValidImgTypes = () => ['gif', 'ico', 'img', 'jpe', 'jpeg', 'jpg'
 
 const checkFileEnding = file => file.split('.').pop().toLowerCase();
 
-
 export const getBestImageURL = (album, response) => {
   let files = response.query.pages[0].images;
 
@@ -22,8 +21,24 @@ export const getBestImageURL = (album, response) => {
   const bestMatch = stringSimilarity.findBestMatch(album + album, files).bestMatch.target;
   const relativeURL = bestMatch.replace('File:', '').replace(/ /g, '_');
   const hash = md5(relativeURL);
-  const URL = `https://upload.wikimedia.org/wikipedia/en/${hash.charAt(0)}/${hash.slice(0, 2)}/${relativeURL}`;
-  console.log(URL);
 
-  return URL;
+  return `https://upload.wikimedia.org/wikipedia/en/${hash.charAt(0)}/${hash.slice(0, 2)}/${relativeURL}`;
+};
+
+export const getBestSearchResult = (res1, res2) => {
+  const res1String = res1[2][0] || '';
+  const res2String = res2[2][0] || '';
+
+  let bestMatch;
+  if (res1String.includes('album') && res2String.includes('album')) {
+    bestMatch = stringSimilarity.findBestMatch(res1String, [res1String, res2String]).bestMatch.target;
+  } else if (res2String.includes('album')) {
+    bestMatch = res2String;
+  } else if (res1String.includes('album')) {
+    bestMatch = res1String;
+  }
+
+  if (bestMatch === res1String) return res1;
+  if (bestMatch === res2String) return res2;
+  return false;
 };
