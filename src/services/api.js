@@ -35,9 +35,10 @@ export const sendWikiImageRequest = (query) => {
   return sendWikiRequest(params);
 };
 
-export const sendDoubleWikiSearchRequest = (lang, query) => {
+export const sendDoubleWikiSearchRequest = (lang, query, extraTerm) => {
+  const term = extraTerm || '(album)';
   const wikiRequest1 = sendWikiSearchRequest(lang, query);
-  const wikiRequest2 = sendWikiSearchRequest(lang, `${query} (album)`);
+  const wikiRequest2 = sendWikiSearchRequest(lang, `${query} ${term}`);
 
   return new Promise((resolve, reject) => {
     let bestResult;
