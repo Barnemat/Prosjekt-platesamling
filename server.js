@@ -4,7 +4,7 @@ var path = require('path');
 
 var app = express();
 
-var buildDir = 'builddir';
+var buildDir = 'dist';
 var appDir = 'src';
 
 app.use(express.static(path.join(__dirname, buildDir)));
