@@ -4,12 +4,14 @@ import AddRecord from './AddRecord';
 
 export default class ListItems extends React.Component {
   static alertClicked() {
-    alert('You clicked the third ListGroupItem');
+    // alert('You clicked the third ListGroupItem');
+    return -1;
   }
 
+  /*
   constructor(props) {
     super(props);
-  }
+  } */
 
   render() {
     return (

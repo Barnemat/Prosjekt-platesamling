@@ -3,9 +3,10 @@ import { Col, Grid, Row } from 'react-bootstrap';
 import ListItems from '../components/Collection/ListItems';
 
 export default class Collection extends React.Component {
+  /*
   constructor(props) {
     super(props);
-  }
+  } */
 
   render() {
     return (

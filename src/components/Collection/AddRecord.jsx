@@ -12,8 +12,10 @@ import {
   OverlayTrigger,
   Checkbox,
   Well,
-  Image } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+  Image,
+  Grid,
+  Col,
+  Row } from 'react-bootstrap';
 import Rating from 'react-rating';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
 import { getBestImageURL } from '../../util';
@@ -48,19 +50,22 @@ export default class AddRecord extends React.Component {
     this.handleSearchRequest = this.handleSearchRequest.bind(this);
     this.handleImgRequest = this.handleImgRequest.bind(this);
     this.handleCheckbox = this.handleCheckbox.bind(this);
+    this.handleReset = this.handleReset.bind(this);
+    this.handleResetWiki = this.handleResetWiki.bind(this);
   }
 
   handleChange(e) {
     e.preventDefault();
-    this.state.title !== '' && !this.state.largeForm ?
-      this.setState({ [e.target.name]: e.target.value, largeForm: true })
-      :
+    if (this.state.title !== '' && !this.state.largeForm) {
+      this.setState({ [e.target.name]: e.target.value, largeForm: true });
+    } else {
       this.setState({ [e.target.name]: e.target.value });
+    }
   }
 
   handleCheckbox(e) {
-    const name = e.target.name;
-    let checkedBoxes = this.state.selectedCheckboxes;
+    const { name } = e.target;
+    const { selectedCheckboxes: checkedBoxes } = this.state;
 
     if (checkedBoxes.indexOf(name) === -1) {
       checkedBoxes.push(name);
@@ -71,14 +76,14 @@ export default class AddRecord extends React.Component {
           req: name === 'wikiImgCB' || this.state.wikiReqImg.req,
           searchTerm: this.state.wikiReqImg.searchTerm,
         },
-      })
+      });
     } else {
       checkedBoxes.splice(checkedBoxes.indexOf(name), 1);
       this.setState({
         selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: name === 'wikiDescCB' ? false: this.state.wikiReqDesc,
+        wikiReqDesc: name === 'wikiDescCB' ? false : this.state.wikiReqDesc,
         wikiReqImg: {
-          req: name === 'wikiImgCB' ? false: this.state.wikiReqImg.req,
+          req: name === 'wikiImgCB' ? false : this.state.wikiReqImg.req,
           searchTerm: this.state.wikiReqImg.searchTerm,
         },
       });
@@ -89,24 +94,60 @@ export default class AddRecord extends React.Component {
     this.setState({ rating: e });
   }
 
+  handleReset() {
+    this.setState({
+      title: '',
+      artist: '',
+      format: '',
+      selectedCheckboxes: [],
+      rating: 0,
+      allowImgReq: false,
+      wikiHref: '',
+      wikiReqDesc: false,
+      wikiReqImg: {
+        req: false,
+        searchTerm: '',
+      },
+      wikiDesc: '',
+      wikiImg: '',
+      largeForm: false,
+    });
+  }
+
+  handleResetWiki() {
+    this.setState({
+      allowImgReq: false,
+      selectedCheckboxes: [],
+      wikiHref: '',
+      wikiReqDesc: false,
+      wikiReqImg: {
+        req: false,
+        searchTerm: '',
+      },
+      wikiDesc: '',
+      wikiImg: '',
+    });
+  }
+
   handleSubmit(e) {
     e.preventDefault();
+    this.handleReset();
   }
 
   handleSearchRequest() {
-    if(!this.state.wikiDesc){
+    if (!this.state.wikiDesc) {
       const searchRequest = sendDoubleWikiSearchRequest('en', this.state.title, this.state.artist);
-    
+
       searchRequest
         .then((res) => {
-          this.setState({ 
+          this.setState({
             allowImgReq: true,
             wikiDesc: res[2] ? res[2][0] : '',
             wikiHref: res[3] ? res[3][0] : '',
-            wikiReqImg: { 
+            wikiReqImg: {
               req: this.state.wikiReqImg.req,
               searchTerm: res[1] && res[1][0] !== '' ? res[1][0] : '',
-            }
+            },
           });
         })
         .catch((err) => {
@@ -116,7 +157,7 @@ export default class AddRecord extends React.Component {
   }
 
   handleImgRequest() {
-    const searchTerm = this.state.wikiReqImg.searchTerm;
+    const { searchTerm } = this.state.wikiReqImg;
     if (searchTerm && !this.state.wikiImg) {
       sendWikiImageRequest(searchTerm)
         .then((res) => {
@@ -134,7 +175,18 @@ export default class AddRecord extends React.Component {
   }
 
   render() {
-    const { largeForm, title, rating, allowImgReq, wikiDesc, wikiImg, wikiReqImg, wikiReqDesc, wikiHref } = this.state;
+    const {
+      largeForm,
+      title,
+      rating,
+      allowImgReq,
+      wikiDesc,
+      wikiImg,
+      wikiReqImg,
+      wikiReqDesc,
+      wikiHref,
+      selectedCheckboxes,
+    } = this.state;
     return (
       <form onSubmit={this.handleSubmit}>
         <TitleFormGroup
@@ -142,6 +194,8 @@ export default class AddRecord extends React.Component {
           value={title}
           label={largeForm ? 'The name of your record:' : 'Add a record to your collection:'}
           handleChange={this.handleChange}
+          handleReset={this.handleReset}
+          largeForm={largeForm}
           toggleLargeForm={this.toggleLargeForm}
           glyph={largeForm ? 'minus' : 'plus'}
           tooltip={largeForm ? '' : 'Click here to add a record.'}
@@ -171,7 +225,9 @@ export default class AddRecord extends React.Component {
                   this.handleCheckbox(e);
                   this.handleSearchRequest();
                 }}
-                inline >
+                checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
+                inline
+              >
                 Add description from Wikipedia
               </Checkbox>
               <Checkbox
@@ -181,31 +237,23 @@ export default class AddRecord extends React.Component {
                   this.handleImgRequest();
                 }}
                 disabled={!allowImgReq}
-                inline >
+                checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
+                inline
+              >
                 Add image from Wikipedia
-              </Checkbox>
+              </Checkbox> {' '}
+              {(wikiImg || wikiDesc) &&
+              <Button onClick={this.handleResetWiki}>
+                Reset Wikipedia fields
+              </Button>}
             </FormGroup>
-            <Collapse in={wikiReqDesc || wikiReqImg.req}>
-              <div>
-                <Well>
-                  <Collapse in={wikiReqImg.req}>
-                    <div>
-                      {wikiImg ? 
-                        <Image src={wikiImg} rounded responsive />
-                        :
-                        'No image was found.'
-                      }
-                    </div>
-                  </Collapse>
-                  <Collapse in={wikiReqDesc}>
-                    <div>
-                      {wikiDesc || 'No information was found.'}
-                    </div>
-                  </Collapse>
-                  {wikiHref ? <a href={wikiHref} target="blank">Wikipedia</a> : null}
-                </Well>
-              </div>
-            </Collapse>
+            <WikiInfo
+              wikiReqDesc={wikiReqDesc}
+              wikiReqImg={wikiReqImg}
+              wikiDesc={wikiDesc}
+              wikiImg={wikiImg}
+              wikiHref={wikiHref}
+            />
             <Rating
               emptySymbol="glyphicon glyphicon-star-empty"
               fullSymbol="glyphicon glyphicon-star"
@@ -227,12 +275,28 @@ const TitleFormGroup = ({
   glyph,
   label,
   handleChange,
+  handleReset,
+  largeForm,
   toggleLargeForm,
   name,
-  ...props,
+  ...props
 }) => (
   <FormGroup controlId="formControlsTitle">
-    {label && <ControlLabel>{label}</ControlLabel>}
+    <Grid fluid>
+      <Row>
+        <Col className="no-padding" lg={11} md={11} sm={11} xs={11}>
+          {label && <ControlLabel>{label}</ControlLabel>}
+        </Col>
+        <Col className="no-padding text-right" lg={1} md={1} sm={1} xs={1}>
+          {(largeForm || value) &&
+            <OverlayTrigger placement="right" overlay={tooltip('Click here to discard submition.')}>
+              <Button bsStyle="danger" bsSize="xs" onClick={handleReset}>
+                <Glyphicon glyph="remove" />
+              </Button>
+            </OverlayTrigger>}
+        </Col>
+      </Row>
+    </Grid>
     <InputGroup>
       <FormControl
         type="text"
@@ -242,16 +306,16 @@ const TitleFormGroup = ({
         onChange={handleChange}
       />
       <InputGroup.Button>
-      { props.tooltip ?
-        <OverlayTrigger placement="right" overlay={tooltip(props.tooltip)}>
+        { props.tooltip ?
+          <OverlayTrigger placement="right" overlay={tooltip(props.tooltip)}>
+            <Button onClick={toggleLargeForm}>
+              <Glyphicon glyph={glyph} />
+            </Button>
+          </OverlayTrigger>
+          :
           <Button onClick={toggleLargeForm}>
             <Glyphicon glyph={glyph} />
-          </Button>
-        </OverlayTrigger>
-        :
-        <Button onClick={toggleLargeForm}>
-          <Glyphicon glyph={glyph} />
-        </Button>}
+          </Button>}
       </InputGroup.Button>
     </InputGroup>
   </FormGroup>
@@ -262,8 +326,10 @@ TitleFormGroup.propTypes = {
   glyph: PropTypes.string.isRequired,
   tooltip: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  label: PropTypes.string,
+  label: PropTypes.string.isRequired,
+  largeForm: PropTypes.bool.isRequired,
   handleChange: PropTypes.func.isRequired,
+  handleReset: PropTypes.func.isRequired,
   toggleLargeForm: PropTypes.func.isRequired,
 };
 
@@ -290,8 +356,8 @@ DefaultFormGroup.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
 };
-/* Locks the input fields for some reason
 
+/* Locks the input fields for some reason
 DefaultFormGroup.defaultProps = {
   id: PropTypes.string.isRequired,
   label: '',
@@ -302,3 +368,74 @@ DefaultFormGroup.defaultProps = {
   onChange: null,
 };
 */
+
+const WikiInfo = ({
+  wikiReqDesc,
+  wikiReqImg,
+  wikiDesc,
+  wikiImg,
+  wikiHref,
+}) => (
+  <Collapse in={wikiReqDesc || wikiReqImg.req}>
+    {wikiReqDesc && wikiReqImg.req ?
+      <div>
+        <Well>
+          <Grid fluid>
+            <Row>
+              <Col lg={4} md={5} sm={5}>
+                <Collapse in={wikiReqImg.req}>
+                  <div>
+                    {wikiImg ?
+                      <Image src={wikiImg} rounded responsive />
+                      :
+                      'No image was found.'
+                    }
+                  </div>
+                </Collapse>
+              </Col>
+              <Col lg={8} md={7} sm={7}>
+                <Collapse in={wikiReqDesc}>
+                  <div>
+                    {wikiDesc || 'No information was found.'}
+                  </div>
+                </Collapse>
+                {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
+              </Col>
+            </Row>
+          </Grid>
+        </Well>
+      </div>
+    :
+      <div>
+        <Well>
+          <Collapse in={wikiReqImg.req}>
+            <div>
+              {wikiImg ?
+                <Image src={wikiImg} rounded responsive />
+                :
+                'No image was found.'
+              }
+            </div>
+          </Collapse>
+          <Collapse in={wikiReqDesc}>
+            <div>
+              {wikiDesc || 'No information was found.'}
+            </div>
+          </Collapse>
+          {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
+        </Well>
+      </div>
+  }
+  </Collapse>
+);
+
+WikiInfo.propTypes = {
+  wikiReqDesc: PropTypes.bool.isRequired,
+  wikiReqImg: PropTypes.shape({
+    req: PropTypes.bool.isRequired,
+    searchTerm: PropTypes.string.isRequired,
+  }).isRequired,
+  wikiDesc: PropTypes.string.isRequired,
+  wikiImg: PropTypes.string.isRequired,
+  wikiHref: PropTypes.string.isRequired,
+};
