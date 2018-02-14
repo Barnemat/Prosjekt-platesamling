@@ -18,7 +18,7 @@ import {
   Row } from 'react-bootstrap';
 import Rating from 'react-rating';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
-import { getBestImageURL } from '../../util';
+import { getBestImageURL, getValidFormatTypes } from '../../util';
 import tooltip from '../CommonComponents/Tooltip';
 
 export default class AddRecord extends React.Component {
@@ -28,7 +28,7 @@ export default class AddRecord extends React.Component {
     this.state = {
       title: '',
       artist: '',
-      format: '',
+      format: getValidFormatTypes()[0],
       selectedCheckboxes: [],
       rating: 0,
       allowImgReq: false,
@@ -41,6 +41,7 @@ export default class AddRecord extends React.Component {
       wikiDesc: '',
       wikiImg: '',
       largeForm: false,
+      notes: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -98,7 +99,7 @@ export default class AddRecord extends React.Component {
     this.setState({
       title: '',
       artist: '',
-      format: '',
+      format: getValidFormatTypes()[0],
       selectedCheckboxes: [],
       rating: 0,
       allowImgReq: false,
@@ -111,6 +112,7 @@ export default class AddRecord extends React.Component {
       wikiDesc: '',
       wikiImg: '',
       largeForm: false,
+      notes: '',
     });
   }
 
@@ -131,6 +133,20 @@ export default class AddRecord extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
+
+    const { title, artist, format, rating, wikiHref, wikiDesc, wikiImg, notes } = this.state;
+
+    this.props.addRecordToCollection({
+      title: title,
+      artist: artist,
+      format: format,
+      rating: rating,
+      wikiHref: wikiHref,
+      wikiDesc: wikiDesc,
+      wikiImg: wikiImg,
+      notes: notes
+    });
+
     this.handleReset();
   }
 
@@ -210,13 +226,12 @@ export default class AddRecord extends React.Component {
               placeholder="Artist..."
               onChange={this.handleChange}
             />
-            <DefaultFormGroup
+            <SelectFormGroup
               id="formControlsFormat"
               name="format"
-              type="text"
               label="The format of the record (e.g. LP, EP, CD):"
-              placeholder="LP, EP, CD..."
               onChange={this.handleChange}
+              options={getValidFormatTypes()}
             />
             <FormGroup>
               <Checkbox
@@ -254,6 +269,16 @@ export default class AddRecord extends React.Component {
               wikiImg={wikiImg}
               wikiHref={wikiHref}
             />
+            <FormGroup controlId="formControlsNotes">
+              <ControlLabel>Add your own notes here:</ControlLabel>
+              <FormControl
+                className="vresize"
+                componentClass="textarea"
+                name="notes"
+                placeholder="Record markings, playback speed, record quality..."
+                onChange={this.handleChange}
+              />
+            </FormGroup>
             <Rating
               emptySymbol="glyphicon glyphicon-star-empty"
               fullSymbol="glyphicon glyphicon-star"
@@ -269,6 +294,11 @@ export default class AddRecord extends React.Component {
     );
   }
 }
+
+AddRecord.propTypes = {
+  url: PropTypes.string.isRequired,
+  addRecordToCollection: PropTypes.func.isRequired,
+};
 
 const TitleFormGroup = ({
   value,
@@ -438,4 +468,31 @@ WikiInfo.propTypes = {
   wikiDesc: PropTypes.string.isRequired,
   wikiImg: PropTypes.string.isRequired,
   wikiHref: PropTypes.string.isRequired,
+};
+
+const SelectFormGroup = ({
+  id,
+  label,
+  help,
+  options,
+  ...props
+}) => (
+  <FormGroup controlId={id}>
+    {label && <ControlLabel>{label}</ControlLabel>}
+    <FormControl componentClass="select" {...props}>
+      {options.map(item => <option key={item} value={item}>{item}</option>)}
+    </FormControl>
+    {help && <HelpBlock>{help}</HelpBlock>}
+  </FormGroup>
+);
+
+SelectFormGroup.propTypes = {
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  label: PropTypes.string,
+  help: PropTypes.string,
+  value: PropTypes.string,
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func,
 };

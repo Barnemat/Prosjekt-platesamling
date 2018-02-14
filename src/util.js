@@ -45,3 +45,42 @@ export const getBestSearchResult = (res1, res2) => {
   if (bestMatch === res2String) return res2;
   return false;
 };
+
+export const getValidFormatTypes = () => {
+  const validFormats = ['LP', 'EP', 'SP', 'CD'].sort();
+  validFormats.push('Other');
+  return validFormats;
+};
+
+/*
+* Checks how much time has passed since a record was added.
+* Returns it on the form '{someNumber} of days, weeks or years ago'
+* @param String
+* @returns String
+*/
+export const checkTimePassed = (date) => {
+  const prevDate = new Date(date);
+  const todayDate = new Date();
+  const dateDistance = todayDate - prevDate;
+
+  /* 1000 ms in a second, 60 seconds in a minute, 60 minutes in an hour,
+  24 hours in a day, 30 days in a month, 365 days i a year */
+  const yearDistance = Math.floor(dateDistance/(1000*60*60*24*365));
+  const monthDistance = Math.floor(dateDistance/(1000*60*60*24*30));
+  const dayDistance = Math.floor(dateDistance/(1000*60*60*24));
+
+  const frontmatter = 'The record was added';
+
+  if (yearDistance === 0) {
+    if (dayDistance > 30) {
+      return `${frontmatter}${monthDistance} months ago`;
+    }
+    if (dayDistance === 0) {
+      return `${frontmatter} today`;
+    }
+    return `${frontmatter}${dayDistance} days ago`
+  } else if (yearDistance === 1) {
+    return `${frontmatter}1 year ago`;
+  }
+  return `${frontmatter}${yearDistance} years ago`;
+};

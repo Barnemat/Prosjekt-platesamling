@@ -1,29 +1,70 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { ListGroup, ListGroupItem, Panel } from 'react-bootstrap';
 import AddRecord from './AddRecord';
+import RecordItem from './RecordItem';
+import axios from 'axios';
 
 export default class ListItems extends React.Component {
-  static alertClicked() {
-    // alert('You clicked the third ListGroupItem');
-    return -1;
-  }
 
-  /*
   constructor(props) {
     super(props);
-  } */
+
+    this.state = {
+      records: [],
+    };
+
+    this.loadCollection = this.loadCollection.bind(this);
+    this.addRecordToCollection = this.addRecordToCollection.bind(this);
+  }
+
+  loadCollection() {
+    axios.get(this.props.url)
+      .then(res => {
+        this.setState({ records: res.data });
+      });
+  }
+
+  addRecordToCollection(record) {
+    axios.post(this.props.url, record)
+      .then(res => {
+        this.setState({ records: res });
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }
+
+  componentDidMount() {
+    this.loadCollection();
+  }
 
   render() {
+    const recordItems = this.state.records.map(record => {
+      return (
+      <RecordItem
+        record={record}
+        key={record['_id']}
+      />
+      );
+    });
+
     return (
       <Panel>
         <Panel.Body>
-          <AddRecord />
+          <AddRecord
+            url={this.props.url}
+            addRecordToCollection={this.addRecordToCollection}
+          />
         </Panel.Body>
         <ListGroup>
-          <ListGroupItem onClick={ListItems.alertClicked}>Link 2</ListGroupItem>
-          <ListGroupItem onClick={ListItems.alertClicked}>Link 3</ListGroupItem>
+          { recordItems }
         </ListGroup>
       </Panel>
     );
   }
 }
+
+ListItems.propTypes = {
+  url: PropTypes.string.isRequired,
+};

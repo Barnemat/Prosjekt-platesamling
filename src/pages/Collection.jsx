@@ -3,10 +3,13 @@ import { Col, Grid, Row } from 'react-bootstrap';
 import ListItems from '../components/Collection/ListItems';
 
 export default class Collection extends React.Component {
-  /*
   constructor(props) {
     super(props);
-  } */
+
+    this.state = {
+      url: 'http://localhost:8080/api/collection',
+    };
+  }
 
   render() {
     return (
@@ -15,7 +18,7 @@ export default class Collection extends React.Component {
           <Row className="show-grid">
             <Col lg={2} md={2} />
             <Col lg={8} md={8} sm={12}>
-              <ListItems />
+              <ListItems url={this.state.url} />
             </Col>
             <Col lg={2} md={2} />
           </Row>
