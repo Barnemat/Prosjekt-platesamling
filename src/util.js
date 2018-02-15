@@ -69,18 +69,21 @@ export const checkTimePassed = (date) => {
   const monthDistance = Math.floor(dateDistance/(1000*60*60*24*30));
   const dayDistance = Math.floor(dateDistance/(1000*60*60*24));
 
-  const frontmatter = 'The record was added';
+  const frontmatter = 'This record was added';
 
   if (yearDistance === 0) {
     if (dayDistance > 30) {
-      return `${frontmatter}${monthDistance} months ago`;
+      if (dayDistance > 60){
+        return `${frontmatter} ${monthDistance} months ago`;
+      }
+      return `${frontmatter} 1 month ago`;
     }
     if (dayDistance === 0) {
       return `${frontmatter} today`;
     }
-    return `${frontmatter}${dayDistance} days ago`
+    return `${frontmatter} ${dayDistance} days ago`
   } else if (yearDistance === 1) {
-    return `${frontmatter}1 year ago`;
+    return `${frontmatter} 1 year ago`;
   }
-  return `${frontmatter}${yearDistance} years ago`;
+  return `${frontmatter} ${yearDistance} years ago`;
 };

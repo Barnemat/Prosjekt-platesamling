@@ -30,6 +30,7 @@ router.route('/collection')
     newRecord.save(err => {
       if (err) res.send(err); 
     });
+    res.json({ msg: 'Record added' });
   });
 
 module.exports = router;

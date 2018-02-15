@@ -95,7 +95,9 @@ export default class AddRecord extends React.Component {
     this.setState({ rating: e });
   }
 
-  handleReset() {
+  handleReset(e) {
+    if (e) e.preventDefault();
+
     this.setState({
       title: '',
       artist: '',
@@ -194,6 +196,8 @@ export default class AddRecord extends React.Component {
     const {
       largeForm,
       title,
+      artist,
+      notes,
       rating,
       allowImgReq,
       wikiDesc,
@@ -221,6 +225,7 @@ export default class AddRecord extends React.Component {
             <DefaultFormGroup
               id="formControlsArtist"
               name="artist"
+              value={artist}
               type="text"
               label="The artist of the record:"
               placeholder="Artist..."
@@ -275,6 +280,7 @@ export default class AddRecord extends React.Component {
                 className="vresize"
                 componentClass="textarea"
                 name="notes"
+                value={notes}
                 placeholder="Record markings, playback speed, record quality..."
                 onChange={this.handleChange}
               />

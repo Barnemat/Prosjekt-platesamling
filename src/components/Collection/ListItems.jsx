@@ -11,7 +11,7 @@ export default class ListItems extends React.Component {
     super(props);
 
     this.state = {
-      records: [],
+      records: []
     };
 
     this.loadCollection = this.loadCollection.bind(this);
@@ -28,14 +28,14 @@ export default class ListItems extends React.Component {
   addRecordToCollection(record) {
     axios.post(this.props.url, record)
       .then(res => {
-        this.setState({ records: res });
+        this.loadCollection();
       })
       .catch(err => {
         console.error(err);
       });
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.loadCollection();
   }
 

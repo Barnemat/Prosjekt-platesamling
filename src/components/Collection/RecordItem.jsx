@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { ListGroup, ListGroupItem, Panel, Grid, Col, Row, Collapse, Image, Well } from 'react-bootstrap';
 import Rating from 'react-rating';
 import { checkTimePassed } from '../../util.js';
+import no_record_img from '../../assets/img/no_record_img.png';
 
 export default class RecordItem extends React.Component {
 
@@ -17,7 +18,13 @@ export default class RecordItem extends React.Component {
   }
 
   toggleExpand() {
-    this.setState({ expand: !this.state.expand });
+    const {
+      notes,
+      wikiDesc,
+      wikiImg
+    } = this.props.record;
+
+    if(notes || wikiDesc || wikiImg) this.setState({ expand: !this.state.expand });
   }
 
   render() {
@@ -51,9 +58,15 @@ RecordItem.propTypes = {
 
 const MinimizedView = ({ record }) => (
   <Row>
-    <Col lg={2} md={4} sm={8}>
-      <Image src={record.wikiImg} rounded responsive />
-    </Col>
+    {record.wikiImg ?
+      <Col lg={2} md={4} sm={8}>
+        <Image src={record.wikiImg} rounded responsive />
+      </Col>
+    :
+      <Col lg={2} md={4} sm={8}>
+        <Image src={no_record_img} rounded responsive />
+      </Col>
+    }
     <Col lg={10} md={8} sm={4}>
       <Grid fluid>
         <Row>
@@ -102,9 +115,15 @@ MinimizedView.propTypes = {
 
 const ExpandedView = ({ record }) => (
   <Row>
-    <Col lg={4} md={4} sm={4} xs={4}>
-      <Image src={record.wikiImg} rounded responsive />
-    </Col>
+    {record.wikiImg ?
+      <Col lg={4} md={4} sm={4} xs={4}>
+        <Image src={record.wikiImg} rounded responsive />
+      </Col>
+      :
+      <Col lg={2} md={4} sm={8} xs={6}>
+        <Image src={no_record_img} rounded responsive />
+      </Col>
+    }
     <Col lg={8} md={8} sm={8} xs={8}>
       <Grid fluid>
         <Row>

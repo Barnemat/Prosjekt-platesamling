@@ -27,6 +27,10 @@ var config = {
         test : /\.css$/,
         include : path.resolve(__dirname, 'node_modules'),
         loader : 'style-loader!css-loader'
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif)$/,
+        loader: 'url-loader?limit=5000&name=[path][name].[hash:6].[ext]'
       }
     ]
   },
