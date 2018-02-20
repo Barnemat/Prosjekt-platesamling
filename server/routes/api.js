@@ -3,7 +3,7 @@ const router = express.Router();
 
 const Record = require('../models/collection');
 
-router.route('/collection')
+router.route('/records')
   .get((req, res) => {
     Record.find(function (err, records) {
       if (err) {
@@ -25,7 +25,8 @@ router.route('/collection')
       wikiHref: req.body.wikiHref,
       wikiDesc: req.body.wikiDesc,
       wikiImg: req.body.wikiImg,
-      notes: req.body.notes
+      notes: req.body.notes,
+      image: req.files.image,
     });
     newRecord.save(err => {
       if (err) res.send(err); 

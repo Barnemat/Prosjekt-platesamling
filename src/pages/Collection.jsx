@@ -7,7 +7,7 @@ export default class Collection extends React.Component {
     super(props);
 
     this.state = {
-      url: 'http://localhost:8080/api/collection',
+      url: 'http://localhost:8080/api/records',
     };
   }
 

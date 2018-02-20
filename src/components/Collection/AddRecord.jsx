@@ -42,6 +42,8 @@ export default class AddRecord extends React.Component {
       wikiImg: '',
       largeForm: false,
       notes: '',
+      image: null,
+      imageURL: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -53,6 +55,7 @@ export default class AddRecord extends React.Component {
     this.handleCheckbox = this.handleCheckbox.bind(this);
     this.handleReset = this.handleReset.bind(this);
     this.handleResetWiki = this.handleResetWiki.bind(this);
+    this.handleFileUpload = this.handleFileUpload.bind(this);
   }
 
   handleChange(e) {
@@ -91,6 +94,20 @@ export default class AddRecord extends React.Component {
     }
   }
 
+  handleFileUpload(e) {
+    e.preventDefault();
+    const reader = new FileReader();
+    const image = e.target.files[0];
+
+    reader.onloadend = () => {
+      this.setState({
+        image: image,
+        imageURL: reader.result,
+      });
+    }
+    image ? reader.readAsDataURL(image) : this.setState({image: null, imageURL: ''});
+  }
+
   handleRatingChange(e) {
     this.setState({ rating: e });
   }
@@ -115,6 +132,8 @@ export default class AddRecord extends React.Component {
       wikiImg: '',
       largeForm: false,
       notes: '',
+      image: null,
+      imageURL: '',
     });
   }
 
@@ -136,19 +155,12 @@ export default class AddRecord extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    const { title, artist, format, rating, wikiHref, wikiDesc, wikiImg, notes } = this.state;
+    const keys = ['title', 'artist', 'format', 'rating', 'wikiHref', 'wikiDesc', 'wikiImg', 'notes', 'image'];
+    const formData = new FormData();
 
-    this.props.addRecordToCollection({
-      title: title,
-      artist: artist,
-      format: format,
-      rating: rating,
-      wikiHref: wikiHref,
-      wikiDesc: wikiDesc,
-      wikiImg: wikiImg,
-      notes: notes
-    });
+    keys.forEach(key => formData.append(key, this.state[key]));
 
+    this.props.addRecordToCollection(formData);
     this.handleReset();
   }
 
@@ -274,6 +286,19 @@ export default class AddRecord extends React.Component {
               wikiImg={wikiImg}
               wikiHref={wikiHref}
             />
+            <DefaultFormGroup
+              id="formControlsImage"
+              name="image"
+              type="file"
+              label="Upload an image of the record:"
+              help="If you want to upload your own image, rather than use the suggestion from Wikipedia"
+              onChange={this.handleFileUpload}
+            />
+            {this.state.imageURL &&
+              <Well>
+                <Image src={this.state.imageURL} />
+              </Well>
+            }
             <FormGroup controlId="formControlsNotes">
               <ControlLabel>Add your own notes here:</ControlLabel>
               <FormControl

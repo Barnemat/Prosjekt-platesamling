@@ -32,9 +32,9 @@ export default class RecordItem extends React.Component {
       <ListGroupItem onClick={this.toggleExpand}>
         <Grid fluid>
           {this.state.expand ?
-            <ExpandedView record={this.props.record} />
+            <ExpandedView record={this.props.record} image={this.props.record.image.data} />
           :
-            <MinimizedView record={this.props.record} />
+            <MinimizedView record={this.props.record} image={this.props.record.image.data} />
         }
         </Grid>
       </ListGroupItem>
@@ -56,11 +56,11 @@ RecordItem.propTypes = {
   }).isRequired,
 };
 
-const MinimizedView = ({ record }) => (
+const MinimizedView = ({ record, image }) => (
   <Row>
-    {record.wikiImg ?
+    {record.wikiImg || image ?
       <Col lg={2} md={4} sm={8}>
-        <Image src={record.wikiImg} rounded responsive />
+        <Image src={`data:image/jpeg;base64,${image}` || record.wikiImg} rounded responsive />
       </Col>
     :
       <Col lg={2} md={4} sm={8}>
@@ -113,11 +113,11 @@ MinimizedView.propTypes = {
   }).isRequired,
 };
 
-const ExpandedView = ({ record }) => (
+const ExpandedView = ({ record, image }) => (
   <Row>
-    {record.wikiImg ?
+    {record.wikiImg || image ?
       <Col lg={4} md={4} sm={4} xs={4}>
-        <Image src={record.wikiImg} rounded responsive />
+        <Image src={`data:image/jpeg;base64,${image}` || record.wikiImg} rounded responsive />
       </Col>
       :
       <Col lg={2} md={4} sm={8} xs={6}>

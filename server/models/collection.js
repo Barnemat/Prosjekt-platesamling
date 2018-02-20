@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const filePluginLib = require('mongoose-file');
+const filePlugin = filePluginLib.filePlugin;
 
-const Record = module.exports = mongoose.model('Record', new Schema({
+const schema = new Schema({
   date: {
     type: Date,
     required: true
@@ -17,4 +19,10 @@ const Record = module.exports = mongoose.model('Record', new Schema({
   wikiDesc: String,
   wikiImg: String,
   notes: String
-}));
+});
+
+schema.plugin(filePlugin, {
+  name: 'image'
+});
+
+const Record = module.exports = mongoose.model('Record', schema);

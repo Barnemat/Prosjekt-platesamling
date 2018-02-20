@@ -4,6 +4,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var path = require('path');
+var fileUpload = require('express-fileupload');
 
 var app = express();
 
@@ -12,6 +13,7 @@ var appDir = 'src';
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(fileUpload());
 
 app.use(function(req, res, next) {
  res.setHeader('Access-Control-Allow-Origin', '*');
