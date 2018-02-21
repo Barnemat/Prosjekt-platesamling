@@ -1,9 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ListGroupItem, Grid, Col, Row, Image, Button, Glyphicon } from 'react-bootstrap';
+import { ListGroupItem, Grid, Col, Row, Image, Button, Glyphicon, Modal, OverlayTrigger } from 'react-bootstrap';
 import Rating from 'react-rating';
 import { checkTimePassed } from '../../util';
 import noRecordImg from '../../assets/img/no_record_img.png';
+import tooltip from '../CommonComponents/Tooltip';
 
 export default class RecordItem extends React.Component {
   constructor(props) {
@@ -11,21 +12,26 @@ export default class RecordItem extends React.Component {
 
     this.state = {
       expand: false,
+      showModal: false,
     };
 
     this.toggleExpand = this.toggleExpand.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
+    this.handleShowModal = this.handleShowModal.bind(this);
+    this.handleHideModal = this.handleHideModal.bind(this);
   }
 
-  toggleExpand() {
+  toggleExpand(e) {
     const {
       notes,
       wikiDesc,
       wikiImg,
     } = this.props.record;
 
-    if (notes || wikiDesc || wikiImg) this.setState({ expand: !this.state.expand });
+    const isGlyph = e.target.className.split(' ').includes('glyphicon');
+
+    if ((notes || wikiDesc || wikiImg) && !isGlyph) this.setState({ expand: !this.state.expand });
   }
 
   handleEdit(e) {
@@ -44,23 +50,46 @@ export default class RecordItem extends React.Component {
       });
   }
 
+  handleShowModal(e) {
+    e.preventDefault();
+    this.setState({ showModal: true });
+  }
+
+  handleHideModal(e) {
+    e.preventDefault();
+    this.setState({ showModal: false });
+  }
+
   render() {
     return (
-      <ListGroupItem>
+      <ListGroupItem className="darker-onhover">
+        <Modal show={this.state.showModal} onHide={this.handleHideModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Remove record</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Are you sure you want to remove this record from your collection?</p>
+            <p><b>This action can not be undone.</b></p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={this.handleHideModal}>Cancel</Button>
+            <Button bsStyle="danger" onClick={this.handleDelete}>Remove Record</Button>
+          </Modal.Footer>
+        </Modal>
         <Grid onClick={this.toggleExpand} fluid>
           {this.state.expand ?
             <ExpandedView
               record={this.props.record}
               image={this.props.record.image.data}
               handleEdit={this.handleEdit}
-              handleDelete={this.handleDelete}
+              handleShowModal={this.handleShowModal}
             />
           :
             <MinimizedView
               record={this.props.record}
               image={this.props.record.image.data}
               handleEdit={this.handleEdit}
-              handleDelete={this.handleDelete}
+              handleShowModal={this.handleShowModal}
             />
         }
         </Grid>
@@ -89,7 +118,7 @@ const MinimizedView = ({
   record,
   image,
   handleEdit,
-  handleDelete,
+  handleShowModal,
 }) => (
   <Row>
     {record.wikiImg || image ?
@@ -103,19 +132,12 @@ const MinimizedView = ({
     }
     <Col lg={10} md={8} sm={4}>
       <Grid fluid>
-        <Row>
-          <Col lg={9} md={9} sm={9}>
-            <h4>{record.artist} - {record.title}</h4>
-          </Col>
-          <Col lg={3} md={3} sm={3}>
-            <Button onClick={handleEdit}>
-              <Glyphicon glyph="pencil" />
-            </Button>
-            <Button onClick={handleDelete}>
-              <Glyphicon glyph="trash" />
-            </Button>
-          </Col>
-        </Row>
+        <CommonInformation
+          title={record.title}
+          artist={record.artist}
+          handleEdit={handleEdit}
+          handleShowModal={handleShowModal}
+        />
         <Row>
           <Col lg={6} md={6} sm={6} xs={6}>
             <h6>Format:</h6>
@@ -154,14 +176,14 @@ MinimizedView.propTypes = {
     notes: PropTypes.string,
   }).isRequired,
   handleEdit: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
+  handleShowModal: PropTypes.func.isRequired,
 };
 
 const ExpandedView = ({
   record,
   image,
   handleEdit,
-  handleDelete,
+  handleShowModal,
 }) => (
   <Row>
     {record.wikiImg || image ?
@@ -175,19 +197,12 @@ const ExpandedView = ({
     }
     <Col lg={8} md={8} sm={8} xs={8}>
       <Grid fluid>
-        <Row>
-          <Col lg={9} md={9} sm={9} xs={9}>
-            <h4>{record.artist} - {record.title}</h4>
-          </Col>
-          <Col lg={3} md={3} sm={3} xs={3}>
-            <Button onClick={handleEdit}>
-              <Glyphicon glyph="pencil" />
-            </Button>
-            <Button onClick={handleDelete}>
-              <Glyphicon glyph="trash" />
-            </Button>
-          </Col>
-        </Row>
+        <CommonInformation
+          title={record.title}
+          artist={record.artist}
+          handleEdit={handleEdit}
+          handleShowModal={handleShowModal}
+        />
         <Row>
           <Col lg={6} md={6} sm={6} xs={6}>
             <h5><b>Format:</b></h5>
@@ -245,5 +260,37 @@ ExpandedView.propTypes = {
     notes: PropTypes.string,
   }).isRequired,
   handleEdit: PropTypes.func.isRequired,
-  handleDelete: PropTypes.func.isRequired,
+  handleShowModal: PropTypes.func.isRequired,
+};
+
+const CommonInformation = ({
+  title,
+  artist,
+  handleEdit,
+  handleShowModal,
+}) => (
+  <Row>
+    <Col lg={10} md={9} sm={10} xs={9}>
+      <h4>{artist} - {title}</h4>
+    </Col>
+    <Col lg={2} md={3} sm={2} xs={3}>
+      <OverlayTrigger placement="left" overlay={tooltip('Edit record')}>
+        <span role="button" tabIndex={0} className="standard-glyph" onClick={handleEdit}>
+          <Glyphicon glyph="pencil" />
+        </span>
+      </OverlayTrigger>
+      <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
+        <span role="button" tabIndex={0} className="standard-glyph" onClick={handleShowModal}>
+          <Glyphicon glyph="trash" />
+        </span>
+      </OverlayTrigger>
+    </Col>
+  </Row>
+);
+
+CommonInformation.propTypes = {
+  title: PropTypes.string.isRequired,
+  artist: PropTypes.string,
+  handleEdit: PropTypes.func.isRequired,
+  handleShowModal: PropTypes.func.isRequired,
 };

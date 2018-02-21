@@ -357,9 +357,9 @@ const TitleFormGroup = ({
         <Col className="no-padding text-right" lg={1} md={1} sm={1} xs={1}>
           {(largeForm || value) &&
             <OverlayTrigger placement="right" overlay={tooltip('Click here to discard submition.')}>
-              <Button bsStyle="danger" bsSize="xs" onClick={handleReset}>
-                <Glyphicon glyph="remove" />
-              </Button>
+              <span role="button" tabIndex={-1} className="standard-glyph" onClick={handleReset}>
+                <Glyphicon glyph="trash" />
+              </span>
             </OverlayTrigger>}
         </Col>
       </Row>
