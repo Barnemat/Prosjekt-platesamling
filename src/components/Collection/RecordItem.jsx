@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ListGroup, ListGroupItem, Panel, Grid, Col, Row, Collapse, Image, Well } from 'react-bootstrap';
+import { ListGroupItem, Grid, Col, Row, Image, Button, Glyphicon } from 'react-bootstrap';
 import Rating from 'react-rating';
-import { checkTimePassed } from '../../util.js';
-import no_record_img from '../../assets/img/no_record_img.png';
+import { checkTimePassed } from '../../util';
+import noRecordImg from '../../assets/img/no_record_img.png';
 
 export default class RecordItem extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -15,26 +14,54 @@ export default class RecordItem extends React.Component {
     };
 
     this.toggleExpand = this.toggleExpand.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   toggleExpand() {
     const {
       notes,
       wikiDesc,
-      wikiImg
+      wikiImg,
     } = this.props.record;
 
-    if(notes || wikiDesc || wikiImg) this.setState({ expand: !this.state.expand });
+    if (notes || wikiDesc || wikiImg) this.setState({ expand: !this.state.expand });
+  }
+
+  handleEdit(e) {
+    e.preventDefault();
+    console.log(this.props.record);
+  }
+
+  handleDelete(e) {
+    e.preventDefault();
+    this.props.handleDelete(this.props.record)
+      .then(() => {
+        this.props.loadCollection();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   render() {
     return (
-      <ListGroupItem onClick={this.toggleExpand}>
-        <Grid fluid>
+      <ListGroupItem>
+        <Grid onClick={this.toggleExpand} fluid>
           {this.state.expand ?
-            <ExpandedView record={this.props.record} image={this.props.record.image.data} />
+            <ExpandedView
+              record={this.props.record}
+              image={this.props.record.image.data}
+              handleEdit={this.handleEdit}
+              handleDelete={this.handleDelete}
+            />
           :
-            <MinimizedView record={this.props.record} image={this.props.record.image.data} />
+            <MinimizedView
+              record={this.props.record}
+              image={this.props.record.image.data}
+              handleEdit={this.handleEdit}
+              handleDelete={this.handleDelete}
+            />
         }
         </Grid>
       </ListGroupItem>
@@ -54,24 +81,39 @@ RecordItem.propTypes = {
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
   }).isRequired,
+  loadCollection: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };
 
-const MinimizedView = ({ record, image }) => (
+const MinimizedView = ({
+  record,
+  image,
+  handleEdit,
+  handleDelete,
+}) => (
   <Row>
     {record.wikiImg || image ?
       <Col lg={2} md={4} sm={8}>
-        <Image src={`data:image/jpeg;base64,${image}` || record.wikiImg} rounded responsive />
+        <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
       </Col>
     :
       <Col lg={2} md={4} sm={8}>
-        <Image src={no_record_img} rounded responsive />
+        <Image src={noRecordImg} rounded responsive />
       </Col>
     }
     <Col lg={10} md={8} sm={4}>
       <Grid fluid>
         <Row>
-          <Col lg={8} md={8} sm={4}>
+          <Col lg={9} md={9} sm={9}>
             <h4>{record.artist} - {record.title}</h4>
+          </Col>
+          <Col lg={3} md={3} sm={3}>
+            <Button onClick={handleEdit}>
+              <Glyphicon glyph="pencil" />
+            </Button>
+            <Button onClick={handleDelete}>
+              <Glyphicon glyph="trash" />
+            </Button>
           </Col>
         </Row>
         <Row>
@@ -111,24 +153,39 @@ MinimizedView.propTypes = {
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
   }).isRequired,
+  handleEdit: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };
 
-const ExpandedView = ({ record, image }) => (
+const ExpandedView = ({
+  record,
+  image,
+  handleEdit,
+  handleDelete,
+}) => (
   <Row>
     {record.wikiImg || image ?
       <Col lg={4} md={4} sm={4} xs={4}>
-        <Image src={`data:image/jpeg;base64,${image}` || record.wikiImg} rounded responsive />
+        <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
       </Col>
       :
-      <Col lg={2} md={4} sm={8} xs={6}>
-        <Image src={no_record_img} rounded responsive />
+      <Col lg={2} md={4} sm={4} xs={4}>
+        <Image src={noRecordImg} rounded responsive />
       </Col>
     }
     <Col lg={8} md={8} sm={8} xs={8}>
       <Grid fluid>
         <Row>
-          <Col lg={8} md={8} sm={8} xs={8}>
+          <Col lg={9} md={9} sm={9} xs={9}>
             <h4>{record.artist} - {record.title}</h4>
+          </Col>
+          <Col lg={3} md={3} sm={3} xs={3}>
+            <Button onClick={handleEdit}>
+              <Glyphicon glyph="pencil" />
+            </Button>
+            <Button onClick={handleDelete}>
+              <Glyphicon glyph="trash" />
+            </Button>
           </Col>
         </Row>
         <Row>
@@ -147,15 +204,15 @@ const ExpandedView = ({ record, image }) => (
           </Col>
         </Row>
         <Row>
-        {record.wikiDesc &&
-          <Col lg={12} md={12} sm={12} xs={12}>
-            <h5><b>Description:</b></h5>
-            {record.wikiDesc + ' '}
-            {(record.wikiHref && <a href={record.wikiHref} target="blank">Wikipedia</a>) || 
-              <a href="https://en.wikipedia.com" target="blank">Wikipedia</a>
-            }
-          </Col>
-        }
+          {record.wikiDesc &&
+            <Col lg={12} md={12} sm={12} xs={12}>
+              <h5><b>Description:</b></h5>
+              {record.wikiDesc}
+              {(record.wikiHref && <a href={record.wikiHref} target="blank"> Wikipedia</a>) ||
+                <a href="https://en.wikipedia.com" target="blank"> Wikipedia</a>
+              }
+            </Col>
+          }
         </Row>
         <Row>
           {record.notes &&
@@ -187,4 +244,6 @@ ExpandedView.propTypes = {
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
   }).isRequired,
+  handleEdit: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };

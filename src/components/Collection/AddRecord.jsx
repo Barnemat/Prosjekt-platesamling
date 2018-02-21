@@ -101,11 +101,11 @@ export default class AddRecord extends React.Component {
 
     reader.onloadend = () => {
       this.setState({
-        image: image,
+        image,
         imageURL: reader.result,
       });
-    }
-    image ? reader.readAsDataURL(image) : this.setState({image: null, imageURL: ''});
+    };
+    image ? reader.readAsDataURL(image) : this.setState({ image: null, imageURL: '' });
   }
 
   handleRatingChange(e) {
@@ -160,8 +160,14 @@ export default class AddRecord extends React.Component {
 
     keys.forEach(key => formData.append(key, this.state[key]));
 
-    this.props.addRecordToCollection(formData);
-    this.handleReset();
+    this.props.addRecordToCollection(formData)
+      .then(() => {
+        this.handleReset();
+        this.props.loadCollection();
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   handleSearchRequest() {
@@ -327,8 +333,8 @@ export default class AddRecord extends React.Component {
 }
 
 AddRecord.propTypes = {
-  url: PropTypes.string.isRequired,
   addRecordToCollection: PropTypes.func.isRequired,
+  loadCollection: PropTypes.func.isRequired,
 };
 
 const TitleFormGroup = ({

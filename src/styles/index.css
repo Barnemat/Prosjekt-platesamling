@@ -12,3 +12,7 @@ body {
 .vresize {
   resize: vertical;
 }
+
+.rm-focus-outline:focus {
+  outline: none;
+}

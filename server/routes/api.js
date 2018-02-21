@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router(); 
 
-const Record = require('../models/collection');
+const Record = require('../models/record');
 
 router.route('/records')
   .get((req, res) => {
@@ -26,12 +26,18 @@ router.route('/records')
       wikiDesc: req.body.wikiDesc,
       wikiImg: req.body.wikiImg,
       notes: req.body.notes,
-      image: req.files.image,
+      image: req.files ? req.files.image || '' : '',
     });
     newRecord.save(err => {
       if (err) res.send(err); 
     });
     res.json({ msg: 'Record added' });
+  })
+  .delete((req, res) => {
+    Record.remove({_id: req.query._id}, (err) => {
+      if (err) res.send(err);
+    });
+    res.json({msg: 'Record removed'});
   });
 
 module.exports = router;
