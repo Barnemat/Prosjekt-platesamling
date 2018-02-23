@@ -5,6 +5,7 @@ import Rating from 'react-rating';
 import { checkTimePassed } from '../../util';
 import noRecordImg from '../../assets/img/no_record_img.png';
 import tooltip from '../CommonComponents/Tooltip';
+import EditRecord from './EditRecord';
 
 export default class RecordItem extends React.Component {
   constructor(props) {
@@ -13,6 +14,7 @@ export default class RecordItem extends React.Component {
     this.state = {
       expand: false,
       showModal: false,
+      isEditMode: false,
     };
 
     this.toggleExpand = this.toggleExpand.bind(this);
@@ -20,6 +22,7 @@ export default class RecordItem extends React.Component {
     this.handleDelete = this.handleDelete.bind(this);
     this.handleShowModal = this.handleShowModal.bind(this);
     this.handleHideModal = this.handleHideModal.bind(this);
+    this.handleReset = this.handleReset.bind(this);
   }
 
   toggleExpand(e) {
@@ -31,12 +34,14 @@ export default class RecordItem extends React.Component {
 
     const isGlyph = e.target.className.split(' ').includes('glyphicon');
 
-    if ((notes || wikiDesc || wikiImg) && !isGlyph) this.setState({ expand: !this.state.expand });
+    if ((notes || wikiDesc || wikiImg) && (!isGlyph || this.state.isEditMode)) {
+      this.setState({ expand: !this.state.expand });
+    }
   }
 
   handleEdit(e) {
     e.preventDefault();
-    console.log(this.props.record);
+    this.setState({ isEditMode: !this.state.isEditMode, expand: !this.state.isEditMode });
   }
 
   handleDelete(e) {
@@ -60,7 +65,17 @@ export default class RecordItem extends React.Component {
     this.setState({ showModal: false });
   }
 
+  handleReset() {
+    this.props.loadCollection();
+    this.setState({
+      expand: false,
+      showModal: false,
+      isEditMode: false,
+    });
+  }
+
   render() {
+    const image = this.props.record.image ? this.props.record.image.data : undefined;
     return (
       <ListGroupItem className="darker-onhover">
         <Modal show={this.state.showModal} onHide={this.handleHideModal}>
@@ -77,21 +92,28 @@ export default class RecordItem extends React.Component {
           </Modal.Footer>
         </Modal>
         <Grid onClick={this.toggleExpand} fluid>
-          {this.state.expand ?
+          {(this.state.expand && !this.state.isEditMode) &&
             <ExpandedView
               record={this.props.record}
-              image={this.props.record.image.data}
+              image={image}
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
-            />
-          :
+            />}
+          {(!this.state.expand && !this.state.isEditMode) &&
             <MinimizedView
               record={this.props.record}
-              image={this.props.record.image.data}
+              image={image}
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
-            />
-        }
+            />}
+          {this.state.isEditMode &&
+            <EditRecord
+              record={this.props.record}
+              handleShowModal={this.handleShowModal}
+              handleEdit={this.handleEdit}
+              handleReset={this.handleReset}
+              editRecordInCollection={this.props.editRecordInCollection}
+            />}
         </Grid>
       </ListGroupItem>
     );
@@ -112,6 +134,7 @@ RecordItem.propTypes = {
   }).isRequired,
   loadCollection: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
+  editRecordInCollection: PropTypes.func.isRequired,
 };
 
 const MinimizedView = ({
@@ -122,15 +145,15 @@ const MinimizedView = ({
 }) => (
   <Row>
     {record.wikiImg || image ?
-      <Col lg={2} md={4} sm={8}>
+      <Col lg={2} md={4} sm={4} xs={12}>
         <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
       </Col>
     :
-      <Col lg={2} md={4} sm={8}>
+      <Col lg={2} md={4} sm={4} xs={12}>
         <Image src={noRecordImg} rounded responsive />
       </Col>
     }
-    <Col lg={10} md={8} sm={4}>
+    <Col lg={10} md={8} sm={8} xs={12}>
       <Grid fluid>
         <CommonInformation
           title={record.title}
@@ -187,15 +210,15 @@ const ExpandedView = ({
 }) => (
   <Row>
     {record.wikiImg || image ?
-      <Col lg={4} md={4} sm={4} xs={4}>
+      <Col lg={4} md={4} sm={4} xs={12}>
         <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
       </Col>
       :
-      <Col lg={2} md={4} sm={4} xs={4}>
+      <Col lg={4} md={4} sm={4} xs={12}>
         <Image src={noRecordImg} rounded responsive />
       </Col>
     }
-    <Col lg={8} md={8} sm={8} xs={8}>
+    <Col lg={8} md={8} sm={8} xs={12}>
       <Grid fluid>
         <CommonInformation
           title={record.title}
@@ -274,14 +297,14 @@ const CommonInformation = ({
       <h4>{artist} - {title}</h4>
     </Col>
     <Col lg={2} md={3} sm={2} xs={3}>
-      <OverlayTrigger placement="left" overlay={tooltip('Edit record')}>
-        <span role="button" tabIndex={0} className="standard-glyph" onClick={handleEdit}>
-          <Glyphicon glyph="pencil" />
+      <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
+        <span role="button" tabIndex={0} className="standard-glyph pull-right" onClick={handleShowModal}>
+          <Glyphicon glyph="trash" />
         </span>
       </OverlayTrigger>
-      <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
-        <span role="button" tabIndex={0} className="standard-glyph" onClick={handleShowModal}>
-          <Glyphicon glyph="trash" />
+      <OverlayTrigger placement="left" overlay={tooltip('Edit record')}>
+        <span role="button" tabIndex={0} className="standard-glyph pull-right" onClick={handleEdit}>
+          <Glyphicon glyph="pencil" />
         </span>
       </OverlayTrigger>
     </Col>

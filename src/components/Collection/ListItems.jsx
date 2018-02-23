@@ -16,6 +16,7 @@ export default class ListItems extends React.Component {
     this.loadCollection = this.loadCollection.bind(this);
     this.addRecordToCollection = this.addRecordToCollection.bind(this);
     this.removeRecordFromCollection = this.removeRecordFromCollection.bind(this);
+    this.editRecordInCollection = this.editRecordInCollection.bind(this);
   }
 
   componentWillMount() {
@@ -37,6 +38,10 @@ export default class ListItems extends React.Component {
     return axios.delete(`${this.props.url}?_id=${record._id}`);
   }
 
+  editRecordInCollection(record) {
+    return axios.put(this.props.url, record);
+  }
+
   render() {
     const recordItems = this.state.records.map(record => (
       <RecordItem
@@ -44,6 +49,7 @@ export default class ListItems extends React.Component {
         key={record._id}
         handleDelete={this.removeRecordFromCollection}
         loadCollection={this.loadCollection}
+        editRecordInCollection={this.editRecordInCollection}
       />));
 
     return (

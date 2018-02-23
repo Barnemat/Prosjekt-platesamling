@@ -98,7 +98,10 @@ export const checkTimePassed = (date) => {
     if (dayDistance === 0) {
       return `${frontmatter} today`;
     }
-    return `${frontmatter} ${dayDistance} days ago`;
+    if (dayDistance > 1) {
+      return `${frontmatter} ${dayDistance} days ago`;
+    }
+    return `${frontmatter} 1 day ago`
   } else if (yearDistance === 1) {
     return `${frontmatter} 1 year ago`;
   }

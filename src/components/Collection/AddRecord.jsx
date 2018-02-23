@@ -8,7 +8,6 @@ import {
   InputGroup,
   ControlLabel,
   Collapse,
-  HelpBlock,
   OverlayTrigger,
   Checkbox,
   Well,
@@ -20,6 +19,8 @@ import Rating from 'react-rating';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
 import { getBestImageURL, getValidFormatTypes } from '../../util';
 import tooltip from '../CommonComponents/Tooltip';
+import DefaultFormGroup from './FormComponents/DefaultFormGroup';
+import SelectFormGroup from './FormComponents/SelectFormGroup';
 
 export default class AddRecord extends React.Component {
   constructor(props) {
@@ -49,7 +50,6 @@ export default class AddRecord extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggleLargeForm = this.toggleLargeForm.bind(this);
-    this.handleRatingChange = this.handleRatingChange.bind(this);
     this.handleSearchRequest = this.handleSearchRequest.bind(this);
     this.handleImgRequest = this.handleImgRequest.bind(this);
     this.handleCheckbox = this.handleCheckbox.bind(this);
@@ -106,10 +106,6 @@ export default class AddRecord extends React.Component {
       });
     };
     image ? reader.readAsDataURL(image) : this.setState({ image: null, imageURL: '' });
-  }
-
-  handleRatingChange(e) {
-    this.setState({ rating: e });
   }
 
   handleReset(e) {
@@ -216,7 +212,6 @@ export default class AddRecord extends React.Component {
       title,
       artist,
       notes,
-      rating,
       allowImgReq,
       wikiDesc,
       wikiImg,
@@ -319,8 +314,8 @@ export default class AddRecord extends React.Component {
             <Rating
               emptySymbol="glyphicon glyphicon-star-empty"
               fullSymbol="glyphicon glyphicon-star"
-              initialRating={rating}
-              onChange={this.handleRatingChange}
+              initialRating={this.state.rating}
+              onChange={rating => this.setState({ rating })}
             />
             <Button bsStyle="primary" type="submit" block>
               Add record to collection
@@ -400,42 +395,6 @@ TitleFormGroup.propTypes = {
   toggleLargeForm: PropTypes.func.isRequired,
 };
 
-const DefaultFormGroup = ({
-  id,
-  label,
-  help,
-  ...props
-}) => (
-  <FormGroup controlId={id}>
-    {label && <ControlLabel>{label}</ControlLabel>}
-    <FormControl {...props} />
-    {help && <HelpBlock>{help}</HelpBlock>}
-  </FormGroup>
-);
-
-DefaultFormGroup.propTypes = {
-  id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  label: PropTypes.string,
-  help: PropTypes.string,
-  type: PropTypes.string.isRequired,
-  value: PropTypes.string,
-  placeholder: PropTypes.string,
-  onChange: PropTypes.func,
-};
-
-/* Locks the input fields for some reason
-DefaultFormGroup.defaultProps = {
-  id: PropTypes.string.isRequired,
-  label: '',
-  help: '',
-  type: PropTypes.string.isRequired,
-  value: '',
-  placeholder: PropTypes.string,
-  onChange: null,
-};
-*/
-
 const WikiInfo = ({
   wikiReqDesc,
   wikiReqImg,
@@ -505,31 +464,4 @@ WikiInfo.propTypes = {
   wikiDesc: PropTypes.string.isRequired,
   wikiImg: PropTypes.string.isRequired,
   wikiHref: PropTypes.string.isRequired,
-};
-
-const SelectFormGroup = ({
-  id,
-  label,
-  help,
-  options,
-  ...props
-}) => (
-  <FormGroup controlId={id}>
-    {label && <ControlLabel>{label}</ControlLabel>}
-    <FormControl componentClass="select" {...props}>
-      {options.map(item => <option key={item} value={item}>{item}</option>)}
-    </FormControl>
-    {help && <HelpBlock>{help}</HelpBlock>}
-  </FormGroup>
-);
-
-SelectFormGroup.propTypes = {
-  id: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-  options: PropTypes.arrayOf(PropTypes.string).isRequired,
-  label: PropTypes.string,
-  help: PropTypes.string,
-  value: PropTypes.string,
-  placeholder: PropTypes.string,
-  onChange: PropTypes.func,
 };
