@@ -17,7 +17,7 @@ import {
   Row } from 'react-bootstrap';
 import Rating from 'react-rating';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
-import { getBestImageURL, getValidFormatTypes } from '../../util';
+import { getBestImageURL, getValidFormatTypes, checkImgValid } from '../../util';
 import tooltip from '../CommonComponents/Tooltip';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
@@ -43,8 +43,9 @@ export default class AddRecord extends React.Component {
       wikiImg: '',
       largeForm: false,
       notes: '',
-      image: null,
+      image: undefined,
       imageURL: '',
+      invalidImg: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -56,6 +57,7 @@ export default class AddRecord extends React.Component {
     this.handleReset = this.handleReset.bind(this);
     this.handleResetWiki = this.handleResetWiki.bind(this);
     this.handleFileUpload = this.handleFileUpload.bind(this);
+    this.handleRemoveImg = this.handleRemoveImg.bind(this);
   }
 
   handleChange(e) {
@@ -103,13 +105,25 @@ export default class AddRecord extends React.Component {
       this.setState({
         image,
         imageURL: reader.result,
+        invalidImg: false,
       });
     };
-    image ? reader.readAsDataURL(image) : this.setState({ image: null, imageURL: '' });
+
+    if (image && checkImgValid(image)) {
+      reader.readAsDataURL(image);
+    } else {
+      this.setState({ image: undefined, imageURL: '', invalidImg: image !== undefined });
+    }
   }
 
   handleReset(e) {
-    if (e) e.preventDefault();
+    if (e) {
+      e.preventDefault();
+
+      if (e.key !== undefined && e.key.toLowerCase() !== 'enter') {
+        return;
+      }
+    }
 
     this.setState({
       title: '',
@@ -128,8 +142,9 @@ export default class AddRecord extends React.Component {
       wikiImg: '',
       largeForm: false,
       notes: '',
-      image: null,
+      image: undefined,
       imageURL: '',
+      invalidImg: false,
     });
   }
 
@@ -158,8 +173,8 @@ export default class AddRecord extends React.Component {
 
     this.props.addRecordToCollection(formData)
       .then(() => {
-        this.handleReset();
         this.props.loadCollection();
+        this.handleReset();
       })
       .catch((err) => {
         console.error(err);
@@ -199,6 +214,16 @@ export default class AddRecord extends React.Component {
           console.error(err);
         });
     }
+  }
+
+  handleRemoveImg(e) {
+    e.preventDefault();
+
+    this.setState({
+      image: undefined,
+      imageURL: '',
+      invalidImg: false,
+    });
   }
 
   toggleLargeForm(e) {
@@ -292,13 +317,25 @@ export default class AddRecord extends React.Component {
               name="image"
               type="file"
               label="Upload an image of the record:"
-              help="If you want to upload your own image, rather than use the suggestion from Wikipedia"
+              help="If you want to upload your own image. (Max: 2MB)"
               onChange={this.handleFileUpload}
             />
-            {this.state.imageURL &&
-              <Well>
-                <Image src={this.state.imageURL} />
-              </Well>
+            {this.state.invalidImg &&
+              <p className="text-danger">The uploaded file is invalid.</p>
+            }
+            {this.state.image &&
+              <Grid fluid>
+                <Row>
+                  <Col lg={6} md={7} sm={5} xs={8}>
+                    <Well bsSize="small">
+                      {this.state.imageURL &&
+                        <Image src={this.state.imageURL} responsive />
+                      }
+                      <Button bsSize="small" onClick={this.handleRemoveImg}>Remove file</Button>
+                    </Well>
+                  </Col>
+                </Row>
+              </Grid>
             }
             <FormGroup controlId="formControlsNotes">
               <ControlLabel>Add your own notes here:</ControlLabel>
@@ -352,7 +389,13 @@ const TitleFormGroup = ({
         <Col className="no-padding text-right" lg={1} md={1} sm={1} xs={1}>
           {(largeForm || value) &&
             <OverlayTrigger placement="right" overlay={tooltip('Click here to discard submition.')}>
-              <span role="button" tabIndex={-1} className="standard-glyph" onClick={handleReset}>
+              <span
+                role="button"
+                tabIndex={0}
+                className="standard-glyph"
+                onClick={handleReset}
+                onKeyUp={handleReset}
+              >
                 <Glyphicon glyph="trash" />
               </span>
             </OverlayTrigger>}

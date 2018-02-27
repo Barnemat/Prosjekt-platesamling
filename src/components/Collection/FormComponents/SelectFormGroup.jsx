@@ -29,4 +29,12 @@ SelectFormGroup.propTypes = {
   onChange: PropTypes.func,
 };
 
+SelectFormGroup.defaultProps = {
+  label: '',
+  help: '',
+  value: '',
+  placeholder: '',
+  onChange: undefined,
+};
+
 export default SelectFormGroup;

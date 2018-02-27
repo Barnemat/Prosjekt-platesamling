@@ -1,9 +1,8 @@
 import md5 from 'md5';
 import stringSimilarity from 'string-similarity';
 
-export function getValidLanugages() {
-  return ['no', 'en'];
-}
+export const getValidLanugages = () => ['no', 'en'];
+
 export const getValidImgTypes = () => ['gif', 'ico', 'img', 'jpe', 'jpeg', 'jpg', 'jpx', 'png'];
 
 const getFileEnding = file => file.split('.').pop().toLowerCase();
@@ -11,7 +10,6 @@ const getFileEnding = file => file.split('.').pop().toLowerCase();
 /*
 * Returns the image URL from a wikipedia page that has the title closest to the search query and has a valid filetype
 * The one with the title closest to the search term, is most likely to be an image of the album.
-* The album term is concatenated with itself to make weigh it more in stringSimilarity
 * @params {String} album, {Object} response
 * @returns {String}
 */
@@ -25,6 +23,7 @@ export const getBestImageURL = (album, response) => {
     files[i] = files[i].title;
   }
 
+  // The album term is concatenated with itself to increase the weight of it in stringSimilarity
   const bestMatch = stringSimilarity.findBestMatch(album + album, files).bestMatch.target;
   const relativeURL = bestMatch.replace('File:', '').replace(/ /g, '_');
   const hash = md5(relativeURL);
@@ -81,7 +80,7 @@ export const checkTimePassed = (date) => {
   const dateDistance = todayDate - prevDate;
 
   /* 1000 ms in a second, 60 seconds in a minute, 60 minutes in an hour,
-  24 hours in a day, 30 days in a month, 365 days i a year */
+  24 hours in a day, 30 days in a month, 365 days in a year */
   const yearDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 365));
   const monthDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 30));
   const dayDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24));
@@ -101,9 +100,21 @@ export const checkTimePassed = (date) => {
     if (dayDistance > 1) {
       return `${frontmatter} ${dayDistance} days ago`;
     }
-    return `${frontmatter} 1 day ago`
+    return `${frontmatter} 1 day ago`;
   } else if (yearDistance === 1) {
     return `${frontmatter} 1 year ago`;
   }
   return `${frontmatter} ${yearDistance} years ago`;
+};
+
+/*
+* Returns true if the image is valid. This means that it should be an image, be specified as a valid type,
+* and have a file size of max 2MB.
+* @param {File} image
+* @returns {Boolean}
+*/
+export const checkImgValid = (image) => {
+  const type = image.type.split('/');
+
+  return image.size <= 2000000 && type[0] === 'image' && getValidImgTypes().includes(type[1]);
 };

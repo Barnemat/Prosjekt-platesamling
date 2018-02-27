@@ -26,16 +26,13 @@ DefaultFormGroup.propTypes = {
   onChange: PropTypes.func,
 };
 
-/* Locks the input fields for some reason
+
 DefaultFormGroup.defaultProps = {
-  id: PropTypes.string.isRequired,
   label: '',
   help: '',
-  type: PropTypes.string.isRequired,
   value: '',
-  placeholder: PropTypes.string,
-  onChange: null,
+  placeholder: '',
+  onChange: undefined,
 };
-*/
 
 export default DefaultFormGroup;

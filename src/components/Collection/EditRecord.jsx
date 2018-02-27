@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -14,7 +16,7 @@ import {
 } from 'react-bootstrap';
 import Rating from 'react-rating';
 import tooltip from '../CommonComponents/Tooltip';
-import { checkTimePassed, getBestImageURL, getValidFormatTypes } from '../../util';
+import { checkTimePassed, getBestImageURL, getValidFormatTypes, checkImgValid } from '../../util';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
@@ -45,6 +47,7 @@ export default class EditRecord extends React.Component {
       image: undefined,
       imageURL: '',
       ignoreRecordImg: false,
+      invalidImg: false,
     };
 
     this.handleEdit = this.handleEdit.bind(this);
@@ -55,6 +58,7 @@ export default class EditRecord extends React.Component {
     this.handleCheckbox = this.handleCheckbox.bind(this);
     this.handleFileUpload = this.handleFileUpload.bind(this);
     this.handleRemoveImg = this.handleRemoveImg.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
   }
 
   handleEdit(e) {
@@ -172,9 +176,15 @@ export default class EditRecord extends React.Component {
         image,
         imageURL: reader.result,
         ignoreRecordImg: false,
+        invalidImg: false,
       });
     };
-    image ? reader.readAsDataURL(image) : this.setState({ image: null, imageURL: '' });
+
+    if (image && checkImgValid(image)) {
+      reader.readAsDataURL(image);
+    } else {
+      this.setState({ image: undefined, imageURL: '', invalidImg: image !== undefined });
+    }
   }
 
   handleRemoveImg(e) {
@@ -184,7 +194,22 @@ export default class EditRecord extends React.Component {
       image: undefined,
       imageURL: '',
       ignoreRecordImg: true,
+      invalidImg: false,
     });
+  }
+
+  handleKeyUp(e) {
+    if (e.key.toLowerCase() === 'enter') {
+      switch (e.target.id) {
+        case 'delete':
+          this.props.handleShowModal(e);
+          break;
+        case 'edit':
+          this.handleEdit(e);
+          break;
+        default: e.preventDefault();
+      }
+    }
   }
 
   render() {
@@ -251,12 +276,26 @@ export default class EditRecord extends React.Component {
               </Col>
               <Col lg={2} md={3} sm={2} xs={3}>
                 <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
-                  <span role="button" tabIndex={0} className="standard-glyph pull-right" onClick={handleShowModal}>
+                  <span
+                    id="delete"
+                    role="button"
+                    tabIndex={0}
+                    className="standard-glyph pull-right"
+                    onClick={handleShowModal}
+                    onKeyUp={this.handleKeyUp}
+                  >
                     <Glyphicon glyph="trash" />
                   </span>
                 </OverlayTrigger>
                 <OverlayTrigger placement="left" overlay={tooltip('Confirm edit')}>
-                  <span role="button" tabIndex={0} className="standard-glyph pull-right" onClick={this.handleEdit}>
+                  <span
+                    id="edit"
+                    role="button"
+                    tabIndex={0}
+                    className="standard-glyph pull-right"
+                    onClick={this.handleEdit}
+                    onKeyUp={this.handleKeyUp}
+                  >
                     <Glyphicon glyph="ok" />
                   </span>
                 </OverlayTrigger>
@@ -275,6 +314,7 @@ export default class EditRecord extends React.Component {
               </Col>
               <Col lg={6} md={6} sm={6} xs={12}>
                 <h5><b>Rating:</b></h5>
+                {/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <div onClick={e => e.stopPropagation()}>
                   <Rating
                     emptySymbol="glyphicon glyphicon-star-empty"
@@ -283,6 +323,7 @@ export default class EditRecord extends React.Component {
                     onChange={rating => this.setState({ rating })}
                   />
                 </div>
+                {/* eslint-enable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
               </Col>
             </Row>
             <Row>
@@ -332,9 +373,12 @@ export default class EditRecord extends React.Component {
                   name="image"
                   type="file"
                   label="Upload an image of the record:"
-                  help="If you want to upload your own image, rather than use the suggestion from Wikipedia"
+                  help="If you want to upload your own image. (Max: 2MB)"
                   onChange={this.handleFileUpload}
                 />
+                {this.state.invalidImg &&
+                  <p className="text-danger">The uploaded file is invalid.</p>
+                }
                 {(image || recordImg) &&
                   <Button onClick={this.handleRemoveImg}>Remove file</Button>
                 }

@@ -76,6 +76,7 @@ export default class RecordItem extends React.Component {
 
   render() {
     const image = this.props.record.image ? this.props.record.image.data : undefined;
+
     return (
       <ListGroupItem className="darker-onhover">
         <Modal show={this.state.showModal} onHide={this.handleHideModal}>
@@ -131,6 +132,7 @@ RecordItem.propTypes = {
     wikiDesc: PropTypes.string,
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
+    image: PropTypes.any,
   }).isRequired,
   loadCollection: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
@@ -198,8 +200,13 @@ MinimizedView.propTypes = {
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
   }).isRequired,
+  image: PropTypes.string,
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
+};
+
+MinimizedView.defaultProps = {
+  image: undefined,
 };
 
 const ExpandedView = ({
@@ -282,8 +289,13 @@ ExpandedView.propTypes = {
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
   }).isRequired,
+  image: PropTypes.string,
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
+};
+
+ExpandedView.defaultProps = {
+  image: undefined,
 };
 
 const CommonInformation = ({
@@ -294,16 +306,28 @@ const CommonInformation = ({
 }) => (
   <Row>
     <Col lg={10} md={9} sm={10} xs={9}>
-      <h4>{artist} - {title}</h4>
+      <h4>{artist ? `${artist} - ` : ''}{title}</h4>
     </Col>
     <Col lg={2} md={3} sm={2} xs={3}>
       <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
-        <span role="button" tabIndex={0} className="standard-glyph pull-right" onClick={handleShowModal}>
+        <span
+          role="button"
+          tabIndex={0}
+          className="standard-glyph pull-right"
+          onClick={handleShowModal}
+          onKeyUp={e => e.key.toLowerCase() === 'enter' && handleShowModal(e)}
+        >
           <Glyphicon glyph="trash" />
         </span>
       </OverlayTrigger>
       <OverlayTrigger placement="left" overlay={tooltip('Edit record')}>
-        <span role="button" tabIndex={0} className="standard-glyph pull-right" onClick={handleEdit}>
+        <span
+          role="button"
+          tabIndex={0}
+          className="standard-glyph pull-right"
+          onClick={handleEdit}
+          onKeyUp={e => e.key.toLowerCase() === 'enter' && handleEdit(e)}
+        >
           <Glyphicon glyph="pencil" />
         </span>
       </OverlayTrigger>
@@ -316,4 +340,8 @@ CommonInformation.propTypes = {
   artist: PropTypes.string,
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
+};
+
+CommonInformation.defaultProps = {
+  artist: '',
 };
