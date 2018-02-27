@@ -5,7 +5,7 @@ const Record = require('../models/record');
 
 router.route('/records')
   .get((req, res) => {
-    Record.find(function (err, records) {
+    Record.find((err, records) => {
       if (err) {
         res.status(501).send(err);
         throw err;
@@ -28,7 +28,7 @@ router.route('/records')
       notes: req.body.notes,
       image: req.files ? req.files.image || '' : '',
     });
-    newRecord.save(err => {
+    newRecord.save((err) => {
       if (err) res.send(err); 
     });
     res.json({ msg: 'Record added' });
@@ -40,7 +40,7 @@ router.route('/records')
     res.json({msg: 'Record removed'});
   })
   .put((req, res) => {
-    Record.findById(req.body.id, function (err, record) {
+    Record.findById(req.body.id, (err, record) => {
       if (err) res.send(err);
 
       record.set({
@@ -60,7 +60,7 @@ router.route('/records')
         record.set({ image: undefined });
       }
 
-      record.save(function (err, updatedRecord) {
+      record.save((err, updatedRecord) => {
         if (err) res.send(err);
         res.send(updatedRecord);
       });
