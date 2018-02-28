@@ -1,29 +1,83 @@
+/* eslint-disable no-underscore-dangle */
+
 import React from 'react';
-import { ListGroup, ListGroupItem, Panel } from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import { ListGroup, Panel } from 'react-bootstrap';
+import axios from 'axios';
 import AddRecord from './AddRecord';
+import RecordItem from './RecordItem';
+import { setLoadingCursor } from '../../util';
 
 export default class ListItems extends React.Component {
-  static alertClicked() {
-    // alert('You clicked the third ListGroupItem');
-    return -1;
-  }
-
-  /*
   constructor(props) {
     super(props);
-  } */
+
+    this.state = {
+      records: [],
+    };
+
+    this.loadCollection = this.loadCollection.bind(this);
+    this.addRecordToCollection = this.addRecordToCollection.bind(this);
+    this.removeRecordFromCollection = this.removeRecordFromCollection.bind(this);
+    this.editRecordInCollection = this.editRecordInCollection.bind(this);
+  }
+
+  componentWillMount() {
+    this.loadCollection();
+  }
+
+  loadCollection() {
+    setLoadingCursor(true);
+    axios.get(this.props.url)
+      .then((res) => {
+        this.setState({ records: res.data });
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .then(() => {
+        setLoadingCursor(false);
+      });
+  }
+
+  addRecordToCollection(record) {
+    return axios.post(this.props.url, record);
+  }
+
+  removeRecordFromCollection(record) {
+    return axios.delete(`${this.props.url}?_id=${record._id}`);
+  }
+
+  editRecordInCollection(record) {
+    return axios.put(this.props.url, record);
+  }
 
   render() {
+    const recordItems = this.state.records.map(record => (
+      <RecordItem
+        record={record}
+        key={record._id}
+        handleDelete={this.removeRecordFromCollection}
+        loadCollection={this.loadCollection}
+        editRecordInCollection={this.editRecordInCollection}
+      />));
+
     return (
       <Panel>
         <Panel.Body>
-          <AddRecord />
+          <AddRecord
+            addRecordToCollection={this.addRecordToCollection}
+            loadCollection={this.loadCollection}
+          />
         </Panel.Body>
-        <ListGroup>
-          <ListGroupItem onClick={ListItems.alertClicked}>Link 2</ListGroupItem>
-          <ListGroupItem onClick={ListItems.alertClicked}>Link 3</ListGroupItem>
+        <ListGroup componentClass="ul">
+          { recordItems }
         </ListGroup>
       </Panel>
     );
   }
 }
+
+ListItems.propTypes = {
+  url: PropTypes.string.isRequired,
+};

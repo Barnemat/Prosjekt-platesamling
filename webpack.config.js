@@ -1,11 +1,11 @@
-var webpack = require('webpack');
-var path = require('path');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-var BUILD_DIR = path.resolve(__dirname, 'dist');
-var APP_DIR = path.resolve(__dirname, 'src');
+const BUILD_DIR = path.resolve(__dirname, 'dist');
+const APP_DIR = path.resolve(__dirname, 'src');
 
-var config = {
+const config = {
   entry: APP_DIR + '/index.jsx',
   output: {
     path: BUILD_DIR,
@@ -27,6 +27,10 @@ var config = {
         test : /\.css$/,
         include : path.resolve(__dirname, 'node_modules'),
         loader : 'style-loader!css-loader'
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif)$/,
+        loader: 'url-loader?limit=5000&name=[path][name].[hash:6].[ext]'
       }
     ]
   },

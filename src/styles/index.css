@@ -5,6 +5,33 @@ body {
   text-decoration: none;
 }
 
+body.waiting * {
+  cursor: wait;
+}
+
 .no-padding {
   padding: 0;
+}
+
+.vresize {
+  resize: vertical;
+}
+
+.rm-focus-outline:focus {
+  outline: none;
+}
+
+.standard-glyph {
+  margin: 0px 1px 0px 1px;
+  padding: 0px 2px 0px 2px;
+  font-size: 17px;
+}
+
+.standard-glyph:hover {
+  color: grey;
+  cursor: pointer;
+}
+
+.darker-onhover:hover {
+  background-color: whitesmoke;
 }
