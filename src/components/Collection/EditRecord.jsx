@@ -16,7 +16,7 @@ import {
 } from 'react-bootstrap';
 import Rating from 'react-rating';
 import tooltip from '../CommonComponents/Tooltip';
-import { checkTimePassed, getBestImageURL, getValidFormatTypes, checkImgValid } from '../../util';
+import { checkTimePassed, getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
@@ -37,15 +37,15 @@ export default class EditRecord extends React.Component {
       wikiHref: record.wikiHref,
       wikiDesc: record.wikiDesc,
       wikiImg: record.wikiImg,
-      wikiReqDesc: false,
+      wikiReqDesc: record.wikiDesc !== '',
       wikiReqImg: {
-        req: false,
-        searchTerm: '',
+        req: record.wikiImg !== '',
+        searchTerm: record.title,
       },
-      allowImgReq: false,
+      allowImgReq: record.wikiDesc !== '',
       selectedCheckboxes: [record.wikiDesc ? 'wikiDescCB' : '', record.wikiImg ? 'wikiImgCB' : ''],
       image: undefined,
-      imageURL: '',
+      imageData: '',
       ignoreRecordImg: false,
       invalidImg: false,
     };
@@ -63,13 +63,31 @@ export default class EditRecord extends React.Component {
 
   handleEdit(e) {
     e.preventDefault();
+    setLoadingCursor(true);
+
     const keys = ['title', 'artist', 'format', 'rating', 'wikiHref', 'wikiDesc', 'wikiImg', 'notes', 'image'];
     const formData = new FormData();
 
     formData.append('id', this.props.record._id);
     keys.forEach((key) => {
-      if (key === 'image' && this.state.ignoreRecordImg) {
-        formData.append(key, null);
+      if (key === 'image') {
+        if (this.state.ignoreRecordImg) {
+          formData.append(key, undefined);
+        } else if (this.state[key] !== undefined) {
+          formData.append(key, this.state[key]);
+        }
+      } else if (key === 'wikiDesc') {
+        if (this.state.selectedCheckboxes.includes('wikiDescCB')) {
+          formData.append(key, this.state[key]);
+        } else {
+          formData.append(key, '');
+        }
+      } else if (key === 'wikiImg') {
+        if (this.state.selectedCheckboxes.includes('wikiImgCB')) {
+          formData.append(key, this.state[key]);
+        } else {
+          formData.append(key, '');
+        }
       } else {
         formData.append(key, this.state[key]);
       }
@@ -81,6 +99,9 @@ export default class EditRecord extends React.Component {
       })
       .catch((err) => {
         console.error(err);
+      })
+      .then(() => {
+        setLoadingCursor(false);
       });
   }
 
@@ -174,7 +195,7 @@ export default class EditRecord extends React.Component {
     reader.onloadend = () => {
       this.setState({
         image,
-        imageURL: reader.result,
+        imageData: reader.result,
         ignoreRecordImg: false,
         invalidImg: false,
       });
@@ -183,7 +204,7 @@ export default class EditRecord extends React.Component {
     if (image && checkImgValid(image)) {
       reader.readAsDataURL(image);
     } else {
-      this.setState({ image: undefined, imageURL: '', invalidImg: image !== undefined });
+      this.setState({ image: undefined, imageData: '', invalidImg: image !== undefined });
     }
   }
 
@@ -192,7 +213,7 @@ export default class EditRecord extends React.Component {
 
     this.setState({
       image: undefined,
-      imageURL: '',
+      imageData: '',
       ignoreRecordImg: true,
       invalidImg: false,
     });
@@ -221,10 +242,12 @@ export default class EditRecord extends React.Component {
       format,
       notes,
       image,
-      imageURL,
+      imageData,
       wikiHref,
       wikiDesc,
+      wikiReqDesc,
       wikiImg,
+      wikiReqImg,
       selectedCheckboxes,
       allowImgReq,
       ignoreRecordImg,
@@ -232,10 +255,10 @@ export default class EditRecord extends React.Component {
 
     return (
       <Row>
-        {wikiImg || image || (record.image && !ignoreRecordImg) ?
+        {(wikiImg && wikiReqImg.req) || image || (recordImg && !ignoreRecordImg) ?
           <Col lg={4} md={4} sm={4} xs={12}>
-            {imageURL ?
-              <Image src={imageURL} rounded responsive />
+            {imageData ?
+              <Image src={imageData} rounded responsive />
               :
               <Image
                 src={recordImg && !ignoreRecordImg ? `data:image/jpeg;base64,${recordImg}` : wikiImg}
@@ -362,8 +385,8 @@ export default class EditRecord extends React.Component {
             <Row>
               <Col lg={12} md={12} sm={12} xs={12}>
                 <h5><b>Description:</b></h5>
-                {wikiDesc}
-                {(wikiHref && <a href={wikiHref} target="blank"> Wikipedia</a>)}
+                {wikiReqDesc && wikiDesc}
+                {(wikiHref && (wikiReqDesc || wikiReqImg.req)) && <a href={wikiHref} target="blank"> Wikipedia</a>}
               </Col>
             </Row>
             <Row>

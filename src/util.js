@@ -118,3 +118,11 @@ export const checkImgValid = (image) => {
 
   return image.size <= 2000000 && type[0] === 'image' && getValidImgTypes().includes(type[1]);
 };
+
+/*
+* Sets the cursor to a loading icon. Should be used during async waiting.
+* @param {Boolean} bool
+*/
+export const setLoadingCursor = (bool) => {
+  document.body.className = bool ? 'waiting' : '';
+};

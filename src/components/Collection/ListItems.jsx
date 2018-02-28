@@ -6,6 +6,7 @@ import { ListGroup, Panel } from 'react-bootstrap';
 import axios from 'axios';
 import AddRecord from './AddRecord';
 import RecordItem from './RecordItem';
+import { setLoadingCursor } from '../../util';
 
 export default class ListItems extends React.Component {
   constructor(props) {
@@ -26,9 +27,16 @@ export default class ListItems extends React.Component {
   }
 
   loadCollection() {
+    setLoadingCursor(true);
     axios.get(this.props.url)
       .then((res) => {
         this.setState({ records: res.data });
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .then(() => {
+        setLoadingCursor(false);
       });
   }
 

@@ -7,11 +7,12 @@ const SelectFormGroup = ({
   label,
   help,
   options,
+  value,
   ...props
 }) => (
   <FormGroup controlId={id}>
     {label && <ControlLabel>{label}</ControlLabel>}
-    <FormControl componentClass="select" {...props}>
+    <FormControl componentClass="select" defaultValue={value} {...props}>
       {options.map(item => <option key={item} value={item}>{item}</option>)}
     </FormControl>
     {help && <HelpBlock>{help}</HelpBlock>}
@@ -25,16 +26,17 @@ SelectFormGroup.propTypes = {
   label: PropTypes.string,
   help: PropTypes.string,
   value: PropTypes.string,
-  placeholder: PropTypes.string,
   onChange: PropTypes.func,
 };
 
+/* eslint react/require-default-props:[0] */
+/* defaultProps does not work properly
 SelectFormGroup.defaultProps = {
   label: '',
   help: '',
   value: '',
   placeholder: '',
   onChange: undefined,
-};
+}; */
 
 export default SelectFormGroup;

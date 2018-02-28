@@ -17,7 +17,7 @@ import {
   Row } from 'react-bootstrap';
 import Rating from 'react-rating';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
-import { getBestImageURL, getValidFormatTypes, checkImgValid } from '../../util';
+import { getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
 import tooltip from '../CommonComponents/Tooltip';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
@@ -44,7 +44,7 @@ export default class AddRecord extends React.Component {
       largeForm: false,
       notes: '',
       image: undefined,
-      imageURL: '',
+      imageData: '',
       invalidImg: false,
     };
 
@@ -102,17 +102,23 @@ export default class AddRecord extends React.Component {
     const image = e.target.files[0];
 
     reader.onloadend = () => {
+      setLoadingCursor(false);
       this.setState({
         image,
-        imageURL: reader.result,
+        imageData: reader.result,
         invalidImg: false,
       });
     };
 
+    reader.onerror = () => {
+      setLoadingCursor(false);
+    };
+
     if (image && checkImgValid(image)) {
+      setLoadingCursor();
       reader.readAsDataURL(image);
     } else {
-      this.setState({ image: undefined, imageURL: '', invalidImg: image !== undefined });
+      this.setState({ image: undefined, imageData: '', invalidImg: image !== undefined });
     }
   }
 
@@ -143,7 +149,7 @@ export default class AddRecord extends React.Component {
       largeForm: false,
       notes: '',
       image: undefined,
-      imageURL: '',
+      imageData: '',
       invalidImg: false,
     });
   }
@@ -165,11 +171,28 @@ export default class AddRecord extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    setLoadingCursor(true);
 
     const keys = ['title', 'artist', 'format', 'rating', 'wikiHref', 'wikiDesc', 'wikiImg', 'notes', 'image'];
     const formData = new FormData();
 
-    keys.forEach(key => formData.append(key, this.state[key]));
+    keys.forEach((key) => {
+      if (key === 'wikiDesc') {
+        if (this.state.selectedCheckboxes.includes('wikiDescCB')) {
+          formData.append(key, this.state[key]);
+        } else {
+          formData.append(key, '');
+        }
+      } else if (key === 'wikiImg') {
+        if (this.state.selectedCheckboxes.includes('wikiImgCB')) {
+          formData.append(key, this.state[key]);
+        } else {
+          formData.append(key, '');
+        }
+      } else {
+        formData.append(key, this.state[key]);
+      }
+    });
 
     this.props.addRecordToCollection(formData)
       .then(() => {
@@ -178,11 +201,15 @@ export default class AddRecord extends React.Component {
       })
       .catch((err) => {
         console.error(err);
+      })
+      .then(() => {
+        setLoadingCursor(false);
       });
   }
 
   handleSearchRequest() {
     if (!this.state.wikiDesc) {
+      setLoadingCursor(true);
       const searchRequest = sendDoubleWikiSearchRequest('en', this.state.title, this.state.artist);
 
       searchRequest
@@ -199,6 +226,9 @@ export default class AddRecord extends React.Component {
         })
         .catch((err) => {
           console.error(err);
+        })
+        .then(() => {
+          setLoadingCursor(false);
         });
     }
   }
@@ -206,12 +236,17 @@ export default class AddRecord extends React.Component {
   handleImgRequest() {
     const { searchTerm } = this.state.wikiReqImg;
     if (searchTerm && !this.state.wikiImg) {
+      setLoadingCursor();
+
       sendWikiImageRequest(searchTerm)
         .then((res) => {
           this.setState({ wikiImg: getBestImageURL(searchTerm, JSON.parse(res.request.response)) });
         })
         .catch((err) => {
           console.error(err);
+        })
+        .then(() => {
+          setLoadingCursor(false);
         });
     }
   }
@@ -221,7 +256,7 @@ export default class AddRecord extends React.Component {
 
     this.setState({
       image: undefined,
-      imageURL: '',
+      imageData: '',
       invalidImg: false,
     });
   }
@@ -245,6 +280,7 @@ export default class AddRecord extends React.Component {
       wikiHref,
       selectedCheckboxes,
     } = this.state;
+
     return (
       <form onSubmit={this.handleSubmit}>
         <TitleFormGroup
@@ -328,11 +364,11 @@ export default class AddRecord extends React.Component {
                 <Row>
                   <Col lg={6} md={7} sm={5} xs={8}>
                     <Well bsSize="small">
-                      {this.state.imageURL &&
-                        <Image src={this.state.imageURL} responsive />
+                      {this.state.imageData &&
+                        <Image src={this.state.imageData} responsive />
                       }
-                      <Button bsSize="small" onClick={this.handleRemoveImg}>Remove file</Button>
                     </Well>
+                    <Button bsSize="small" onClick={this.handleRemoveImg}>Remove file</Button>
                   </Col>
                 </Row>
               </Grid>

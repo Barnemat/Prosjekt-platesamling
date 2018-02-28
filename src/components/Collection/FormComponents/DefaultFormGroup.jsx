@@ -26,13 +26,14 @@ DefaultFormGroup.propTypes = {
   onChange: PropTypes.func,
 };
 
-
+/* eslint react/require-default-props:[0] */
+/* defaultProps does not work properly
 DefaultFormGroup.defaultProps = {
   label: '',
   help: '',
   value: '',
   placeholder: '',
   onChange: undefined,
-};
+}; */
 
 export default DefaultFormGroup;

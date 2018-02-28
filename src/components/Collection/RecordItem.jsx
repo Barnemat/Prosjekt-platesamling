@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ListGroupItem, Grid, Col, Row, Image, Button, Glyphicon, Modal, OverlayTrigger } from 'react-bootstrap';
 import Rating from 'react-rating';
-import { checkTimePassed } from '../../util';
+import { checkTimePassed, setLoadingCursor } from '../../util';
 import noRecordImg from '../../assets/img/no_record_img.png';
 import tooltip from '../CommonComponents/Tooltip';
 import EditRecord from './EditRecord';
@@ -46,12 +46,17 @@ export default class RecordItem extends React.Component {
 
   handleDelete(e) {
     e.preventDefault();
+    setLoadingCursor(true);
+
     this.props.handleDelete(this.props.record)
       .then(() => {
         this.props.loadCollection();
       })
       .catch((err) => {
         console.error(err);
+      })
+      .then(() => {
+        setLoadingCursor(false);
       });
   }
 

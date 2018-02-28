@@ -5,6 +5,10 @@ body {
   text-decoration: none;
 }
 
+body.waiting * {
+  cursor: wait;
+}
+
 .no-padding {
   padding: 0;
 }

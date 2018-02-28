@@ -10,15 +10,39 @@ const schema = new Schema({
   },
   title: {
     type: String,
-    required: true
+    required: true,
+    minlength: 1,
+    maxlength: 865,
   },
-  artist: String,
-  format: String,
-  rating: Number,
-  wikiHref: String,
-  wikiDesc: String,
-  wikiImg: String,
-  notes: String
+  artist: {
+    type: String,
+    maxlength: 50,
+  },
+  format: {
+    type: String,
+    maxlength: 20,
+  },
+  rating: {
+    type: Number,
+    min: 0,
+    max: 5,
+  },
+  wikiHref: {
+    type: String,
+    maxlength: 300,
+  },
+  wikiDesc: {
+    type: String,
+    maxlength: 1000,
+  },
+  wikiImg: {
+    type: String,
+    maxlength: 300,
+  },
+  notes: {
+    type: String,
+    maxlength: 2000,
+  }
 });
 
 schema.plugin(filePlugin, {
