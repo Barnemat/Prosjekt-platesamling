@@ -107,8 +107,6 @@ export default class EditRecord extends React.Component {
 
   handleChange(e) {
     e.preventDefault();
-    e.persist();
-    console.log(e);
     this.setState({ [e.target.name]: e.target.value });
   }
 

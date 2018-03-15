@@ -13,7 +13,7 @@ router.route('/records')
         res.json(records);
       }
     })
-    .sort(sort || {'date': -1})
+    .sort(sort || { date: -1 })
     .lean();
   })
   .post((req, res) => {
