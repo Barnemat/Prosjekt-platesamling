@@ -143,6 +143,12 @@ export const setLoadingCursor = (bool) => {
   document.body.className = bool ? 'waiting' : '';
 };
 
+/*
+* Sorts an array of similar objects based on the key selected by the type parameter.
+* Order is either 1 or -1 and specifies descending or ascending order.
+* @params {Array} array, {String} type, {int} order
+* @returns {Array}
+*/
 export const sortArrayOfObjects = (array, type, order) => (
   array.sort((a, b) => {
     let elementA = type === 'date' ? Date.parse(a[type]) : a[type];
