@@ -5,6 +5,15 @@ export const getValidLanugages = () => ['no', 'en'];
 
 export const getValidImgTypes = () => ['gif', 'ico', 'img', 'jpe', 'jpeg', 'jpg', 'jpx', 'png'];
 
+export const getSortModes = () => ({
+  newest: 'Newest first',
+  oldest: 'Oldest first',
+  albumDesc: 'Album (A-Z)',
+  albumAsc: 'Album (Z-A)',
+  artistDesc: 'Artist (A-Z)',
+  artistAsc: 'Artist (Z-A)',
+});
+
 const getFileEnding = file => file.split('.').pop().toLowerCase();
 
 /*
@@ -80,27 +89,34 @@ export const checkTimePassed = (date) => {
   const dateDistance = todayDate - prevDate;
 
   /* 1000 ms in a second, 60 seconds in a minute, 60 minutes in an hour,
-  24 hours in a day, 30 days in a month, 365 days in a year */
+  24 hours in a day, 7 days in a week, 30 days in a month, 365 days in a year */
   const yearDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 365));
   const monthDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 30));
+  const weekDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 7));
   const dayDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24));
 
   const frontmatter = 'This record was added';
 
   if (yearDistance === 0) {
-    if (dayDistance > 30) {
-      if (dayDistance > 60) {
+    if (dayDistance >= 30) {
+      if (dayDistance >= 60) {
         return `${frontmatter} ${monthDistance} months ago`;
       }
       return `${frontmatter} 1 month ago`;
     }
-    if (dayDistance === 0) {
-      return `${frontmatter} today`;
+    if (dayDistance < 7) {
+      if (dayDistance === 0) {
+        return `${frontmatter} today`;
+      }
+      if (dayDistance > 1) {
+        return `${frontmatter} ${dayDistance} days ago`;
+      }
+      return `${frontmatter} 1 day ago`;
     }
-    if (dayDistance > 1) {
-      return `${frontmatter} ${dayDistance} days ago`;
+    if (weekDistance === 1) {
+      return `${frontmatter} 1 week ago`;
     }
-    return `${frontmatter} 1 day ago`;
+    return `${frontmatter} ${weekDistance} weeks ago`;
   } else if (yearDistance === 1) {
     return `${frontmatter} 1 year ago`;
   }
@@ -126,3 +142,29 @@ export const checkImgValid = (image) => {
 export const setLoadingCursor = (bool) => {
   document.body.className = bool ? 'waiting' : '';
 };
+
+/*
+* Sorts an array of similar objects based on the key selected by the type parameter.
+* Order is either 1 or -1 and specifies descending or ascending order.
+* @params {Array} array, {String} type, {int} order
+* @returns {Array}
+*/
+export const sortArrayOfObjects = (array, type, order) => (
+  array.sort((a, b) => {
+    let elementA = type === 'date' ? Date.parse(a[type]) : a[type];
+    let elementB = type === 'date' ? Date.parse(b[type]) : b[type];
+
+    if (typeof elementA === 'string') {
+      elementA = elementA.toUpperCase();
+      elementB = elementB.toUpperCase();
+
+      if (order === 1) {
+        return elementA >= elementB ? 1 : -1;
+      }
+      return elementA < elementB ? 1 : -1;
+    } else if (typeof elementA === 'number') {
+      return order === 1 ? (elementA - elementB) : (elementB - elementA);
+    }
+    return 0;
+  })
+);

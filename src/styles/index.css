@@ -27,6 +27,10 @@ body.waiting * {
   font-size: 17px;
 }
 
+.margin-bottom {
+  margin-bottom: 4px;
+}
+
 .standard-glyph:hover {
   color: grey;
   cursor: pointer;
