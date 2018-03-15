@@ -17,7 +17,7 @@ export default class Collection extends React.Component {
         <Grid fluid>
           <Row className="show-grid">
             <Col lg={2} md={2} />
-            <Col lg={8} md={8} sm={12}>
+            <Col lg={8} md={8} sm={12} xs={12}>
               <ListItems url={this.state.url} />
             </Col>
             <Col lg={2} md={2} />

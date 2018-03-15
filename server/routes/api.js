@@ -5,6 +5,7 @@ const Record = require('../models/record');
 
 router.route('/records')
   .get((req, res) => {
+    const sort = req.query.sort ? JSON.parse(req.query.sort) : undefined;
     Record.find((err, records) => {
       if (err) {
         res.status(404).send(err);
@@ -12,6 +13,7 @@ router.route('/records')
         res.json(records);
       }
     })
+    .sort(sort || {'date': -1})
     .lean();
   })
   .post((req, res) => {
