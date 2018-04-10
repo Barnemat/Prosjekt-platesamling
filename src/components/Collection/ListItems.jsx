@@ -2,19 +2,21 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { ListGroup, Panel, Grid, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import AddRecord from './AddRecord';
 import RecordItem from './RecordItem';
 import SortModes from './SortModes';
 import { setLoadingCursor, sortArrayOfObjects } from '../../util';
+import { setCollection } from '../../action_creators';
+import { getRecordsBySearch } from '../../selectors/collection';
 
-export default class ListItems extends React.Component {
+class ListItems extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      records: [],
       sortMode: { date: -1 },
       galleryView: false,
     };
@@ -33,7 +35,10 @@ export default class ListItems extends React.Component {
   }
 
   getRecordItems() {
-    return this.state.records.map(record => (
+    const type = Object.keys(this.state.sortMode)[0];
+    const order = Object.values(this.state.sortMode)[0];
+
+    return sortArrayOfObjects(this.props.records, type, order).map(record => (
       <RecordItem
         record={record}
         key={record._id}
@@ -66,11 +71,7 @@ export default class ListItems extends React.Component {
     };
 
     const sortMode = possibleSortModes[key];
-    const type = Object.keys(sortMode)[0];
-    const order = Object.values(sortMode)[0];
-
-    const records = sortArrayOfObjects(this.state.records, type, order);
-    this.setState({ records, sortMode });
+    this.setState({ sortMode });
   }
 
   handleGalleryView(e) {
@@ -82,7 +83,7 @@ export default class ListItems extends React.Component {
     setLoadingCursor(true);
     axios.get(`${this.props.url}?sort=${JSON.stringify(this.state.sortMode)}`)
       .then((res) => {
-        this.setState({ records: res.data });
+        this.props.setCollection({ records: res.data });
       })
       .catch((err) => {
         console.error(err);
@@ -147,3 +148,16 @@ export default class ListItems extends React.Component {
 ListItems.propTypes = {
   url: PropTypes.string.isRequired,
 };
+
+const mapStateToProps = (state) => ({
+  records: getRecordsBySearch(state),
+});
+
+const mapDispatchToProps = {
+  setCollection,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ListItems);

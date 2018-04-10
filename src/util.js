@@ -93,7 +93,7 @@ export const checkTimePassed = (date) => {
   const yearDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 365));
   const monthDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 30));
   const weekDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 7));
-  const dayDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24));
+  const dayDistance = Math.ceil(dateDistance / (1000 * 60 * 60 * 24));
 
   const frontmatter = 'This record was added';
 

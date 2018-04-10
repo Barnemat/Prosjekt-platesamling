@@ -184,8 +184,15 @@ const MinimizedView = ({
           </Col>
         </Row>
         <Row>
-          <Col lg={8} md={8} sm={4}>
+          <Col lg={12} md={12} sm={12} xs={12}>
             <small>{checkTimePassed(record.date)}</small>
+            <Button
+              className="pull-right"
+              bsSize="small"
+              onClick={e => e.preventDefault()}
+            >
+              Show more
+            </Button>
           </Col>
         </Row>
       </Grid>
@@ -273,8 +280,15 @@ const ExpandedView = ({
           }
         </Row>
         <Row>
-          <Col lg={8} md={8} sm={8} xs={8}>
+          <Col lg={12} md={12} sm={12} xs={12}>
             <h6>{checkTimePassed(record.date)}</h6>
+            <Button
+              className="pull-right"
+              bsSize="small"
+              onClick={e => e.preventDefault()}
+            >
+              Show less
+            </Button>
           </Col>
         </Row>
       </Grid>
@@ -318,7 +332,7 @@ const CommonInformation = ({
         <span
           role="button"
           tabIndex={0}
-          className="standard-glyph pull-right"
+          className="standard-glyph pull-right md-glyph"
           onClick={handleShowModal}
           onKeyUp={e => e.key.toLowerCase() === 'enter' && handleShowModal(e)}
         >
@@ -329,7 +343,7 @@ const CommonInformation = ({
         <span
           role="button"
           tabIndex={0}
-          className="standard-glyph pull-right"
+          className="standard-glyph pull-right md-glyph"
           onClick={handleEdit}
           onKeyUp={e => e.key.toLowerCase() === 'enter' && handleEdit(e)}
         >

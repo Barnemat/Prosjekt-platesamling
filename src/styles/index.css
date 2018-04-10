@@ -24,7 +24,14 @@ body.waiting * {
 .standard-glyph {
   margin: 0px 1px 0px 1px;
   padding: 0px 2px 0px 2px;
+}
+
+.md-glyph {
   font-size: 17px;
+}
+
+.lg-glyph {
+  font-size: 20px;
 }
 
 .margin-bottom {

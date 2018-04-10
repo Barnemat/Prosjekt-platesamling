@@ -303,7 +303,7 @@ export default class EditRecord extends React.Component {
                     id="delete"
                     role="button"
                     tabIndex={0}
-                    className="standard-glyph pull-right"
+                    className="standard-glyph pull-right md-glyph"
                     onClick={handleShowModal}
                     onKeyUp={this.handleKeyUp}
                   >
@@ -315,7 +315,7 @@ export default class EditRecord extends React.Component {
                     id="edit"
                     role="button"
                     tabIndex={0}
-                    className="standard-glyph pull-right"
+                    className="standard-glyph pull-right md-glyph"
                     onClick={this.handleEdit}
                     onKeyUp={this.handleKeyUp}
                   >
