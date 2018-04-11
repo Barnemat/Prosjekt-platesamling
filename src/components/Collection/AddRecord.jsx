@@ -428,7 +428,7 @@ const TitleFormGroup = ({
               <span
                 role="button"
                 tabIndex={0}
-                className="standard-glyph"
+                className="standard-glyph md-glyph"
                 onClick={handleReset}
                 onKeyUp={handleReset}
               >

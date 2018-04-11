@@ -93,7 +93,7 @@ export const checkTimePassed = (date) => {
   const yearDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 365));
   const monthDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 30));
   const weekDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24 * 7));
-  const dayDistance = Math.floor(dateDistance / (1000 * 60 * 60 * 24));
+  const dayDistance = Math.ceil(dateDistance / (1000 * 60 * 60 * 24));
 
   const frontmatter = 'This record was added';
 
@@ -168,3 +168,25 @@ export const sortArrayOfObjects = (array, type, order) => (
     return 0;
   })
 );
+/*
+* Returns an array of strings where the first item is the part of the string (t) which comes before
+* the search string (s), the second item is the search string (s) part of string (t)
+* correctly formatted e.g. uppercase characters,
+* and the third item is the part of the string (t) that remains after the search string (s) in string (t).
+* @params {String} t, {String} s
+* @returns {Array}
+*/
+export const getSplittedStringsForSearchFormatting = (t, s) => {
+  const text = t.toLowerCase();
+  const search = s.toLowerCase();
+
+  const index = text.indexOf(search);
+  const lastChar = index + search.length;
+
+  if (s.length === 0 || index === -1) return [t, '', ''];
+
+  return [
+    t.substring(0, index),
+    t.substring(index, lastChar),
+    t.substring(lastChar)];
+};
