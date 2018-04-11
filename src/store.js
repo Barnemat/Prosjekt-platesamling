@@ -17,6 +17,7 @@ if (process.env.NODE_ENV === 'production') {
   store = createStore(reducer, initialState, devTools);
 }
 
+// Records added as array inside collection in case app is later extended to include other collectibles
 const initialCollection = { records: [] };
 const initialSearch = '';
 

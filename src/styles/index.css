@@ -46,3 +46,7 @@ body.waiting * {
 .darker-onhover:hover {
   background-color: whitesmoke;
 }
+
+.yellow-bg {
+  background-color: yellow;
+}
