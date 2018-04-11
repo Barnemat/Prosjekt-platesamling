@@ -76,8 +76,8 @@ class SortModes extends React.Component {
                   onClick={this.clearSearch}
                   onKeyUp={e => e.key.toLowerCase() === 'enter' && this.clearSearch(e)}
                 >
-                <Glyphicon glyph="remove" />
-              </span>}
+                  <Glyphicon glyph="remove" />
+                </span>}
             </Form>
           </Col>
           <Col lg={6} md={6} sm={6} xs={6}>
@@ -109,12 +109,15 @@ class SortModes extends React.Component {
 }
 
 SortModes.propTypes = {
+  search: PropTypes.string.isRequired,
   galleryView: PropTypes.bool.isRequired,
   handleSortMode: PropTypes.func.isRequired,
   handleGalleryView: PropTypes.func.isRequired,
+  setSearch: PropTypes.func.isRequired,
+  resetSearch: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   search: state.search,
 });
 

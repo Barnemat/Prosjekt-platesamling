@@ -188,6 +188,5 @@ export const getSplittedStringsForSearchFormatting = (t, s) => {
   return [
     t.substring(0, index),
     t.substring(index, lastChar),
-    t.substring(lastChar)
-  ];
+    t.substring(lastChar)];
 };

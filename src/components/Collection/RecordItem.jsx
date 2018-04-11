@@ -79,7 +79,7 @@ MinimizedView.propTypes = {
     notes: PropTypes.string,
   }).isRequired,
   image: PropTypes.string,
-  search: PropTypes.string,
+  search: PropTypes.string.isRequired,
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
 };
@@ -178,7 +178,7 @@ ExpandedView.propTypes = {
     notes: PropTypes.string,
   }).isRequired,
   image: PropTypes.string,
-  search: PropTypes.string,
+  search: PropTypes.string.isRequired,
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
 };
@@ -196,9 +196,6 @@ const CommonInformation = ({
 }) => {
   const artistStrings = getSplittedStringsForSearchFormatting(artist, search);
   const titleStrings = getSplittedStringsForSearchFormatting(title, search);
-
-  //console.log(artistStrings);
-  //console.log(titleStrings);
 
   return (
     <Row>
@@ -240,7 +237,7 @@ const CommonInformation = ({
 CommonInformation.propTypes = {
   title: PropTypes.string.isRequired,
   artist: PropTypes.string,
-  search: PropTypes.string,
+  search: PropTypes.string.isRequired,
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
 };
@@ -383,16 +380,14 @@ RecordItem.propTypes = {
     notes: PropTypes.string,
     image: PropTypes.any,
   }).isRequired,
-  search: PropTypes.string,
+  search: PropTypes.string.isRequired,
   loadCollection: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   editRecordInCollection: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   search: state.search,
 });
 
-export default connect(
-  mapStateToProps,
-)(RecordItem);
+export default connect(mapStateToProps)(RecordItem);

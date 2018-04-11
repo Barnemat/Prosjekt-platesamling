@@ -3,10 +3,10 @@ import { setCollection, setSearch } from './action_creators';
 import reducer from './reducer';
 
 const initialState = {};
-let store;
+let tmpStore;
 
 if (process.env.NODE_ENV === 'production') {
-  store = createStore(reducer, initialState);
+  tmpStore = createStore(reducer, initialState);
 } else {
   // enables reduxDevTools when not in production
   const devTools = typeof window === 'object' && typeof window.devToolsExtension !== 'undefined' ?
@@ -14,8 +14,10 @@ if (process.env.NODE_ENV === 'production') {
     :
     undefined;
 
-  store = createStore(reducer, initialState, devTools);
+  tmpStore = createStore(reducer, initialState, devTools);
 }
+
+const store = tmpStore;
 
 // Records added as array inside collection in case app is later extended to include other collectibles
 const initialCollection = { records: [] };

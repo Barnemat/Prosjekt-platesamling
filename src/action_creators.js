@@ -3,7 +3,7 @@ export function setCollection(collection) {
     type: 'SET_COLLECTION',
     payload: {
       collection,
-    }
+    },
   };
 }
 
@@ -18,7 +18,7 @@ export function setSearch(search) {
     type: 'SET_SEARCH',
     payload: {
       search,
-    }
+    },
   };
 }
 

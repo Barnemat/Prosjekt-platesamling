@@ -145,11 +145,14 @@ class ListItems extends React.Component {
   }
 }
 
+/* eslint react/forbid-prop-types:[0] */
 ListItems.propTypes = {
   url: PropTypes.string.isRequired,
+  records: PropTypes.array.isRequired,
+  setCollection: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   records: getRecordsBySearch(state),
 });
 
