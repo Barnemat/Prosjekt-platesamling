@@ -8,7 +8,7 @@ const Header = () => (
     <Grid fluid>
       <Row>
         <Col lg={2} md={2} />
-        <Col lg={9} md={9}>
+        <Col lg={8} md={8}>
           <Navbar.Header>
             <Navbar.Brand>
               <NavLink to="/" activeClassName="active" exact>
@@ -36,15 +36,20 @@ const Header = () => (
               </LinkContainer>
             </Nav>
             <Nav pullRight>
-              <LinkContainer to="/example">
+              <LinkContainer to="/register">
                 <NavItem eventKey={4}>
-                  Example 3
+                  Register
+                </NavItem>
+              </LinkContainer>
+              <LinkContainer to="/signin">
+                <NavItem eventKey={5}>
+                  Sign in
                 </NavItem>
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>
         </Col>
-        <Col lg={1} md={1} />
+        <Col lg={2} md={2} />
       </Row>
     </Grid>
   </Navbar>

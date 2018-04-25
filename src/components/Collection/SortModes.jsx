@@ -6,7 +6,7 @@ import SelectFormGroup from './FormComponents/SelectFormGroup';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import tooltip from '../CommonComponents/Tooltip';
 import { getSortModes } from '../../util';
-import { setSearch, resetSearch } from '../../action_creators';
+import { setSearch, resetSearch } from '../../actions';
 
 class SortModes extends React.Component {
   constructor(props) {

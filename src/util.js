@@ -106,13 +106,15 @@ export const checkTimePassed = (date) => {
     }
     if (dayDistance < 7) {
       if (dayDistance === 0) {
-        if (prevDate.getDay() === todayDate.getDay()) return `${frontmatter} today`;
-        return `${frontmatter} yesterday`
+        if (prevDate.getDay() === todayDate.getDay()) {
+          return `${frontmatter} today`;
+        }
+        return `${frontmatter} yesterday`;
       }
       if (dayDistance > 1) {
         return `${frontmatter} ${dayDistance} days ago`;
       }
-      return `${frontmatter} 1 day ago`;
+      return `${frontmatter} yesterday`;
     }
     if (weekDistance === 1) {
       return `${frontmatter} 1 week ago`;

@@ -9,7 +9,7 @@ import AddRecord from './AddRecord';
 import RecordItem from './RecordItem';
 import SortModes from './SortModes';
 import { setLoadingCursor, sortArrayOfObjects } from '../../util';
-import { setCollection } from '../../action_creators';
+import { setCollection } from '../../actions';
 import { getRecordsBySearch } from '../../selectors/collection';
 
 class ListItems extends React.Component {

@@ -1,8 +1,11 @@
 const express = require('express');
-const router = express.Router(); 
+const router = express.Router();
+const bcrypt = require('bcrypt');
 
 const Record = require('../models/record');
+const User = require('../models/user');
 
+// Handles record adding/editing
 router.route('/records')
   .get((req, res) => {
     const sort = req.query.sort ? JSON.parse(req.query.sort) : undefined;
@@ -88,6 +91,124 @@ router.route('/records')
         });
       }
     });
+  });
+
+// Handles sign in
+router.route('/signin')
+  .post((req, res) => {
+    User.findOne({ username: req.body.username }, (err, user) => {
+      if (!user) res.json({ msg: 'Invalid username or password' });
+      if (err) throw err;
+
+      bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
+        if(err) {
+          throw err;
+        }
+
+        if (isMatch) {
+          req.session.user = user._id;
+          req.session.auth = true;
+          req.session.regenerate((err) => {
+            if (err) throw err;
+          });
+          res.json({ sucess: true, user: user._id, msg: 'Login successful.' });
+        } else {
+          res.json({ msg: 'Invalid username or password' });
+        }
+      });
+    }).lean();
+  });
+
+// Handles user registration and modifications
+router.route('/user')
+  .post((req, res) => {
+    if (!req.body || !req.body.username || !req.body.password || !req.body.email) {
+      res.status(204).send({ error: 'Request lacking required fields.' });
+    } else {
+      let unique = true;
+      User.findOne({ username: req.body.username }, (err, user) => {
+        if (user) unique = false;
+      });
+
+      if (unique){
+        const newUser = new User({
+          username: req.body.username,
+          password: req.body.password,
+          email: req.body.email,
+        });
+
+        bcrypt.genSalt(15, (error, salt) => {
+          if (error) {
+            throw error;
+          } else {
+            bcrypt.hash(newUser.password, salt, (err, hash) => {
+              if (err) throw err;
+
+              if (hash) {
+                newUser.password = hash;
+                newUser.save((err) => {
+                  if (err) {
+                    res.send(err);
+                  } else {
+                    res.json({ success: true, msg: 'User added' });
+                  }
+                });
+              }
+            });
+          }
+        });
+      } else {
+        res.send({ error: 'Username taken' });
+      }
+    }
+  })
+  .delete((req, res) => {
+    let error;
+    User.remove({ username: req.query.username }, (err) => {
+      error = err;
+      if (err) res.send(err);
+    });
+    if (error) {
+      res.send(error);
+    } else {
+      res.json({ sucess: true, msg: 'User removed' });
+    }
+  })
+  .put((req, res) => {
+    /* Needs work
+    User.findByOne(req.body.username, (err, user) => {
+      if (err) {
+        res.send(err);
+      } else {
+        user.set({
+          username: req.body.username,
+          password: req.body.password,
+          email: req.body.email,
+        });
+
+        record.save((err, updatedUser) => {
+          if (err) {
+            res.send(err);
+          } else {
+            res.send(updatedUser);
+          }
+        });
+      }
+    });*/
+  });
+
+router.route('/authenticated')
+  .get((req, res) => {
+    if (req.session.auth && req.session.user) {
+      req.session.regenerate((err) => {
+        if (err) throw err;
+      });
+      res.json({ authenticated: req.session.auth, user: req.session.user });
+    } else {
+      req.session.auth = false;
+      req.session.user = {};
+      res.json({ authenticated: false, user: {} });
+    }
   });
 
 module.exports = router;
