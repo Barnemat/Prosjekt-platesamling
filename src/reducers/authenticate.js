@@ -3,7 +3,7 @@ export default function(state={}, action) {
     case 'AUTHENTICATED':
       return { ...state, authenticated: true, user: action.payload };
     case 'UNAUTHENTICATED':
-      return { ...state, authenticated: false };
+      return { ...state, authenticated: false, user: { username: '', email: '' } };
     case 'AUTHENTICATION_ERROR':
       return { ...state, error: action.payload };
   }

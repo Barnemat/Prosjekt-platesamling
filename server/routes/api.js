@@ -106,17 +106,30 @@ router.route('/signin')
         }
 
         if (isMatch) {
-          req.session.user = user._id;
+          const userObject  = {
+            username: user.username,
+            email: user.email,
+          };
+
+          req.session.user = userObject;
           req.session.auth = true;
+
           req.session.regenerate((err) => {
             if (err) throw err;
           });
-          res.json({ sucess: true, user: user._id, msg: 'Login successful.' });
+          res.json({ user: userObject, msg: 'Login successful.' });
         } else {
           res.json({ msg: 'Invalid username or password' });
         }
       });
     }).lean();
+  });
+
+// Handles sign out
+router.route('/signout')
+  .get((req, res) => {
+    req.session.destroy();
+    res.json({ msg: 'User logged out' });
   });
 
 // Handles user registration and modifications
@@ -171,7 +184,7 @@ router.route('/user')
     if (error) {
       res.send(error);
     } else {
-      res.json({ sucess: true, msg: 'User removed' });
+      res.json({ msg: 'User removed' });
     }
   })
   .put((req, res) => {
@@ -205,8 +218,6 @@ router.route('/authenticated')
       });
       res.json({ authenticated: req.session.auth, user: req.session.user });
     } else {
-      req.session.auth = false;
-      req.session.user = {};
       res.json({ authenticated: false, user: {} });
     }
   });

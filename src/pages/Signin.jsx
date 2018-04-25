@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Col, Grid, Row, Button } from 'react-bootstrap';
 import { Field, reduxForm } from 'redux-form';
+import { Redirect } from 'react-router-dom';
 import { signInAction } from '../actions';
 
 class Signin extends React.Component {
@@ -13,15 +14,14 @@ class Signin extends React.Component {
     };
 
     this.submit = values => {
-      console.log(values);
       this.props.signInAction(values);
     };
   }
 
   render() {
-    const { handleSubmit, pristine, reset, submitting } = this.props;
+    const { handleSubmit, pristine, reset, submitting, authenticated } = this.props;
 
-    return (
+    return authenticated ? (<Redirect to="/" />) : (
       <div>
         <Grid fluid>
           <Row className="show-grid">
@@ -57,9 +57,10 @@ class Signin extends React.Component {
   }
 }
 
-const mapStateToProps = state => {
-  return { errorMessage: state.authenticate.error };
-}
+const mapStateToProps = state => ({
+  errorMessage: state.authenticate.error,
+  authenticated: state.authenticate.authenticated,
+});
 
 const reduxFormSignin = reduxForm({
   form: 'signin'

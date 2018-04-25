@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { setCollection, setSearch } from './actions';
+import { setCollection, setSearch, authenticatedAction } from './actions';
 import reducer from './reducer';
 
 const initialState = {};
@@ -22,22 +22,7 @@ const store = tmpStore;
 const initialCollection = { records: [] };
 const initialSearch = '';
 
-// Checks if a user is already logged in
-axios.get('http://localhost:8080/api/authenticated')
-  .then((res) => {
-    if (res.data.authenticated) {
-      store.dispatch({
-        type: 'AUTHENTICATED',
-        payload: res.data.user,
-      });
-    } else {
-      store.dispatch({ type: 'UNAUTHENTICATED' });
-    }
-  })
-  .catch((err) => {
-    store.dispatch({ type: 'UNAUTHENTICATED' });
-  });
-
+store.dispatch(authenticatedAction());
 store.dispatch(setCollection(initialCollection));
 store.dispatch(setSearch(initialSearch));
 

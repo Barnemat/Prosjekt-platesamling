@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import {
   FormControl,
   FormGroup,
@@ -18,7 +20,7 @@ import {
   import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
   import { setLoadingCursor } from '../util';
 
-export default class Register extends React.Component {
+class Register extends React.Component {
   constructor(props) {
     super(props);
 
@@ -63,7 +65,7 @@ export default class Register extends React.Component {
 
   render() {
     const { username, email } = this.state;
-    return (
+    return this.props.authenticated ? (<Redirect to="/" />) : (
       <div>
         <Grid fluid>
           <Row className="show-grid">
@@ -108,3 +110,9 @@ export default class Register extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  authenticated: state.authenticate.authenticated,
+});
+
+export default connect(mapStateToProps)(Register);
