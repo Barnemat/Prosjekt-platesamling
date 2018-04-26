@@ -97,12 +97,16 @@ router.route('/records')
 router.route('/signin')
   .post((req, res) => {
     User.findOne({ username: req.body.username }, (err, user) => {
-      if (!user) res.json({ msg: 'Invalid username or password' });
+      if (!user) {
+        res.json({ success: false, msg: 'Invalid username or password' });
+        return;
+      }
       if (err) throw err;
 
       bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
         if(err) {
-          throw err;
+          res.json({ success: false, msg: 'Invalid username or password' });
+          return;
         }
 
         if (isMatch) {
@@ -111,15 +115,17 @@ router.route('/signin')
             email: user.email,
           };
 
-          req.session.user = userObject;
-          req.session.auth = true;
+          if (req.body.remember) {
+            req.session.user = userObject;
+            req.session.auth = true;
+          }
 
           req.session.regenerate((err) => {
             if (err) throw err;
           });
-          res.json({ user: userObject, msg: 'Login successful.' });
+          res.json({ success: true, user: userObject, msg: 'Login successful.' });
         } else {
-          res.json({ msg: 'Invalid username or password' });
+          res.json({ success: false, msg: 'Invalid username or password' });
         }
       });
     }).lean();
@@ -150,7 +156,7 @@ router.route('/user')
           email: req.body.email,
         });
 
-        bcrypt.genSalt(15, (error, salt) => {
+        bcrypt.genSalt(10, (error, salt) => {
           if (error) {
             throw error;
           } else {

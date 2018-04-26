@@ -6,6 +6,8 @@ export default function(state={}, action) {
       return { ...state, authenticated: false, user: { username: '', email: '' } };
     case 'AUTHENTICATION_ERROR':
       return { ...state, error: action.payload };
+    case 'CLEAR_AUTH_ERROR':
+      return { ...state, error: '' };
   }
   return state;
 }

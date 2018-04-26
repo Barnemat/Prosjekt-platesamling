@@ -29,10 +29,12 @@ class Register extends React.Component {
       username: '',
       email: '',
       password: '',
+      retype: '',
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleReset = this.handleReset.bind(this);
   }
 
   handleChange(e) {
@@ -47,7 +49,7 @@ class Register extends React.Component {
 
     axios.post(this.state.url, { username, email, password })
       .then((res) => {
-        console.log(res);
+        this.handleReset();
       })
       .catch((err) => {
         console.error(err);
@@ -55,11 +57,14 @@ class Register extends React.Component {
       .then(() => {
         setLoadingCursor(false);
       });
-    
+  }
+
+  handleReset() {
     this.setState({
       username: '',
       email: '',
       password: '',
+      retype: '',
     });
   }
 
@@ -71,7 +76,7 @@ class Register extends React.Component {
           <Row className="show-grid">
             <Col lg={2} md={2} />
             <Col lg={8} md={8} sm={12} xs={12}>
-              <form onSubmit={this.handleSubmit}>
+              <form onSubmit={this.handleSubmit} onReset={this.handleReset}>
                 <DefaultFormGroup
                   id="formControlsUsername"
                   name="username"
@@ -98,8 +103,19 @@ class Register extends React.Component {
                   placeholder="Password..."
                   onChange={this.handleChange}
                 />
+                <DefaultFormGroup
+                  id="formControlsPassword2"
+                  name="retype"
+                  type="password"
+                  label="Retype Password"
+                  placeholder="Password..."
+                  onChange={this.handleChange}
+                />
                 <Button bsStyle="primary" type="submit">
                   Register
+                </Button>
+                <Button type="reset">
+                  Reset Fields
                 </Button>
               </form>
             </Col>
@@ -111,7 +127,7 @@ class Register extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   authenticated: state.authenticate.authenticated,
 });
 

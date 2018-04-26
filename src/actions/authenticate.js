@@ -1,18 +1,26 @@
 import axios from 'axios';
 
-export function signInAction({ username, password }) {
+export function signInAction({ username, password, remember }) {
   return (dispatch) => {
-    axios.post('http://localhost:8080/api/signin', { username, password })
+    axios.post('http://localhost:8080/api/signin', { username, password, remember })
       .then((res) => {
-        dispatch({
-          type: 'AUTHENTICATED',
-          payload: res.data.user,
-        });
+        if (res.data.success) {
+          dispatch({
+            type: 'AUTHENTICATED',
+            payload: res.data.user,
+          });
+          dispatch({ type: 'CLEAR_AUTH_ERROR' });
+        } else {
+          dispatch({
+          type: 'AUTHENTICATION_ERROR',
+            payload: res.data.msg,
+          });
+        }
       })
       .catch((err) => {
         dispatch({
           type: 'AUTHENTICATION_ERROR',
-          payload: 'Invalid username or password'
+          payload: 'Invalid username or password',
         });
       });
   };
@@ -42,9 +50,11 @@ export function signOutAction() {
     axios.get('http://localhost:8080/api/signout')
       .then((res) => {
         dispatch({ type: 'UNAUTHENTICATED' });
+        dispatch({ type: 'CLEAR_AUTH_ERROR' });
       })
       .catch((err) => {
         dispatch({ type: 'UNAUTHENTICATED' });
+        dispatch({ type: 'CLEAR_AUTH_ERROR' });
       });
   };
 }

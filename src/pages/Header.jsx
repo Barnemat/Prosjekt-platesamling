@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { NavLink, withRouter } from 'react-router-dom';
 import { Navbar, Nav, NavItem, Col, Grid, Row } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { signOutAction } from '../actions';
@@ -9,20 +9,12 @@ import { signOutAction } from '../actions';
 class Header extends React.Component {
   constructor(props) {
     super(props);
-
-    this.handleSelect = this.handleSelect.bind(this);
-  }
-
-  handleSelect(eventKey) {
-    if (eventKey === 5) {
-      this.props.signOutAction();
-    }
   }
 
   render() {
     const { authenticated, username } = this.props;
     return (
-      <Navbar inverse fluid collapseOnSelect onSelect={this.handleSelect}>
+      <Navbar inverse fluid collapseOnSelect>
         <Grid fluid>
           <Row>
             <Col lg={2} md={2} />
@@ -54,32 +46,33 @@ class Header extends React.Component {
                   </LinkContainer>
                 </Nav>
                 {authenticated ? (
-                    <Nav pullRight>
-                      <LinkContainer to="/example">
-                        <NavItem eventKey={4}>
-                          {username} (Example)
-                        </NavItem>
-                      </LinkContainer>
-                      <LinkContainer to="/" exact>
-                        <NavItem eventKey={5}>
-                          Sign out
-                        </NavItem>
-                      </LinkContainer>
-                    </Nav>
+                  <Nav pullRight>
+                    <LinkContainer to={"/example"}>
+                      <NavItem eventKey={4}>
+                        {username} (Example)
+                      </NavItem>
+                    </LinkContainer>
+                    <LinkContainer to="/signout">
+                      <NavItem eventKey={5} onClick={this.props.signOutAction}>
+                        Sign out
+                      </NavItem>
+                    </LinkContainer>
+                  </Nav>
                   )
                   :
-                  (<Nav pullRight>
-                      <LinkContainer to="/register">
-                        <NavItem eventKey={6}>
-                          Register
-                        </NavItem>
-                      </LinkContainer>
-                      <LinkContainer to="/signin">
-                        <NavItem eventKey={7}>
-                          Sign in
-                        </NavItem>
-                      </LinkContainer>
-                    </Nav>
+                  (
+                  <Nav pullRight>
+                    <LinkContainer to="/register">
+                      <NavItem eventKey={4}>
+                        Register
+                      </NavItem>
+                    </LinkContainer>
+                    <LinkContainer to="/signin">
+                      <NavItem eventKey={5}>
+                        Sign in
+                      </NavItem>
+                    </LinkContainer>
+                  </Nav>
                   )
                 }
               </Navbar.Collapse>
@@ -104,4 +97,4 @@ const mapStateToProps = (state) => ({
   username: state.authenticate.user ? state.authenticate.user.username : '',
 });
 
-export default connect(mapStateToProps, {signOutAction})(Header);
+export default withRouter(connect(mapStateToProps, {signOutAction})(Header));
