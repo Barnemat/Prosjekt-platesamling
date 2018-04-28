@@ -49,6 +49,7 @@
     "md5": "^2.2.1",
     "mongoose": "^5.0.1",
     "mongoose-file": "^0.0.2",
+    "password-validator": "^4.1.1",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-bootstrap": "^0.32.1",

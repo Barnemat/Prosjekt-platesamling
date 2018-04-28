@@ -34,7 +34,7 @@ mongoose.connection.on('connected', (res) => {
 });
 
 mongoose.connection.on('error', (err) => {
-  console.error('Mongoose encountered an error connecting to MongoDB: ' + err);
+  console.error('Mongoose encountered an error connecting to MongoDB');
 });
 
 const mongoStore = new MongoDBStore({
@@ -48,7 +48,8 @@ mongoStore.on('connected', (res) => {
 });
 
 mongoStore.on('error', (err) => {
-  console.error('MongoDBStore encountered an error connecting to MongoDB: ' + err);
+  console.error('MongoDBStore encountered an error connecting to MongoDB');
+
 });
 
 app.use(session({

@@ -7,11 +7,13 @@ const DefaultFormGroup = ({
   label,
   help,
   validationState,
+  feedback,
   ...props
 }) => (
   <FormGroup controlId={id} validationState={validationState}>
     {label && <ControlLabel>{label}</ControlLabel>}
     <FormControl {...props} />
+    {feedback && <FormControl.Feedback />}
     {help && <HelpBlock>{help}</HelpBlock>}
   </FormGroup>
 );
@@ -26,6 +28,7 @@ DefaultFormGroup.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func,
   validationState: PropTypes.string,
+  feedback: PropTypes.bool,
 };
 
 /* eslint react/require-default-props:[0] */

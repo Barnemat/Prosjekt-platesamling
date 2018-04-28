@@ -11,11 +11,19 @@ class Signin extends React.Component {
 
     this.state = {
       url: 'http://localhost:8080/api/users',
+      checked: false,
     };
 
     this.submit = values => {
       this.props.signInAction(values);
     };
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick(e) {
+    e.preventDefault();
+    this.setState({ checked: !this.state.checked });
   }
 
   render() {
@@ -66,8 +74,10 @@ class Signin extends React.Component {
                         name="remember"
                         component="input"
                         type="checkbox"
+                        checked={this.state.checked}
+                        onClick={this.handleClick}
                       />
-                      <span> Remember me</span>
+                      <span onClick={this.handleClick}> Remember me</span>
                     </Col>
                   </Row>
                   <Row>

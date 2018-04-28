@@ -140,6 +140,21 @@ router.route('/signout')
 
 // Handles user registration and modifications
 router.route('/user')
+  .get((req, res) => {
+    const search = req.query.username ? { username: req.query.username } : { email: req.query.email };
+
+    User.findOne(search, (err, user) => {
+      let unique = false;
+      if (user === null) unique = true;
+      res.json({
+        user: {
+          username: user ? user.username : '',
+          email: user ? user.email : ''
+        },
+        unique
+      });
+    });
+  })
   .post((req, res) => {
     if (!req.body || !req.body.username || !req.body.password || !req.body.email) {
       res.status(204).send({ error: 'Request lacking required fields.' });
