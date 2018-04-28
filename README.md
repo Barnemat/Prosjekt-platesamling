@@ -31,6 +31,6 @@ Then you need to start a MongoDB process. There's probably not neccesary to manu
 sudo service mongod start                                        // Starts the mongoDB service on ubuntu linux (is possibly the only thing neccesary to start adding records directly from the apllication)
 mongo                                                            // Starts a mongo shell
 > use record_collection                                          // Adds a database
-> db.records.insertOne({title: 'Test Title', date: new Date()})  // Adds a test document to the collection. This will save the database and collection.
+> db.records.insertOne({title: 'Test Title', date: new Date(), format: 'CD'})  // Adds a test document to the collection. This will save the database and collection.
 ```
 The `sudo service mongod start` command must be run again each time you reboot your system.
