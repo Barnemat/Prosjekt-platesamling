@@ -47,9 +47,9 @@ class Header extends React.Component {
                 </Nav>
                 {authenticated ? (
                   <Nav pullRight>
-                    <LinkContainer to={"/example"}>
+                    <LinkContainer to={`/user/${username}`}>
                       <NavItem eventKey={4}>
-                        {username} (Example)
+                        { username }
                       </NavItem>
                     </LinkContainer>
                     <LinkContainer to="/signout">

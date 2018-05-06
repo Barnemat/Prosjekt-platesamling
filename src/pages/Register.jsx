@@ -20,6 +20,7 @@ import {
   Row } from 'react-bootstrap';
   import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
   import { setLoadingCursor } from '../util';
+  import WildCardError from '../components/CommonComponents/WildCardError';
 
 class Register extends React.Component {
   constructor(props) {
@@ -43,12 +44,16 @@ class Register extends React.Component {
       email: '',
       password: '',
       retype: '',
-      userUnique: null,
+      userUnique: true,
+      emailUnique: true,
       emailValid: null,
       passwordValid: null,
       passwordsEqual: null,
-      showpasswordNotValid: false,
+      showPasswordNotValid: false,
+      showPasswordsNotEqual: false,
+      showEmailNotValid: false,
       registered: false,
+      wildCardError: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -57,47 +62,32 @@ class Register extends React.Component {
     this.getPasswordValid = this.getPasswordValid.bind(this);
     this.handleFocus = this.handleFocus.bind(this);
     this.getDisable = this.getDisable.bind(this);
+    this.getEmailValid = this.getEmailValid.bind(this);
   }
 
   handleFocus(e) {
     e.preventDefault();
     const { name } = e.target;
-    const { username, email, password, retype, passwordValid, url } = this.state;
-    let userUnique = null;
-    let emailValid = null;
-    let showpasswordNotValid = false;
-    let passwordsEqual = null;
+    const { username, email, password, retype, passwordValid, emailValid } = this.state;
+    let showEmailNotValid = false;
+    let showPasswordNotValid = false;
+    let showPasswordsNotEqual = false;
 
-    axios.get(`${url}?username=${username}`)
-      .then((res) => {
-        axios.get(`${url}?email=${email}`)
-          .then((innerRes) => {
-            if (name !== 'username' && username.length > 0) {
-              userUnique = res.data.unique ? 'success' : 'error';
-            }
+    if (name !== 'email' && emailValid === 'error') {
+      showEmailNotValid = true;
+    }
 
-            if (name !== 'email' && email.length > 0) {
-              emailValid = innerRes.data.unique && email.includes('@', 1) && email.includes('.', 2) ? 'success' : 'error';
-            }
+    if (name !== 'password' && passwordValid === 'error') {
+      showPasswordNotValid = true;
+    }
 
-            if (name !== 'password' && passwordValid === 'error') {
-              showpasswordNotValid = true;
-            }
+    if (name !== 'retype' && password.length > 0 && retype.length > 0) {
+      if (password !== retype) {
+        showPasswordsNotEqual = true;
+      }
+    }
 
-            if (name !== 'retype') {
-              if (password.length > 0 && retype.length > 0) {
-                passwordsEqual = password === retype ? 'success' : 'error';
-              }
-            }
-            this.setState({ userUnique, emailValid, showpasswordNotValid, passwordsEqual });
-          })
-          .catch((err) => {
-            this.setState({ userUnique, emailValid, showpasswordNotValid, passwordsEqual });
-          })
-      })
-      .catch((err) => {
-        this.setState({ userUnique, emailValid, showpasswordNotValid, passwordsEqual });
-      })
+    this.setState({ showEmailNotValid, showPasswordNotValid, showPasswordsNotEqual });
   }
 
   getPasswordValid(password) {
@@ -105,30 +95,80 @@ class Register extends React.Component {
     return validation;
   }
 
+  getEmailValid(email = '') {
+    const currentEmail = email || this.state.email;
+
+    if (currentEmail.length === 0) return null;
+    return currentEmail.includes('@', 1) && currentEmail.includes('.', 2) ? 'success' : 'error';
+  }
+
   handleChange(e) {
     e.preventDefault();
+    const { name, value } = e.target;
+    const { email, password, retype } = this.state;
     let passwordValid = this.state.passwordValid;
+    let emailValid = this.state.emailValid;
+    let passwordsEqual = this.state.passwordsEqual;
 
-    if (e.target.name === 'password') passwordValid = this.getPasswordValid(e.target.value);
-    this.setState({ [e.target.name]: e.target.value, passwordValid, lackingReqFields: false });
+    if (name === 'password') {
+      passwordValid = this.getPasswordValid(value);
+    } else if (name === 'email' && email.length > 0) {
+      emailValid = this.getEmailValid(value);
+    } else if (name === 'retype') {
+      passwordsEqual = password === value ? 'success' : 'error';
+    }
+
+    this.setState({
+      [name]: value,
+      passwordValid,
+      emailValid,
+      passwordsEqual,
+      lackingReqFields: false,
+      userUnique: true,
+      emailUnique: true,
+      showPasswordNotValid: false,
+      showPasswordsNotEqual: false,
+      showEmailNotValid: false,
+      wildCardError: false
+    });
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const { username, email, password, userUnique, passwordValid, passwordsEqual } = this.state;
+    const { username, email, password, passwordValid, passwordsEqual, url } = this.state;
 
     if (!this.getDisable()) {
       setLoadingCursor(true);
-      axios.post(this.state.url, { username, email, password })
-        .then((res) => {
-          this.setState({ registered: true });
-        })
-        .catch((err) => {
-          console.error(err);
-        })
-        .then(() => {
-          setLoadingCursor(false);
-        });
+      axios.get(`${url}?username=${username}`)
+      .then((res) => {
+        if (res.data.unique) {
+          axios.get(`${url}?email=${email}`)
+            .then((innerRes) => {
+              if (innerRes.data.unique) {
+                axios.post(this.state.url, { username, email, password })
+                  .then((res) => {
+                    this.setState({ registered: true });
+                  })
+                  .catch((err) => {
+                    this.setState({ wildCardError: true });
+                  });
+              } else {
+                this.setState({ emailUnique: false });
+              }
+            })
+            .catch((err) => {
+              this.setState({ wildCardError: true });
+            });
+        } else {
+          this.setState({ userUnique: false });
+        }
+      })
+      .catch((err) => {
+        this.setState({ wildCardError: true });
+      })
+      .then(() => {
+        setLoadingCursor(false);
+      });  
     }
   }
 
@@ -138,11 +178,15 @@ class Register extends React.Component {
       email: '',
       password: '',
       retype: '',
-      userUnique: null,
+      userUnique: true,
+      emailUnique: true,
       emailValid: null,
       passwordValid: null,
       passwordsEqual: null,
-      showpasswordNotValid: false,
+      showPasswordNotValid: false,
+      showPasswordsNotEqual: false,
+      showEmailNotValid: false,
+      wildCardError: false,
     });
   }
 
@@ -163,7 +207,6 @@ class Register extends React.Component {
     email.length === 0 ||
     password.length === 0 ||
     retype.length === 0 ||
-    userUnique === 'error' ||
     passwordValid === 'error' ||
     passwordsEqual === 'error' ||
     emailValid === 'error');
@@ -176,11 +219,15 @@ class Register extends React.Component {
       password,
       retype,
       userUnique,
+      emailUnique,
       emailValid,
       passwordValid,
-      showpasswordNotValid,
+      showPasswordNotValid,
+      showPasswordsNotEqual,
+      showEmailNotValid,
       passwordsEqual,
       registered,
+      wildCardError,
     } = this.state;
 
     return this.props.authenticated || registered ? (<Redirect to="/" />) : (
@@ -190,6 +237,9 @@ class Register extends React.Component {
             <Col lg={2} md={2} />
             <Col lg={8} md={8} sm={12} xs={12}>
               <form onSubmit={this.handleSubmit} onReset={this.handleReset}>
+                {wildCardError &&
+                  <WildCardError />
+                }
                 <DefaultFormGroup
                   id="formControlsUsername"
                   name="username"
@@ -197,14 +247,14 @@ class Register extends React.Component {
                   type="text"
                   label="Username"
                   placeholder="Username..."
-                  validationState={userUnique}
+                  validationState={userUnique ? null : 'error'}
                   feedback={true}
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
-                {userUnique === 'error' &&
+                {!userUnique &&
                   <div className="text-danger">
-                    The username is taken.
+                    The username already is taken.
                   </div>
                 }
                 <DefaultFormGroup
@@ -219,9 +269,14 @@ class Register extends React.Component {
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
-                {emailValid === 'error' &&
+                {showEmailNotValid === 'error' &&
                   <div className="text-danger">
-                    The email is registered by another user or does not contain an '@' or a '.'
+                     The email does not contain an '@' or a '.'
+                  </div>
+                }
+                {!emailUnique &&
+                  <div className="text-danger">
+                    The email is registered by another user.
                   </div>
                 }
                 <DefaultFormGroup
@@ -235,7 +290,7 @@ class Register extends React.Component {
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
-                {showpasswordNotValid &&
+                {showPasswordNotValid &&
                   <div className="text-danger">
                     {this.notValidText}
                   </div>
@@ -251,7 +306,7 @@ class Register extends React.Component {
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
-                {passwordsEqual === 'error' &&
+                {showPasswordsNotEqual &&
                   <div className="text-danger">
                     The passwords does not match.
                   </div>
@@ -273,6 +328,9 @@ class Register extends React.Component {
                   onFocus={this.handleFocus}>
                   Reset Fields
                 </Button>
+                {wildCardError &&
+                  <WildCardError />
+                }
               </form>
             </Col>
             <Col lg={2} md={2} />

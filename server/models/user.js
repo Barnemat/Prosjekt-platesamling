@@ -21,6 +21,10 @@ const schema = new Schema({
     unique: true,
     maxlength: 50,
   },
+  private: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const User = module.exports = mongoose.model('User', schema);

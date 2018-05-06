@@ -118,6 +118,7 @@ router.route('/signin')
           if (req.body.remember) {
             req.session.user = userObject;
             req.session.auth = true;
+            req.session.remember = true;
           }
 
           req.session.regenerate((err) => {
@@ -149,7 +150,8 @@ router.route('/user')
       res.json({
         user: {
           username: user ? user.username : '',
-          email: user ? user.email : ''
+          email: user ? user.email : '',
+          private: user && user.private,
         },
         unique
       });
@@ -164,7 +166,7 @@ router.route('/user')
         if (user) unique = false;
       });
 
-      if (unique){
+      if (unique) {
         const newUser = new User({
           username: req.body.username,
           password: req.body.password,
@@ -187,6 +189,8 @@ router.route('/user')
                     res.json({ success: true, msg: 'User added' });
                   }
                 });
+              } else {
+                res.json({ success: false });
               }
             });
           }
@@ -209,26 +213,100 @@ router.route('/user')
     }
   })
   .put((req, res) => {
-    /* Needs work
-    User.findByOne(req.body.username, (err, user) => {
+    User.findOne({ username: req.body.username || '' }, (err, user) => {
       if (err) {
         res.send(err);
       } else {
-        user.set({
-          username: req.body.username,
-          password: req.body.password,
-          email: req.body.email,
-        });
+        if (req.body.password) {
+          let password = req.body.password;
 
-        record.save((err, updatedUser) => {
-          if (err) {
-            res.send(err);
-          } else {
-            res.send(updatedUser);
+          bcrypt.genSalt(10, (error, salt) => {
+            if (error) {
+              throw error;
+            } else {
+              bcrypt.hash(password, salt, (err, hash) => {
+                if (err) throw err;
+
+                if (hash) {
+                  password = hash;
+
+                  req.session.regenerate((err) => {
+                    if (err) throw err;
+                  });
+
+                  user.set({
+                    password: password || user.password,
+                    email: req.body.email || user.email,
+                    private: typeof req.body.private === 'boolean' ? req.body.private : true,
+                  });
+
+                  user.save((err, updatedUser) => {
+                    if (err) {
+                      res.send(err);
+                    } else {
+                      res.send(updatedUser);
+                    }
+                  });
+                } else {
+                  res.json({ success: false });
+                }
+              });
+            }
+          });
+        } else {
+          const userObject  = {
+            username: user.username,
+            email: req.body.email || user.email,
+          };
+
+          if (req.session.remember) {
+            req.session.user = userObject;
+            req.session.auth = true;
           }
-        });
+
+          req.session.regenerate((err) => {
+            if (err) throw err;
+          });
+
+          user.set({
+            email: req.body.email || user.email,
+            private: typeof req.body.private === 'boolean' ? req.body.private : true,
+          });
+
+          user.save((err, updatedUser) => {
+            if (err) {
+              res.send(err);
+            } else {
+              res.send(updatedUser);
+            }
+          });
+        }
       }
-    });*/
+    });
+  });
+
+router.route('/validPassword')
+  .post((req, res) => {
+    User.findOne({ username: req.body.username }, (err, user) => {
+      if (!user) {
+        res.json({ success: false });
+        return;
+      }
+      if (err) throw err;
+
+      bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
+        if(err) {
+          res.json({ success: false });
+          return;
+        }
+
+        if (isMatch) {
+          res.json({ success: true });
+        } else {
+          res.json({ success: false });
+        }
+      });
+    }).lean();
   });
 
 router.route('/authenticated')
