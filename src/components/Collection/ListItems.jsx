@@ -8,8 +8,8 @@ import axios from 'axios';
 import AddRecord from './AddRecord';
 import RecordItem from './RecordItem';
 import SortModes from './SortModes';
-import { setLoadingCursor, sortArrayOfObjects } from '../../util';
-import { setCollection } from '../../actions';
+import { setLoadingCursor, sortArrayOfObjects, getOwnershipFormat } from '../../util';
+import { getCollection, resetCollection } from '../../actions';
 import { getRecordsBySearch } from '../../selectors/collection';
 
 class ListItems extends React.Component {
@@ -45,19 +45,27 @@ class ListItems extends React.Component {
         handleDelete={this.removeRecordFromCollection}
         loadCollection={this.loadCollection}
         editRecordInCollection={this.editRecordInCollection}
+        publicUsername={this.props.publicUsername}
       />));
   }
 
   addRecordToCollection(record) {
-    return axios.post(this.props.url, record);
+    if (!this.props.publicUsername) {
+      record.append('username', this.props.authenticatedUser.username);
+      return axios.post(this.props.url, record);
+    }
   }
 
   removeRecordFromCollection(record) {
-    return axios.delete(`${this.props.url}?_id=${record._id}`);
+    if (!this.props.publicUsername) {
+      return axios.delete(`${this.props.url}?_id=${record._id}`);
+    }
   }
 
   editRecordInCollection(record) {
-    return axios.put(this.props.url, record);
+    if (!this.props.publicUsername) {
+      return axios.put(this.props.url, record);
+    }
   }
 
   handleSortMode(key) {
@@ -80,17 +88,14 @@ class ListItems extends React.Component {
   }
 
   loadCollection() {
-    setLoadingCursor(true);
-    axios.get(`${this.props.url}?sort=${JSON.stringify(this.state.sortMode)}`)
-      .then((res) => {
-        this.props.setCollection({ records: res.data });
-      })
-      .catch((err) => {
-        console.error(err);
-      })
-      .then(() => {
-        setLoadingCursor(false);
-      });
+    const { authenticatedUser, publicUsername, getCollection } = this.props;
+    if (authenticatedUser && authenticatedUser.username && !publicUsername) {
+      getCollection(authenticatedUser.username, this.state.sortMode);
+    } else if (publicUsername) {
+      getCollection(publicUsername, this.state.sortMode);
+    } else {
+      this.props.resetCollection();
+    }
   }
 
   render() {
@@ -111,13 +116,18 @@ class ListItems extends React.Component {
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
+            {this.props.publicUsername &&
+              <h4>
+                You are viewing <strong>{getOwnershipFormat(this.props.publicUsername)}</strong> collection.
+              </h4>}
             <Panel>
+            {!this.props.publicUsername &&
               <Panel.Body>
-                <AddRecord
+                  <AddRecord
                   addRecordToCollection={this.addRecordToCollection}
                   loadCollection={this.loadCollection}
                 />
-              </Panel.Body>
+              </Panel.Body>}
               {this.state.galleryView &&
                 <Grid fluid>
                   <Row>
@@ -149,15 +159,22 @@ class ListItems extends React.Component {
 ListItems.propTypes = {
   url: PropTypes.string.isRequired,
   records: PropTypes.array.isRequired,
-  setCollection: PropTypes.func.isRequired,
+  getCollection: PropTypes.func.isRequired,
+  authenticatedUser: PropTypes.shape({
+    username: PropTypes.string,
+    email: PropTypes.string,
+  }),
+  publicUsername: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
   records: getRecordsBySearch(state),
+  authenticatedUser: state.authenticate.user,
 });
 
 const mapDispatchToProps = {
-  setCollection,
+  getCollection,
+  resetCollection,
 };
 
 export default connect(

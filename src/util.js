@@ -193,3 +193,16 @@ export const getSplittedStringsForSearchFormatting = (t, s) => {
     t.substring(index, lastChar),
     t.substring(lastChar)];
 };
+
+/*
+* Returns a name with proper ownership format, such as Jon's or James'.
+* @param {String} name
+* @returns {String}
+*/
+export const getOwnershipFormat = (name) => {
+  if (typeof name !== 'string') return -1;
+  return name.endsWith('s') ?
+    `${name}'`
+    :
+    `${name.substring(0, name.length)}'s`;
+};

@@ -1,27 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavLink, Redirect } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { Navbar, Nav, NavItem, Col, Grid, Row } from 'react-bootstrap';
 import { signOutAction } from '../actions';
 
 class Signout extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      redirect: false,
-    }
-  }
-
-  componentDidMount() {
-    setTimeout(() => this.setState({ redirect: true }), 3000);
   }
 
   render() {
     const { authenticated } = this.props;
     authenticated && signOutAction();
-    return this.state.redirect === true ? (<Redirect to="/" />) : (
+
+    return (
       <div>
         <Grid fluid>
           <Row className="show-grid">
@@ -33,6 +26,9 @@ class Signout extends React.Component {
                   :
                   'You successfully signed out.'
                 }
+              </div>
+              <div className="text-center">
+                Return to the {<Link to="/">front page.</Link>}
               </div>
             </Col>
             <Col lg={2} md={2} />

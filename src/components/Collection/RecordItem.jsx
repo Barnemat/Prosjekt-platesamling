@@ -14,6 +14,7 @@ const MinimizedView = ({
   handleEdit,
   handleShowModal,
   search,
+  publicUsername,
 }) => (
   <Row>
     {record.wikiImg || image ?
@@ -33,6 +34,7 @@ const MinimizedView = ({
           search={search}
           handleEdit={handleEdit}
           handleShowModal={handleShowModal}
+          publicUsername={publicUsername}
         />
         <Row>
           <Col lg={6} md={6} sm={6} xs={6}>
@@ -82,6 +84,7 @@ MinimizedView.propTypes = {
   search: PropTypes.string.isRequired,
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
+  publicUsername: PropTypes.string,
 };
 
 MinimizedView.defaultProps = {
@@ -94,6 +97,7 @@ const ExpandedView = ({
   handleEdit,
   handleShowModal,
   search,
+  publicUsername,
 }) => (
   <Row>
     {record.wikiImg || image ?
@@ -113,6 +117,7 @@ const ExpandedView = ({
           search={search}
           handleEdit={handleEdit}
           handleShowModal={handleShowModal}
+          publicUsername={publicUsername}
         />
         <Row>
           <Col lg={6} md={6} sm={6} xs={6}>
@@ -181,6 +186,7 @@ ExpandedView.propTypes = {
   search: PropTypes.string.isRequired,
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
+  publicUsername: PropTypes.string,
 };
 
 ExpandedView.defaultProps = {
@@ -193,6 +199,7 @@ const CommonInformation = ({
   handleEdit,
   handleShowModal,
   search,
+  publicUsername,
 }) => {
   const artistStrings = getSplittedStringsForSearchFormatting(artist, search);
   const titleStrings = getSplittedStringsForSearchFormatting(title, search);
@@ -207,28 +214,31 @@ const CommonInformation = ({
         </h4>
       </Col>
       <Col lg={2} md={3} sm={2} xs={3}>
-        <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
-          <span
-            role="button"
-            tabIndex={0}
-            className="standard-glyph pull-right md-glyph"
-            onClick={handleShowModal}
-            onKeyUp={e => e.key.toLowerCase() === 'enter' && handleShowModal(e)}
-          >
-            <Glyphicon glyph="trash" />
-          </span>
-        </OverlayTrigger>
-        <OverlayTrigger placement="left" overlay={tooltip('Edit record')}>
-          <span
-            role="button"
-            tabIndex={0}
-            className="standard-glyph pull-right md-glyph"
-            onClick={handleEdit}
-            onKeyUp={e => e.key.toLowerCase() === 'enter' && handleEdit(e)}
-          >
-            <Glyphicon glyph="pencil" />
-          </span>
-        </OverlayTrigger>
+      {!publicUsername &&
+        <div>
+          <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
+            <span
+              role="button"
+              tabIndex={0}
+              className="standard-glyph pull-right md-glyph"
+              onClick={handleShowModal}
+              onKeyUp={e => e.key.toLowerCase() === 'enter' && handleShowModal(e)}
+            >
+              <Glyphicon glyph="trash" />
+            </span>
+          </OverlayTrigger>
+          <OverlayTrigger placement="left" overlay={tooltip('Edit record')}>
+            <span
+              role="button"
+              tabIndex={0}
+              className="standard-glyph pull-right md-glyph"
+              onClick={handleEdit}
+              onKeyUp={e => e.key.toLowerCase() === 'enter' && handleEdit(e)}
+            >
+              <Glyphicon glyph="pencil" />
+            </span>
+          </OverlayTrigger>
+        </div>}
       </Col>
     </Row>
   );
@@ -240,6 +250,7 @@ CommonInformation.propTypes = {
   search: PropTypes.string.isRequired,
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
+  publicUsername: PropTypes.string,
 };
 
 CommonInformation.defaultProps = {
@@ -344,6 +355,8 @@ class RecordItem extends React.Component {
               search={this.props.search}
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
+              authenticatedUser={this.props.authenticatedUser}
+              publicUsername={this.props.publicUsername}
             />}
           {(!this.state.expand && !this.state.isEditMode) &&
             <MinimizedView
@@ -352,6 +365,8 @@ class RecordItem extends React.Component {
               search={this.props.search}
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
+              authenticatedUser={this.props.authenticatedUser}
+              publicUsername={this.props.publicUsername}
             />}
           {this.state.isEditMode &&
             <EditRecord
@@ -384,6 +399,7 @@ RecordItem.propTypes = {
   loadCollection: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   editRecordInCollection: PropTypes.func.isRequired,
+  publicUsername: PropTypes.string,
 };
 
 const mapStateToProps = state => ({

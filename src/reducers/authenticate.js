@@ -8,6 +8,7 @@ export default function(state={}, action) {
       return { ...state, error: action.payload };
     case 'CLEAR_AUTH_ERROR':
       return { ...state, error: '' };
+    default:
+      return state;
   }
-  return state;
 }

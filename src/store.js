@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { setCollection, setSearch, authenticatedAction } from './actions';
+import { getCollection, setSearch, authenticatedAction, resetCollection } from './actions';
 import reducer from './reducer';
 
 const initialState = {};
@@ -18,12 +18,10 @@ if (process.env.NODE_ENV === 'production') {
 
 const store = tmpStore;
 
-// Records added as array inside collection in case app is later extended to include other collectibles
-const initialCollection = { records: [] };
 const initialSearch = '';
 
 store.dispatch(authenticatedAction());
-store.dispatch(setCollection(initialCollection));
+store.dispatch(resetCollection());
 store.dispatch(setSearch(initialSearch));
 
 export default store;

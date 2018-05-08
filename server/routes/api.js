@@ -9,20 +9,33 @@ const User = require('../models/user');
 router.route('/records')
   .get((req, res) => {
     const sort = req.query.sort ? JSON.parse(req.query.sort) : undefined;
-    Record.find((err, records) => {
-      if (err) {
-        res.status(404).send(err);
+    User.findOne({ username: req.query.username }, (err, user) => {
+      if (err) throw err;
+
+      if (user) {
+        Record.find({ userId: user._id }, (err, records) => {
+          if (err) {
+            res.status(404).send(err);
+          } else {
+            res.json(records);
+          }
+        })
+        .sort(sort || { date: -1 })
+        .lean();
       } else {
-        res.json(records);
+        res.send([]);
       }
     })
-    .sort(sort || { date: -1 })
     .lean();
   })
   .post((req, res) => {
-    if (!req.body || !req.body.title) {
+    console.log(req.body);
+    if (!req.body || !req.body.title || !req.body.username) {
       res.status(204).send({ error: 'Request lacking required fields.' });
     } else {
+      User.findOne({ username: req.body.username }, (userError, user) => {
+        if (userError) throw userError;
+
         const date = new Date();
         const newRecord = new Record({
           date: date,
@@ -35,18 +48,20 @@ router.route('/records')
           wikiImg: req.body.wikiImg,
           notes: req.body.notes,
           image: req.files ? (req.files.image || undefined) : undefined,
+          userId: user._id,
         });
+
         let error;
         newRecord.save((err) => {
           error = err;
           if (err) res.send(err);
         });
-        if (error) {
-          res.send(error);
-        } else {
+        if (!error) {
           res.json({ msg: 'Record added' });
         }
-      }
+      })
+    .lean();
+    }
   })
   .delete((req, res) => {
     let error;
@@ -151,7 +166,7 @@ router.route('/user')
         user: {
           username: user ? user.username : '',
           email: user ? user.email : '',
-          private: user && user.private,
+          private: user && user.private ? true : user.private,
         },
         unique
       });
