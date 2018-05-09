@@ -106,13 +106,15 @@ export const checkTimePassed = (date) => {
     }
     if (dayDistance < 7) {
       if (dayDistance === 0) {
-        if (prevDate.getDay() === todayDate.getDay()) return `${frontmatter} today`;
-        return `${frontmatter} yesterday`
+        if (prevDate.getDay() === todayDate.getDay()) {
+          return `${frontmatter} today`;
+        }
+        return `${frontmatter} yesterday`;
       }
       if (dayDistance > 1) {
         return `${frontmatter} ${dayDistance} days ago`;
       }
-      return `${frontmatter} 1 day ago`;
+      return `${frontmatter} yesterday`;
     }
     if (weekDistance === 1) {
       return `${frontmatter} 1 week ago`;
@@ -190,4 +192,17 @@ export const getSplittedStringsForSearchFormatting = (t, s) => {
     t.substring(0, index),
     t.substring(index, lastChar),
     t.substring(lastChar)];
+};
+
+/*
+* Returns a name with proper ownership format, such as Jon's or James'.
+* @param {String} name
+* @returns {String}
+*/
+export const getOwnershipFormat = (name) => {
+  if (typeof name !== 'string') return -1;
+  return name.endsWith('s') ?
+    `${name}'`
+    :
+    `${name.substring(0, name.length)}'s`;
 };

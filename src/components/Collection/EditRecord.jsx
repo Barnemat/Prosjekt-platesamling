@@ -20,6 +20,7 @@ import { checkTimePassed, getBestImageURL, getValidFormatTypes, checkImgValid, s
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
+import WildCardError from '../CommonComponents/WildCardError';
 import noRecordImg from '../../assets/img/no_record_img.png';
 
 export default class EditRecord extends React.Component {
@@ -48,6 +49,7 @@ export default class EditRecord extends React.Component {
       imageData: '',
       ignoreRecordImg: false,
       invalidImg: false,
+      showWildCardError: false,
     };
 
     this.handleEdit = this.handleEdit.bind(this);
@@ -97,8 +99,8 @@ export default class EditRecord extends React.Component {
       .then(() => {
         this.props.handleReset();
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
+        this.setState({ showWildCardError: true });
       })
       .then(() => {
         setLoadingCursor(false);
@@ -107,7 +109,7 @@ export default class EditRecord extends React.Component {
 
   handleChange(e) {
     e.preventDefault();
-    this.setState({ [e.target.name]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value, showWildCardError: false });
   }
 
   handleResetWiki() {
@@ -141,8 +143,8 @@ export default class EditRecord extends React.Component {
             },
           });
         })
-        .catch((err) => {
-          console.error(err);
+        .catch(() => {
+          this.setState({ showWildCardError: true });
         });
     }
   }
@@ -154,8 +156,8 @@ export default class EditRecord extends React.Component {
         .then((res) => {
           this.setState({ wikiImg: getBestImageURL(searchTerm, JSON.parse(res.request.response)) });
         })
-        .catch((err) => {
-          console.error(err);
+        .catch(() => {
+          this.setState({ showWildCardError: true });
         });
     }
   }
@@ -251,6 +253,7 @@ export default class EditRecord extends React.Component {
       selectedCheckboxes,
       allowImgReq,
       ignoreRecordImg,
+      showWildCardError,
     } = this.state;
 
     return (
@@ -427,6 +430,7 @@ export default class EditRecord extends React.Component {
                 <h6>{checkTimePassed(record.date)}</h6>
               </Col>
               <Col lg={5} md={5} sm={5} xs={12}>
+                {showWildCardError && <WildCardError />}
                 <Button className="pull-right" bsStyle="success" onClick={this.handleEdit}>Confirm Edit</Button>
                 <Button className="pull-right" onClick={this.props.handleReset}>Cancel</Button>
               </Col>

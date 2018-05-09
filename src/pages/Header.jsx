@@ -1,17 +1,20 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { NavLink, withRouter } from 'react-router-dom';
 import { Navbar, Nav, NavItem, Col, Grid, Row } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { signOutAction } from '../actions';
 
-const Header = () => (
+const Header = ({ authenticated, username, ...props }) => (
   <Navbar inverse fluid collapseOnSelect>
     <Grid fluid>
       <Row>
         <Col lg={2} md={2} />
-        <Col lg={9} md={9}>
+        <Col lg={8} md={8}>
           <Navbar.Header>
             <Navbar.Brand>
-              <NavLink to="/" activeClassName="active" exact>
+              <NavLink to="/" exact>
                 Record Collection
               </NavLink>
             </Navbar.Brand>
@@ -35,19 +38,55 @@ const Header = () => (
                 </NavItem>
               </LinkContainer>
             </Nav>
-            <Nav pullRight>
-              <LinkContainer to="/example">
-                <NavItem eventKey={4}>
-                  Example 3
-                </NavItem>
-              </LinkContainer>
-            </Nav>
+            {authenticated ? (
+              <Nav pullRight>
+                <LinkContainer to={`/user/${username}`}>
+                  <NavItem eventKey={4}>
+                    { username }
+                  </NavItem>
+                </LinkContainer>
+                <LinkContainer to="/signout">
+                  <NavItem eventKey={5} onClick={props.signOutAction}>
+                    Sign out
+                  </NavItem>
+                </LinkContainer>
+              </Nav>
+              )
+              :
+              (
+                <Nav pullRight>
+                  <LinkContainer to="/register">
+                    <NavItem eventKey={4}>
+                    Register
+                    </NavItem>
+                  </LinkContainer>
+                  <LinkContainer to="/signin">
+                    <NavItem eventKey={5}>
+                    Sign in
+                    </NavItem>
+                  </LinkContainer>
+                </Nav>
+              )
+            }
           </Navbar.Collapse>
         </Col>
-        <Col lg={1} md={1} />
+        <Col lg={2} md={2} />
       </Row>
     </Grid>
   </Navbar>
 );
 
-export default Header;
+
+Header.propTypes = {
+  authenticated: PropTypes.bool.isRequired,
+  username: PropTypes.string.isRequired,
+  signOutAction: PropTypes.func.isRequired,
+};
+
+
+const mapStateToProps = state => ({
+  authenticated: state.authenticate.authenticated || false,
+  username: state.authenticate.user ? state.authenticate.user.username : '',
+});
+
+export default withRouter(connect(mapStateToProps, { signOutAction })(Header));

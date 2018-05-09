@@ -1,6 +1,6 @@
 export default function (state = {}, action) {
   switch (action.type) {
-    case 'SET_COLLECTION':
+    case 'GET_COLLECTION':
       return action.payload.collection;
     case 'RESET_COLLECTION':
       return {};

@@ -4,6 +4,12 @@ const filePluginLib = require('mongoose-file');
 const filePlugin = filePluginLib.filePlugin;
 
 const schema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    required: false, // Should required when register/signin is implemented
+    minlength: 1,
+    maxlength: 865,
+  },
   date: {
     type: Date,
     required: true
