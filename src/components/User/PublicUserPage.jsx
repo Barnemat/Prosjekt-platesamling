@@ -1,16 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
-import {
-  Button,
-  Glyphicon,
-  Collapse,
-  OverlayTrigger,
-  Well,
-  Image,
-  Grid,
-  Col,
-  Row } from 'react-bootstrap';
 import ListItems from '../Collection/ListItems';
 
 export default class PublicUserPage extends React.Component {
@@ -37,6 +26,5 @@ export default class PublicUserPage extends React.Component {
 }
 
 PublicUserPage.propTypes = {
-  url: PropTypes.string.isRequired,
   usernameFromPath: PropTypes.string.isRequired,
 };

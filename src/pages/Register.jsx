@@ -1,38 +1,35 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import passwordValidator from 'password-validator';
+import PasswordValidator from 'password-validator';
 import {
-  FormControl,
-  FormGroup,
   Button,
-  Glyphicon,
-  InputGroup,
-  ControlLabel,
-  Collapse,
-  OverlayTrigger,
-  Checkbox,
-  Well,
-  Image,
   Grid,
   Col,
   Row } from 'react-bootstrap';
-  import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
-  import { setLoadingCursor } from '../util';
-  import WildCardError from '../components/CommonComponents/WildCardError';
+import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
+import { setLoadingCursor } from '../util';
+import WildCardError from '../components/CommonComponents/WildCardError';
 
 class Register extends React.Component {
   constructor(props) {
     super(props);
 
-    this.passwordValidator = new passwordValidator()
+    this.passwordValidator = new PasswordValidator()
       .is().min(8)
-      .is().max(50)
-      .has().uppercase()
-      .has().lowercase()
-      .has().digits()
-      .has().not().spaces();
+      .is()
+      .max(50)
+      .has()
+      .uppercase()
+      .has()
+      .lowercase()
+      .has()
+      .digits()
+      .has()
+      .not()
+      .spaces();
 
     this.notValidText = `
       Your password must contain at least 8 characters,
@@ -65,10 +62,45 @@ class Register extends React.Component {
     this.getEmailValid = this.getEmailValid.bind(this);
   }
 
+  getDisable() {
+    const {
+      username,
+      email,
+      password,
+      retype,
+      emailValid,
+      passwordValid,
+      passwordsEqual,
+    } = this.state;
+
+    return (
+      username.length === 0 ||
+      email.length === 0 ||
+      password.length === 0 ||
+      retype.length === 0 ||
+      passwordValid === 'error' ||
+      passwordsEqual === 'error' ||
+      emailValid === 'error');
+  }
+
+  getPasswordValid(password) {
+    const validation = this.passwordValidator.validate(password || this.state.password) ? 'success' : 'error';
+    return validation;
+  }
+
+  getEmailValid(email = '') {
+    const currentEmail = email || this.state.email;
+
+    if (currentEmail.length === 0) return null;
+    return currentEmail.includes('@', 1) && currentEmail.includes('.', 2) ? 'success' : 'error';
+  }
+
   handleFocus(e) {
     e.preventDefault();
     const { name } = e.target;
-    const { username, email, password, retype, passwordValid, emailValid } = this.state;
+    const {
+      password, retype, passwordValid, emailValid,
+    } = this.state;
     let showEmailNotValid = false;
     let showPasswordNotValid = false;
     let showPasswordsNotEqual = false;
@@ -90,25 +122,12 @@ class Register extends React.Component {
     this.setState({ showEmailNotValid, showPasswordNotValid, showPasswordsNotEqual });
   }
 
-  getPasswordValid(password) {
-    const validation = this.passwordValidator.validate(password || this.state.password) ? 'success' : 'error';
-    return validation;
-  }
-
-  getEmailValid(email = '') {
-    const currentEmail = email || this.state.email;
-
-    if (currentEmail.length === 0) return null;
-    return currentEmail.includes('@', 1) && currentEmail.includes('.', 2) ? 'success' : 'error';
-  }
 
   handleChange(e) {
     e.preventDefault();
     const { name, value } = e.target;
-    const { email, password, retype } = this.state;
-    let passwordValid = this.state.passwordValid;
-    let emailValid = this.state.emailValid;
-    let passwordsEqual = this.state.passwordsEqual;
+    const { email, password } = this.state;
+    let { passwordValid, emailValid, passwordsEqual } = this.state;
 
     if (name === 'password') {
       passwordValid = this.getPasswordValid(value);
@@ -123,52 +142,53 @@ class Register extends React.Component {
       passwordValid,
       emailValid,
       passwordsEqual,
-      lackingReqFields: false,
       userUnique: true,
       emailUnique: true,
       showPasswordNotValid: false,
       showPasswordsNotEqual: false,
       showEmailNotValid: false,
-      wildCardError: false
+      wildCardError: false,
     });
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    const { username, email, password, passwordValid, passwordsEqual, url } = this.state;
+    const {
+      username, email, password, url,
+    } = this.state;
 
     if (!this.getDisable()) {
       setLoadingCursor(true);
       axios.get(`${url}?username=${username}`)
-      .then((res) => {
-        if (res.data.unique) {
-          axios.get(`${url}?email=${email}`)
-            .then((innerRes) => {
-              if (innerRes.data.unique) {
-                axios.post(this.state.url, { username, email, password })
-                  .then((res) => {
-                    this.setState({ registered: true });
-                  })
-                  .catch((err) => {
-                    this.setState({ wildCardError: true });
-                  });
-              } else {
-                this.setState({ emailUnique: false });
-              }
-            })
-            .catch((err) => {
-              this.setState({ wildCardError: true });
-            });
-        } else {
-          this.setState({ userUnique: false });
-        }
-      })
-      .catch((err) => {
-        this.setState({ wildCardError: true });
-      })
-      .then(() => {
-        setLoadingCursor(false);
-      });  
+        .then((res) => {
+          if (res.data.unique) {
+            axios.get(`${url}?email=${email}`)
+              .then((innerRes) => {
+                if (innerRes.data.unique) {
+                  axios.post(this.state.url, { username, email, password })
+                    .then(() => {
+                      this.setState({ registered: true });
+                    })
+                    .catch(() => {
+                      this.setState({ wildCardError: true });
+                    });
+                } else {
+                  this.setState({ emailUnique: false });
+                }
+              })
+              .catch(() => {
+                this.setState({ wildCardError: true });
+              });
+          } else {
+            this.setState({ userUnique: false });
+          }
+        })
+        .catch(() => {
+          this.setState({ wildCardError: true });
+        })
+        .then(() => {
+          setLoadingCursor(false);
+        });
     }
   }
 
@@ -188,28 +208,6 @@ class Register extends React.Component {
       showEmailNotValid: false,
       wildCardError: false,
     });
-  }
-
-  getDisable() {
-    const {
-      username,
-      email,
-      password,
-      retype,
-      userUnique,
-      emailValid,
-      passwordValid,
-      passwordsEqual,
-    } = this.state;
-
-    return (
-    username.length === 0 ||
-    email.length === 0 ||
-    password.length === 0 ||
-    retype.length === 0 ||
-    passwordValid === 'error' ||
-    passwordsEqual === 'error' ||
-    emailValid === 'error');
   }
 
   render() {
@@ -248,7 +246,7 @@ class Register extends React.Component {
                   label="Username"
                   placeholder="Username..."
                   validationState={userUnique ? null : 'error'}
-                  feedback={true}
+                  feedback
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
@@ -265,13 +263,13 @@ class Register extends React.Component {
                   label="Email"
                   placeholder="Email..."
                   validationState={emailValid}
-                  feedback={true}
+                  feedback
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
-                {showEmailNotValid === 'error' &&
+                {showEmailNotValid &&
                   <div className="text-danger">
-                     The email does not contain an '@' or a '.'
+                     The email does not contain an &apos;@&apos; or a &apos;.&apos;
                   </div>
                 }
                 {!emailUnique &&
@@ -286,7 +284,7 @@ class Register extends React.Component {
                   label="Password"
                   placeholder="Password..."
                   validationState={passwordValid}
-                  feedback={true}
+                  feedback
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
@@ -301,7 +299,7 @@ class Register extends React.Component {
                   type="password"
                   label="Retype Password"
                   placeholder="Password..."
-                  feedback={true}
+                  feedback
                   validationState={passwordsEqual}
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
@@ -315,7 +313,8 @@ class Register extends React.Component {
                   bsStyle="primary"
                   type="submit"
                   disabled={this.getDisable()}
-                  onFocus={this.handleFocus}>
+                  onFocus={this.handleFocus}
+                >
                   Register
                 </Button>
                 <Button
@@ -325,7 +324,8 @@ class Register extends React.Component {
                       email.length === 0 &&
                       password.length === 0 &&
                       retype.length === 0}
-                  onFocus={this.handleFocus}>
+                  onFocus={this.handleFocus}
+                >
                   Reset Fields
                 </Button>
                 {wildCardError &&
@@ -341,7 +341,15 @@ class Register extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({
+Register.propTypes = {
+  authenticated: PropTypes.bool,
+};
+
+Register.defaultProps = {
+  authenticated: false,
+};
+
+const mapStateToProps = state => ({
   authenticated: state.authenticate.authenticated,
 });
 

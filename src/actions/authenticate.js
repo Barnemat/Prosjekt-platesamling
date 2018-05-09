@@ -12,12 +12,12 @@ export function signInAction({ username, password, remember }) {
           dispatch({ type: 'CLEAR_AUTH_ERROR' });
         } else {
           dispatch({
-          type: 'AUTHENTICATION_ERROR',
+            type: 'AUTHENTICATION_ERROR',
             payload: res.data.msg,
           });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch({
           type: 'AUTHENTICATION_ERROR',
           payload: 'Invalid username or password',
@@ -39,20 +39,20 @@ export function authenticatedAction() {
           dispatch({ type: 'UNAUTHENTICATED' });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch({ type: 'UNAUTHENTICATED' });
       });
-  }
+  };
 }
 
 export function signOutAction() {
   return (dispatch) => {
     axios.get('http://localhost:8080/api/signout')
-      .then((res) => {
+      .then(() => {
         dispatch({ type: 'UNAUTHENTICATED' });
         dispatch({ type: 'CLEAR_AUTH_ERROR' });
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch({ type: 'UNAUTHENTICATED' });
         dispatch({ type: 'CLEAR_AUTH_ERROR' });
       });

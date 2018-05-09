@@ -6,6 +6,7 @@ import Rating from 'react-rating';
 import { checkTimePassed, setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
 import noRecordImg from '../../assets/img/no_record_img.png';
 import tooltip from '../CommonComponents/Tooltip';
+import WildCardError from '../CommonComponents/WildCardError';
 import EditRecord from './EditRecord';
 
 const MinimizedView = ({
@@ -89,6 +90,7 @@ MinimizedView.propTypes = {
 
 MinimizedView.defaultProps = {
   image: undefined,
+  publicUsername: null,
 };
 
 const ExpandedView = ({
@@ -191,6 +193,7 @@ ExpandedView.propTypes = {
 
 ExpandedView.defaultProps = {
   image: undefined,
+  publicUsername: null,
 };
 
 const CommonInformation = ({
@@ -214,7 +217,7 @@ const CommonInformation = ({
         </h4>
       </Col>
       <Col lg={2} md={3} sm={2} xs={3}>
-      {!publicUsername &&
+        {!publicUsername &&
         <div>
           <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
             <span
@@ -255,6 +258,7 @@ CommonInformation.propTypes = {
 
 CommonInformation.defaultProps = {
   artist: '',
+  publicUsername: null,
 };
 
 class RecordItem extends React.Component {
@@ -265,6 +269,7 @@ class RecordItem extends React.Component {
       expand: false,
       showModal: false,
       isEditMode: false,
+      showWildCardError: false,
     };
 
     this.toggleExpand = this.toggleExpand.bind(this);
@@ -285,13 +290,13 @@ class RecordItem extends React.Component {
     const isGlyph = e.target.className.split(' ').includes('glyphicon');
 
     if ((notes || wikiDesc || wikiImg) && (!isGlyph || this.state.isEditMode)) {
-      this.setState({ expand: !this.state.expand });
+      this.setState({ expand: !this.state.expand, showWildCardError: false });
     }
   }
 
   handleEdit(e) {
     e.preventDefault();
-    this.setState({ isEditMode: !this.state.isEditMode, expand: !this.state.isEditMode });
+    this.setState({ isEditMode: !this.state.isEditMode, expand: !this.state.isEditMode, showWildCardError: false });
   }
 
   handleDelete(e) {
@@ -302,8 +307,8 @@ class RecordItem extends React.Component {
       .then(() => {
         this.props.loadCollection();
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
+        this.setState({ showWildCardError: true });
       })
       .then(() => {
         setLoadingCursor(false);
@@ -326,6 +331,7 @@ class RecordItem extends React.Component {
       expand: false,
       showModal: false,
       isEditMode: false,
+      showWildCardError: false,
     });
   }
 
@@ -355,7 +361,6 @@ class RecordItem extends React.Component {
               search={this.props.search}
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
-              authenticatedUser={this.props.authenticatedUser}
               publicUsername={this.props.publicUsername}
             />}
           {(!this.state.expand && !this.state.isEditMode) &&
@@ -365,7 +370,6 @@ class RecordItem extends React.Component {
               search={this.props.search}
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
-              authenticatedUser={this.props.authenticatedUser}
               publicUsername={this.props.publicUsername}
             />}
           {this.state.isEditMode &&
@@ -376,6 +380,7 @@ class RecordItem extends React.Component {
               handleReset={this.handleReset}
               editRecordInCollection={this.props.editRecordInCollection}
             />}
+          {this.state.showWildCardError && <WildCardError />}
         </Grid>
       </ListGroupItem>
     );
@@ -400,6 +405,10 @@ RecordItem.propTypes = {
   handleDelete: PropTypes.func.isRequired,
   editRecordInCollection: PropTypes.func.isRequired,
   publicUsername: PropTypes.string,
+};
+
+RecordItem.defaultProps = {
+  publicUsername: null,
 };
 
 const mapStateToProps = state => ({

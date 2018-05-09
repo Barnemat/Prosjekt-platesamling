@@ -1,23 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import passwordValidator from 'password-validator';
+import PasswordValidator from 'password-validator';
 import {
-  FormControl,
-  FormGroup,
   Button,
-  Glyphicon,
-  InputGroup,
   ControlLabel,
-  Collapse,
-  OverlayTrigger,
   Checkbox,
-  Well,
-  Image,
-  Grid,
-  Col,
-  Row } from 'react-bootstrap';
-import { Redirect, Link } from 'react-router-dom';
+} from 'react-bootstrap';
 import DefaultFormGroup from '../Collection/FormComponents/DefaultFormGroup';
 import { setLoadingCursor } from '../../util';
 import WildCardError from '../CommonComponents/WildCardError';
@@ -26,13 +15,19 @@ export default class CurrentUserPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.passwordValidator = new passwordValidator()
+    this.passwordValidator = new PasswordValidator()
       .is().min(8)
-      .is().max(50)
-      .has().uppercase()
-      .has().lowercase()
-      .has().digits()
-      .has().not().spaces();
+      .is()
+      .max(50)
+      .has()
+      .uppercase()
+      .has()
+      .lowercase()
+      .has()
+      .digits()
+      .has()
+      .not()
+      .spaces();
 
     this.notValidText = `
       Your password must contain at least 8 characters,
@@ -60,7 +55,7 @@ export default class CurrentUserPage extends React.Component {
       wildCardError: false,
       privateUser: this.props.authenticatedUser && this.props.authenticatedUser.private !== undefined ?
         this.props.authenticatedUser.private
-        : 
+        :
         true,
       showPrivateUserSubmitSuccess: false,
     };
@@ -78,27 +73,6 @@ export default class CurrentUserPage extends React.Component {
     this.getPasswordBtnDisable = this.getPasswordBtnDisable.bind(this);
   }
 
-  handleFocus(e) {
-    e.preventDefault();
-    const { name } = e.target;
-    const { newEmail, newPassword, newPasswordRetype, passwordValid, emailValid } = this.state;
-    const { url } = this.props;
-    let showEmailNotValid = false;
-    let showPasswordNotValid = false;
-    let showPasswordsNotEqual = false;
-
-    if (name !== 'newEmail' && emailValid === 'error') showEmailNotValid = true;
-
-    if (name !== 'newPassword' && passwordValid === 'error') showPasswordNotValid = true;
-
-    if (name !== 'newPasswordRetype' && newPassword.length > 0 && newPasswordRetype.length > 0) {
-      if (newPassword !== newPasswordRetype) {
-        showPasswordsNotEqual = true;
-      }
-    }
-    this.setState({ showPasswordNotValid, showEmailNotValid, showPasswordsNotEqual });
-  }
-
   getPasswordValid(password = '') {
     if (this.state.newPassword.length === 0 && password.length === 0) return null;
     const validation = this.passwordValidator.validate(password || this.state.newPassword) ? 'success' : 'error';
@@ -112,44 +86,34 @@ export default class CurrentUserPage extends React.Component {
     return currentEmail.includes('@', 1) && currentEmail.includes('.', 2) ? 'success' : 'error';
   }
 
-  handleChange(e) {
-    if (e.target.name !== 'privateUserCheckbox') e.preventDefault();
-    const { name, value } = e.target;
-    const { newPassword, newPasswordRetype } = this.state;
-    let passwordValid = this.state.passwordValid;
-    let privateUser = this.state.privateUser;
-    let emailValid = this.state.emailValid;
-    let showEmailPreviouslyUsed = this.state.showEmailPreviouslyUsed;
-    let passwordsEqual = this.state.passwordsEqual;
-
-    if (name === 'newPassword') {
-      passwordValid = this.getPasswordValid(value);
-    } else if (name === 'privateUserCheckbox') {
-      privateUser = !privateUser;
-    } else if (name === 'newEmail') {
-      emailValid = this.getEmailValid(value);
-      showEmailPreviouslyUsed = false;
-    } else if (name === 'newPasswordRetype') {
-      passwordsEqual = newPassword === value ? 'success' : 'error';
-    }
-
-    this.setState({
-      [name]: value,
-      passwordValid,
-      privateUser,
+  getEmailBtnDisable() {
+    const {
+      newEmail,
+      confirmEmailPassword,
       emailValid,
-      showEmailPreviouslyUsed,
+    } = this.state;
+
+    return (
+      newEmail.length === 0 ||
+      confirmEmailPassword.length === 0 ||
+      emailValid === 'error');
+  }
+
+  getPasswordBtnDisable() {
+    const {
+      newPassword,
+      newPasswordRetype,
+      confirmPasswordEdit,
+      passwordValid,
       passwordsEqual,
-      showEmailSubmitSuccess: false,
-      showPasswordSubmitSuccess: false,
-      showPrivateUserSubmitSuccess: false,
-      showEmailNotValid: false,
-      showPasswordsNotEqual: false,
-      showPasswordNotValid: false,
-      wrongPasswordEmail: false,
-      wrongPasswordPassword: false,
-      wildCardError: false,
-    });
+    } = this.state;
+
+    return (
+      newPassword.length === 0 ||
+      newPasswordRetype.length === 0 ||
+      confirmPasswordEdit.length === 0 ||
+      passwordValid === 'error' ||
+      passwordsEqual === 'error');
   }
 
   handleEmailSubmit(e) {
@@ -161,20 +125,19 @@ export default class CurrentUserPage extends React.Component {
       setLoadingCursor(true);
       axios.get(`${url}?email=${newEmail}`)
         .then((res) => {
-          if(res.data.unique) {
+          if (res.data.unique) {
             axios.post(passwordValidUrl, { username: authenticatedUser.username, password: confirmEmailPassword })
               .then((innerRes) => {
                 if (innerRes.data.success) {
                   axios.put(url, { username: authenticatedUser.username, email: newEmail })
-                    .then((userRes) => {
+                    .then(() => {
                       this.props.signInAction({
                         username: authenticatedUser.username,
                         password: confirmEmailPassword,
                       });
                       this.handleEmailReset();
                     })
-                    .catch((err) => {
-                      console.error(err);
+                    .catch(() => {
                       this.setState({ wildCardError: true });
                     })
                     .then(() => {
@@ -184,21 +147,19 @@ export default class CurrentUserPage extends React.Component {
                   this.setState({ wrongPasswordEmail: true });
                 }
               })
-              .catch((err) => {
-                console.error(err);
+              .catch(() => {
                 this.setState({ wildCardError: true });
               });
           } else {
             this.setState({ emailValid: 'error', showEmailPreviouslyUsed: true });
           }
         })
-      .catch((err) => {
-        console.error(err);
-        this.setState({ wildCardError: true });
-      })
-      .then(() => {
-        setLoadingCursor(false);
-      });
+        .catch(() => {
+          this.setState({ wildCardError: true });
+        })
+        .then(() => {
+          setLoadingCursor(false);
+        });
     }
   }
 
@@ -206,7 +167,6 @@ export default class CurrentUserPage extends React.Component {
     e.preventDefault();
     const {
       newPassword,
-      newPasswordRetype,
       confirmPasswordEdit,
       passwordValid,
       passwordsEqual,
@@ -219,17 +179,17 @@ export default class CurrentUserPage extends React.Component {
         .then((res) => {
           if (res.data.success) {
             axios.put(url, { username: authenticatedUser.username, password: newPassword })
-              .then((innerRes) => {
+              .then(() => {
                 this.handlePasswordReset();
               })
-              .catch((err) => {
+              .catch(() => {
                 this.setState({ wildCardError: true });
               });
           } else {
             this.setState({ wrongPasswordPassword: true });
           }
         })
-        .catch((err) => {
+        .catch(() => {
           this.setState({ wildCardError: true });
         })
         .then(() => {
@@ -245,11 +205,13 @@ export default class CurrentUserPage extends React.Component {
 
     setLoadingCursor(true);
     axios.put(url, { username: authenticatedUser.username, private: privateUser })
-      .then((res) => {
-        setLoadingCursor(false);
+      .then(() => {
         this.setState({ showPrivateUserSubmitSuccess: true });
       })
-      .catch((err) => {
+      .catch(() => {
+        this.setState({ wildCardError: true });
+      })
+      .then(() => {
         setLoadingCursor(false);
       });
   }
@@ -304,34 +266,64 @@ export default class CurrentUserPage extends React.Component {
     }
   }
 
-  getPasswordBtnDisable() {
-    const { 
-      newPassword,
-      newPasswordRetype,
-      confirmPasswordEdit,
-      passwordValid,
-      passwordsEqual,
+  handleChange(e) {
+    if (e.target.name !== 'privateUserCheckbox') e.preventDefault();
+    const { name, value } = e.target;
+    const { newPassword } = this.state;
+    let {
+      passwordValid, privateUser, emailValid, showEmailPreviouslyUsed, passwordsEqual,
     } = this.state;
 
-    return (
-      newPassword.length === 0 ||
-      newPasswordRetype.length === 0 ||
-      confirmPasswordEdit.length === 0 ||
-      passwordValid === 'error' ||
-      passwordsEqual === 'error');
+    if (name === 'newPassword') {
+      passwordValid = this.getPasswordValid(value);
+    } else if (name === 'privateUserCheckbox') {
+      privateUser = !privateUser;
+    } else if (name === 'newEmail') {
+      emailValid = this.getEmailValid(value);
+      showEmailPreviouslyUsed = false;
+    } else if (name === 'newPasswordRetype') {
+      passwordsEqual = newPassword === value ? 'success' : 'error';
+    }
+
+    this.setState({
+      [name]: value,
+      passwordValid,
+      privateUser,
+      emailValid,
+      showEmailPreviouslyUsed,
+      passwordsEqual,
+      showEmailSubmitSuccess: false,
+      showPasswordSubmitSuccess: false,
+      showPrivateUserSubmitSuccess: false,
+      showEmailNotValid: false,
+      showPasswordsNotEqual: false,
+      showPasswordNotValid: false,
+      wrongPasswordEmail: false,
+      wrongPasswordPassword: false,
+      wildCardError: false,
+    });
   }
 
-  getEmailBtnDisable() {
+  handleFocus(e) {
+    e.preventDefault();
+    const { name } = e.target;
     const {
-      newEmail,
-      confirmEmailPassword,
-      emailValid,
+      newPassword, newPasswordRetype, passwordValid, emailValid,
     } = this.state;
+    let showEmailNotValid = false;
+    let showPasswordNotValid = false;
+    let showPasswordsNotEqual = false;
 
-    return (
-      newEmail.length === 0 ||
-      confirmEmailPassword.length === 0 ||
-      emailValid === 'error');
+    if (name !== 'newEmail' && emailValid === 'error') showEmailNotValid = true;
+
+    if (name !== 'newPassword' && passwordValid === 'error') showPasswordNotValid = true;
+
+    if (name !== 'newPasswordRetype' && newPassword.length > 0 && newPasswordRetype.length > 0) {
+      if (newPassword !== newPasswordRetype) {
+        showPasswordsNotEqual = true;
+      }
+    }
+    this.setState({ showPasswordNotValid, showEmailNotValid, showPasswordsNotEqual });
   }
 
   render() {
@@ -357,7 +349,6 @@ export default class CurrentUserPage extends React.Component {
       wildCardError,
     } = this.state;
     const { authenticatedUser } = this.props;
-    console.log(this.state);
     return (
       <div>
         <h3>Hi, {authenticatedUser.username}!</h3>
@@ -395,7 +386,7 @@ export default class CurrentUserPage extends React.Component {
             label="New email address:"
             placeholder="Email..."
             validationState={emailValid}
-            feedback={true}
+            feedback
             onChange={this.handleChange}
             onFocus={this.handleFocus}
             autoComplete="new-email"
@@ -404,13 +395,15 @@ export default class CurrentUserPage extends React.Component {
             bsStyle="primary"
             type="submit"
             disabled={this.getEmailBtnDisable()}
-            onFocus={this.handleFocus}>
+            onFocus={this.handleFocus}
+          >
             Change email
           </Button>
           <Button
             type="reset"
             disabled={newEmail.length === 0 && confirmEmailPassword.length === 0}
-            onFocus={this.handleFocus}>
+            onFocus={this.handleFocus}
+          >
             Reset Fields
           </Button>
           {showEmailSubmitSuccess &&
@@ -420,7 +413,7 @@ export default class CurrentUserPage extends React.Component {
           }
           {showEmailNotValid &&
             <div className="text-danger">
-              The email does not contain an '@' or a '.'
+              The email does not contain an &apos;@&apos; or a &apos;.&apos;
             </div>
           }
           {showEmailPreviouslyUsed &&
@@ -455,7 +448,7 @@ export default class CurrentUserPage extends React.Component {
             label="New password:"
             placeholder="Password..."
             validationState={passwordValid}
-            feedback={true}
+            feedback
             onChange={this.handleChange}
             onFocus={this.handleFocus}
             autoComplete="new-password"
@@ -472,7 +465,7 @@ export default class CurrentUserPage extends React.Component {
             type="password"
             label="Retype new password:"
             placeholder="Password..."
-            feedback={true}
+            feedback
             validationState={passwordsEqual}
             onChange={this.handleChange}
             onFocus={this.handleFocus}
@@ -487,7 +480,8 @@ export default class CurrentUserPage extends React.Component {
             bsStyle="primary"
             type="submit"
             disabled={this.getPasswordBtnDisable()}
-            onFocus={this.handleFocus}>
+            onFocus={this.handleFocus}
+          >
             Change password
           </Button>
           <Button
@@ -496,7 +490,8 @@ export default class CurrentUserPage extends React.Component {
                 confirmPasswordEdit.length === 0 &&
                 newPassword.length === 0 &&
                 newPasswordRetype.length === 0}
-            onFocus={this.handleFocus}>
+            onFocus={this.handleFocus}
+          >
             Reset Fields
           </Button>
           {showPasswordSubmitSuccess &&
@@ -518,7 +513,7 @@ export default class CurrentUserPage extends React.Component {
             bsStyle="primary"
             type="submit"
             onFocus={this.handleFocus}
-            >
+          >
             Confirm public/private change
           </Button>
           {showPrivateUserSubmitSuccess &&
@@ -539,9 +534,9 @@ CurrentUserPage.propTypes = {
   url: PropTypes.string.isRequired,
   passwordValidUrl: PropTypes.string.isRequired,
   authenticatedUser: PropTypes.shape({
-      username: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      private: PropTypes.bool.isRequiredy,
-    }).isRequired,
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    private: PropTypes.bool.isRequiredy,
+  }).isRequired,
   signInAction: PropTypes.func.isRequired,
 };

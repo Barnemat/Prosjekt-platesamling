@@ -13,8 +13,7 @@ export function getCollection(username, sortMode = { date: -1 }) {
           },
         });
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
         dispatch({
           type: 'COLLECTION_ERROR',
           payload: 'An error occured while retrieving collection',

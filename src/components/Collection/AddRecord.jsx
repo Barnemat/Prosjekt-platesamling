@@ -21,6 +21,7 @@ import { getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor }
 import tooltip from '../CommonComponents/Tooltip';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
+import WildCardError from '../CommonComponents/WildCardError';
 
 export default class AddRecord extends React.Component {
   constructor(props) {
@@ -46,6 +47,7 @@ export default class AddRecord extends React.Component {
       image: undefined,
       imageData: '',
       invalidImg: false,
+      showWildCardError: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -63,9 +65,9 @@ export default class AddRecord extends React.Component {
   handleChange(e) {
     e.preventDefault();
     if (this.state.title !== '' && !this.state.largeForm) {
-      this.setState({ [e.target.name]: e.target.value, largeForm: true });
+      this.setState({ [e.target.name]: e.target.value, largeForm: true, showWildCardError: false });
     } else {
-      this.setState({ [e.target.name]: e.target.value });
+      this.setState({ [e.target.name]: e.target.value, showWildCardError: false });
     }
   }
 
@@ -151,6 +153,7 @@ export default class AddRecord extends React.Component {
       image: undefined,
       imageData: '',
       invalidImg: false,
+      showWildCardError: false,
     });
   }
 
@@ -199,8 +202,8 @@ export default class AddRecord extends React.Component {
         this.props.loadCollection();
         this.handleReset();
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
+        this.setState({ showWildCardError: true });
       })
       .then(() => {
         setLoadingCursor(false);
@@ -224,8 +227,8 @@ export default class AddRecord extends React.Component {
             },
           });
         })
-        .catch((err) => {
-          console.error(err);
+        .catch(() => {
+          this.setState({ showWildCardError: true });
         })
         .then(() => {
           setLoadingCursor(false);
@@ -242,8 +245,8 @@ export default class AddRecord extends React.Component {
         .then((res) => {
           this.setState({ wikiImg: getBestImageURL(searchTerm, JSON.parse(res.request.response)) });
         })
-        .catch((err) => {
-          console.error(err);
+        .catch(() => {
+          this.setState({ showWildCardError: true });
         })
         .then(() => {
           setLoadingCursor(false);
@@ -279,10 +282,12 @@ export default class AddRecord extends React.Component {
       wikiReqDesc,
       wikiHref,
       selectedCheckboxes,
+      showWildCardError,
     } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
+        {showWildCardError && <WildCardError />}
         <TitleFormGroup
           name="title"
           value={title}

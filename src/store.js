@@ -1,7 +1,8 @@
-import axios from 'axios';
+/* eslint-disable no-underscore-dangle */
+
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { getCollection, setSearch, authenticatedAction, resetCollection } from './actions';
+import { setSearch, authenticatedAction, resetCollection } from './actions';
 import reducer from './reducer';
 
 const initialState = {};

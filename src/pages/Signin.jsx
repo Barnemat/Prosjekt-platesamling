@@ -1,6 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Col, Grid, Row, Button, ControlLabel, Checkbox } from 'react-bootstrap';
+import { Col, Grid, Row, Button, ControlLabel } from 'react-bootstrap';
 import { Field, reduxForm } from 'redux-form';
 import { Redirect } from 'react-router-dom';
 import { signInAction } from '../actions';
@@ -10,24 +11,24 @@ class Signin extends React.Component {
     super(props);
 
     this.state = {
-      url: 'http://localhost:8080/api/users',
       checked: false,
     };
 
-    this.submit = values => {
+    this.submit = (values) => {
       this.props.signInAction(values);
     };
 
     this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick(e) {
-    e.preventDefault();
+  handleClick() {
     this.setState({ checked: !this.state.checked });
   }
 
   render() {
-    const { handleSubmit, pristine, reset, submitting, authenticated } = this.props;
+    const {
+      handleSubmit, pristine, reset, submitting, authenticated,
+    } = this.props;
 
     return authenticated ? (<Redirect to="/" />) : (
       <div>
@@ -40,25 +41,25 @@ class Signin extends React.Component {
                   <Row className="margin-bottom">
                     <Col lg={2} md={3} sm={3} xs={12} componentClass={ControlLabel}>Username</Col>
                     <Col lg={10} md={9} sm={9} xs={12}>
-                    <Field
-                      className="form-control"
-                      name="username"
-                      component="input"
-                      type="text"
-                      placeholder="Username"
-                    />
+                      <Field
+                        className="form-control"
+                        name="username"
+                        component="input"
+                        type="text"
+                        placeholder="Username"
+                      />
                     </Col>
                   </Row>
                   <Row className="margin-bottom">
                     <Col lg={2} md={3} sm={3} xs={12} componentClass={ControlLabel}>Password</Col>
                     <Col lg={10} md={9} sm={9} xs={12}>
-                    <Field
-                      className="form-control"
-                      name="password"
-                      component="input"
-                      type="password"
-                      placeholder="Password"
-                    />
+                      <Field
+                        className="form-control"
+                        name="password"
+                        component="input"
+                        type="password"
+                        placeholder="Password"
+                      />
                     </Col>
                   </Row>
                   <Row className="margin-bottom">
@@ -69,7 +70,8 @@ class Signin extends React.Component {
                       lg={10}
                       md={9}
                       sm={9}
-                      xs={12}>
+                      xs={12}
+                    >
                       <Field
                         name="remember"
                         component="input"
@@ -77,7 +79,14 @@ class Signin extends React.Component {
                         checked={this.state.checked}
                         onClick={this.handleClick}
                       />
-                      <span onClick={this.handleClick}> Remember me</span>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onKeyUp={e => e.key.toLowerCase() === 'enter' && this.handleClick()}
+                        onClick={this.handleClick}
+                      >
+                        Remember me
+                      </span>
                     </Col>
                   </Row>
                   <Row>
@@ -114,7 +123,7 @@ class Signin extends React.Component {
                 </p>
               </Col>
             </Col>
-            <Col lg={5} md={5} sm={4} xs={1}/>
+            <Col lg={5} md={5} sm={4} xs={1} />
           </Row>
         </Grid>
       </div>
@@ -122,13 +131,28 @@ class Signin extends React.Component {
   }
 }
 
+Signin.propTypes = {
+  errorMessage: PropTypes.string,
+  authenticated: PropTypes.bool,
+  signInAction: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  reset: PropTypes.func.isRequired,
+  pristine: PropTypes.bool.isRequired,
+  submitting: PropTypes.bool.isRequired,
+};
+
+Signin.defaultProps = {
+  errorMessage: null,
+  authenticated: false,
+};
+
 const mapStateToProps = state => ({
   errorMessage: state.authenticate.error,
   authenticated: state.authenticate.authenticated,
 });
 
 const reduxFormSignin = reduxForm({
-  form: 'signin'
+  form: 'signin',
 })(Signin);
 
-export default connect(mapStateToProps, {signInAction})(reduxFormSignin);
+export default connect(mapStateToProps, { signInAction })(reduxFormSignin);

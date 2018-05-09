@@ -8,7 +8,7 @@ import axios from 'axios';
 import AddRecord from './AddRecord';
 import RecordItem from './RecordItem';
 import SortModes from './SortModes';
-import { setLoadingCursor, sortArrayOfObjects, getOwnershipFormat } from '../../util';
+import { sortArrayOfObjects, getOwnershipFormat } from '../../util';
 import { getCollection, resetCollection } from '../../actions';
 import { getRecordsBySearch } from '../../selectors/collection';
 
@@ -54,18 +54,21 @@ class ListItems extends React.Component {
       record.append('username', this.props.authenticatedUser.username);
       return axios.post(this.props.url, record);
     }
+    return Promise.resolve('Not allowed.');
   }
 
   removeRecordFromCollection(record) {
     if (!this.props.publicUsername) {
       return axios.delete(`${this.props.url}?_id=${record._id}`);
     }
+    return Promise.resolve('Not allowed.');
   }
 
   editRecordInCollection(record) {
     if (!this.props.publicUsername) {
       return axios.put(this.props.url, record);
     }
+    return Promise.resolve('Not allowed.');
   }
 
   handleSortMode(key) {
@@ -88,11 +91,11 @@ class ListItems extends React.Component {
   }
 
   loadCollection() {
-    const { authenticatedUser, publicUsername, getCollection } = this.props;
+    const { authenticatedUser, publicUsername } = this.props;
     if (authenticatedUser && authenticatedUser.username && !publicUsername) {
-      getCollection(authenticatedUser.username, this.state.sortMode);
+      this.props.getCollection(authenticatedUser.username, this.state.sortMode);
     } else if (publicUsername) {
-      getCollection(publicUsername, this.state.sortMode);
+      this.props.getCollection(publicUsername, this.state.sortMode);
     } else {
       this.props.resetCollection();
     }
@@ -121,9 +124,9 @@ class ListItems extends React.Component {
                 You are viewing <strong>{getOwnershipFormat(this.props.publicUsername)}</strong> collection.
               </h4>}
             <Panel>
-            {!this.props.publicUsername &&
+              {!this.props.publicUsername &&
               <Panel.Body>
-                  <AddRecord
+                <AddRecord
                   addRecordToCollection={this.addRecordToCollection}
                   loadCollection={this.loadCollection}
                 />
@@ -160,11 +163,20 @@ ListItems.propTypes = {
   url: PropTypes.string.isRequired,
   records: PropTypes.array.isRequired,
   getCollection: PropTypes.func.isRequired,
+  resetCollection: PropTypes.func.isRequired,
   authenticatedUser: PropTypes.shape({
     username: PropTypes.string,
     email: PropTypes.string,
   }),
   publicUsername: PropTypes.string,
+};
+
+ListItems.defaultProps = {
+  authenticatedUser: {
+    username: '',
+    email: '',
+  },
+  publicUsername: null,
 };
 
 const mapStateToProps = state => ({

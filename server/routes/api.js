@@ -128,6 +128,7 @@ router.route('/signin')
           const userObject  = {
             username: user.username,
             email: user.email,
+            private: user.private,
           };
 
           if (req.body.remember) {
@@ -272,6 +273,7 @@ router.route('/user')
           const userObject  = {
             username: user.username,
             email: req.body.email || user.email,
+            private: user.private,
           };
 
           if (req.session.remember) {

@@ -31,49 +31,48 @@ class Collection extends React.Component {
       return (<Redirect to="/signin" />);
     } else if (registerButton) {
       return (<Redirect to="/register" />);
-    } else {
-      return (
-        <div>
-          <Grid fluid>
-            <Row className="show-grid">
-              <Col lg={2} md={2} />
-              <Col lg={8} md={8} sm={12} xs={12}>
-                {this.props.authenticated &&
-                <ListItems url={this.state.url} />
-                }
-                {!this.props.authenticated &&
-                  <Jumbotron>
-                    <h1>You have not signed in!</h1>
-                    <p>
-                      To view a collection on this page, you need to {<Link to="/signin">sign in</Link>} first.
-                      If you don't have a user yet, you can {<Link to="/register">register here.</Link>}
-                    </p>
-                    <p>
-                      <Button
-                        bsStyle="primary"
-                        name="signinButton"
-                        onClick={this.handleClick}
-                      >
-                        Sign in
-                      </Button>
-                      {' '}
-                      <Button
-                        bsStyle="primary"
-                        name="registerButton"
-                        onClick={this.handleClick}
-                      >
-                        Register
-                      </Button>
-                    </p>
-                  </Jumbotron>
-                }
-              </Col>
-              <Col lg={2} md={2} />
-            </Row>
-          </Grid>
-        </div>
-      );
     }
+    return (
+      <div>
+        <Grid fluid>
+          <Row className="show-grid">
+            <Col lg={2} md={2} />
+            <Col lg={8} md={8} sm={12} xs={12}>
+              {this.props.authenticated &&
+                <ListItems url={this.state.url} />
+              }
+              {!this.props.authenticated &&
+                <Jumbotron>
+                  <h1>You have not signed in!</h1>
+                  <p>
+                    To view a collection on this page, you need to {<Link href="#" to="/signin">sign in</Link>} first.
+                    If you don&apos;t have a user yet, you can {<Link href="#" to="/register">register here.</Link>}
+                  </p>
+                  <p>
+                    <Button
+                      bsStyle="primary"
+                      name="signinButton"
+                      onClick={this.handleClick}
+                    >
+                      Sign in
+                    </Button>
+                    {' '}
+                    <Button
+                      bsStyle="primary"
+                      name="registerButton"
+                      onClick={this.handleClick}
+                    >
+                      Register
+                    </Button>
+                  </p>
+                </Jumbotron>
+              }
+            </Col>
+            <Col lg={2} md={2} />
+          </Row>
+        </Grid>
+      </div>
+    );
   }
 }
 
@@ -81,12 +80,8 @@ Collection.propTypes = {
   authenticated: PropTypes.bool.isRequired,
 };
 
-Collection.defaultProps = {
-  authenticated: false,
-}
-
-const mapStateToProps = (state) => ({
-  authenticated: state.authenticate.authenticated,
+const mapStateToProps = state => ({
+  authenticated: state.authenticate.authenticated || false,
 });
 
 export default connect(mapStateToProps)(Collection);
