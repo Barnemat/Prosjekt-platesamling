@@ -29,7 +29,6 @@ router.route('/records')
     .lean();
   })
   .post((req, res) => {
-    console.log(req.body);
     if (!req.body || !req.body.title || !req.body.username) {
       res.status(204).send({ error: 'Request lacking required fields.' });
     } else {
@@ -140,6 +139,7 @@ router.route('/signin')
           req.session.regenerate((err) => {
             if (err) throw err;
           });
+
           res.json({ success: true, user: userObject, msg: 'Login successful.' });
         } else {
           res.json({ success: false, msg: 'Invalid username or password' });
@@ -167,7 +167,7 @@ router.route('/user')
         user: {
           username: user ? user.username : '',
           email: user ? user.email : '',
-          private: user && user.private ? true : user.private,
+          private: user && user.private === false ? user.private : true,
         },
         unique
       });

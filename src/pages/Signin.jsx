@@ -15,7 +15,7 @@ class Signin extends React.Component {
     };
 
     this.submit = (values) => {
-      this.props.signInAction(values);
+      this.props.signInAction(Object.assign(values, { remember: this.state.checked }));
     };
 
     this.handleClick = this.handleClick.bind(this);
