@@ -21,7 +21,7 @@ const schema = new Schema({
     unique: true,
     maxlength: 50,
   },
-  private: {
+  public: {
     type: Boolean,
     default: false,
   }

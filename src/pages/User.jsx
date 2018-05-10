@@ -39,27 +39,27 @@ class User extends React.Component {
     this.state = {
       url: 'http://localhost:8080/api/user',
       passwordValidUrl: 'http://localhost:8080/api/validPassword',
-      authenticatedUser: this.props.authenticatedUser || { username: '', email: '', private: true },
+      authenticatedUser: this.props.authenticatedUser || { username: '', email: '', public: false },
       usernameFromPath: this.props.match.params.username,
       usernameFromPathExists: false,
-      usernameFromPathPrivate: true,
+      usernameFromPathPublic: false,
       showWildCardError: false,
     };
 
-    this.getUserFromPathExistsAndPrivate = this.getUserFromPathExistsAndPrivate.bind(this);
+    this.setUserFromPathExistsAndPublic = this.setUserFromPathExistsAndPublic.bind(this);
   }
 
   componentWillMount() {
-    this.getUserFromPathExistsAndPrivate();
+    this.setUserFromPathExistsAndPublic();
   }
 
-  getUserFromPathExistsAndPrivate() {
+  setUserFromPathExistsAndPublic() {
     const { url, usernameFromPath } = this.state;
     axios.get(`${url}?username=${usernameFromPath}`)
       .then((res) => {
         const { user } = res.data;
         if (user.username) {
-          this.setState({ usernameFromPathExists: true, usernameFromPathPrivate: user.private });
+          this.setState({ usernameFromPathExists: true, usernameFromPathPublic: user.public });
         }
       })
       .catch(() => {
@@ -74,7 +74,7 @@ class User extends React.Component {
       passwordValidUrl,
       usernameFromPath,
       usernameFromPathExists,
-      usernameFromPathPrivate,
+      usernameFromPathPublic,
       showWildCardError,
     } = this.state;
 
@@ -99,13 +99,13 @@ class User extends React.Component {
           <Col lg={2} md={2} />
           <Col lg={8} md={8} sm={12} xs={12}>
             {showWildCardError && <WildCardError />}
-            {usernameFromPathPrivate &&
+            {!usernameFromPathPublic &&
             <UsernameNotMatching
               usernameFromPath={usernameFromPath}
               usernameFromPathExists={usernameFromPathExists}
             />
               }
-            {usernameFromPathExists && !usernameFromPathPrivate &&
+            {usernameFromPathExists && usernameFromPathPublic &&
             <PublicUserPage
               url={url}
               usernameFromPath={usernameFromPath}
@@ -123,7 +123,7 @@ User.propTypes = {
   authenticatedUser: PropTypes.shape({
     username: PropTypes.string,
     email: PropTypes.string,
-    private: PropTypes.bool,
+    public: PropTypes.bool,
   }),
   signInAction: PropTypes.func.isRequired,
   match: PropTypes.shape({
@@ -140,9 +140,8 @@ User.defaultProps = {
   authenticatedUser: {
     username: '',
     email: '',
-    private: true,
+    public: false,
   },
-
 };
 
 const mapStateToProps = state => ({
