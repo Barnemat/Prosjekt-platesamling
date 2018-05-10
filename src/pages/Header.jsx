@@ -27,14 +27,9 @@ const Header = ({ authenticated, username, ...props }) => (
                   Collection
                 </NavItem>
               </LinkContainer>
-              <LinkContainer to="/example">
+              <LinkContainer to="/find">
                 <NavItem eventKey={2}>
-                  Example 1
-                </NavItem>
-              </LinkContainer>
-              <LinkContainer to="/example">
-                <NavItem eventKey={3}>
-                  Example 2
+                  Find users
                 </NavItem>
               </LinkContainer>
             </Nav>

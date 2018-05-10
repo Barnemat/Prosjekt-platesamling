@@ -127,7 +127,7 @@ router.route('/signin')
           const userObject  = {
             username: user.username,
             email: user.email,
-            private: user.private,
+            public: user.public,
           };
 
           if (req.body.remember) {
@@ -167,7 +167,7 @@ router.route('/user')
         user: {
           username: user ? user.username : '',
           email: user ? user.email : '',
-          private: user && user.private === false ? user.private : true,
+          public: user && user.public,
         },
         unique
       });
@@ -253,7 +253,7 @@ router.route('/user')
                   user.set({
                     password: password || user.password,
                     email: req.body.email || user.email,
-                    private: typeof req.body.private === 'boolean' ? req.body.private : true,
+                    public: typeof req.body.public === 'boolean' && req.body.public,
                   });
 
                   user.save((err, updatedUser) => {
@@ -273,7 +273,7 @@ router.route('/user')
           const userObject  = {
             username: user.username,
             email: req.body.email || user.email,
-            private: user.private,
+            public: user.public,
           };
 
           if (req.session.remember) {
@@ -287,7 +287,7 @@ router.route('/user')
 
           user.set({
             email: req.body.email || user.email,
-            private: typeof req.body.private === 'boolean' ? req.body.private : true,
+            public: typeof req.body.public === 'boolean' && req.body.public,
           });
 
           user.save((err, updatedUser) => {
@@ -336,6 +336,43 @@ router.route('/authenticated')
     } else {
       res.json({ authenticated: false, user: {} });
     }
+  });
+
+router.route('/allMatchingUsers')
+  .get((req, res) => {
+    const search = req.query.username;
+    const searchRegEx = new RegExp(search, "i");
+    let exactUserMatch = { username: '', public: '' };
+
+    User.findOne({username: search}, (err, user) => {
+      if (user) {
+        exactUserMatch = {
+          username: user.username,
+          public: user.public,
+        };
+      }
+
+      User.find({username: { $regex: searchRegEx }}, (err, users) => {
+        const userArray = users.map((user) => {
+          if (user.username === exactUserMatch.username) {
+            delete user;
+            return;
+          }
+          return {
+            username: user.username,
+            public: user.public,
+          };
+        });
+
+        if (exactUserMatch.username) {
+          res.send([exactUserMatch].concat(userArray).filter(user => user !== undefined));
+        } else {
+          res.send(userArray.filter(user => user !== undefined));
+        }
+      })
+      .limit(20)
+      .lean();
+    });
   });
 
 module.exports = router;

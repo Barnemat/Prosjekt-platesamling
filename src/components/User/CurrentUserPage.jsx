@@ -53,11 +53,11 @@ export default class CurrentUserPage extends React.Component {
       showPasswordNotValid: false,
       showPasswordsNotEqual: false,
       wildCardError: false,
-      privateUser: this.props.authenticatedUser && this.props.authenticatedUser.private !== undefined ?
-        this.props.authenticatedUser.private
+      publicUser: this.props.authenticatedUser && this.props.authenticatedUser.public !== undefined ?
+        this.props.authenticatedUser.public
         :
-        true,
-      showPrivateUserSubmitSuccess: false,
+        false,
+      showPublicUserSubmitSuccess: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -65,7 +65,7 @@ export default class CurrentUserPage extends React.Component {
     this.handleEmailReset = this.handleEmailReset.bind(this);
     this.handlePasswordSubmit = this.handlePasswordSubmit.bind(this);
     this.handlePasswordReset = this.handlePasswordReset.bind(this);
-    this.handlePrivateUserSubmit = this.handlePrivateUserSubmit.bind(this);
+    this.handlePublicUserSubmit = this.handlePublicUserSubmit.bind(this);
     this.getEmailValid = this.getEmailValid.bind(this);
     this.getPasswordValid = this.getPasswordValid.bind(this);
     this.handleFocus = this.handleFocus.bind(this);
@@ -198,15 +198,15 @@ export default class CurrentUserPage extends React.Component {
     }
   }
 
-  handlePrivateUserSubmit(e) {
+  handlePublicUserSubmit(e) {
     e.preventDefault();
-    const { privateUser } = this.state;
+    const { publicUser } = this.state;
     const { authenticatedUser, url } = this.props;
 
     setLoadingCursor(true);
-    axios.put(url, { username: authenticatedUser.username, private: privateUser })
+    axios.put(url, { username: authenticatedUser.username, public: publicUser })
       .then(() => {
-        this.setState({ showPrivateUserSubmitSuccess: true });
+        this.setState({ showPublicUserSubmitSuccess: true });
       })
       .catch(() => {
         this.setState({ wildCardError: true });
@@ -267,17 +267,17 @@ export default class CurrentUserPage extends React.Component {
   }
 
   handleChange(e) {
-    if (e.target.name !== 'privateUserCheckbox') e.preventDefault();
+    if (e.target.name !== 'publicUserCheckbox') e.preventDefault();
     const { name, value } = e.target;
     const { newPassword } = this.state;
     let {
-      passwordValid, privateUser, emailValid, showEmailPreviouslyUsed, passwordsEqual,
+      passwordValid, publicUser, emailValid, showEmailPreviouslyUsed, passwordsEqual,
     } = this.state;
 
     if (name === 'newPassword') {
       passwordValid = this.getPasswordValid(value);
-    } else if (name === 'privateUserCheckbox') {
-      privateUser = !privateUser;
+    } else if (name === 'publicUserCheckbox') {
+      publicUser = !publicUser;
     } else if (name === 'newEmail') {
       emailValid = this.getEmailValid(value);
       showEmailPreviouslyUsed = false;
@@ -288,13 +288,13 @@ export default class CurrentUserPage extends React.Component {
     this.setState({
       [name]: value,
       passwordValid,
-      privateUser,
+      publicUser,
       emailValid,
       showEmailPreviouslyUsed,
       passwordsEqual,
       showEmailSubmitSuccess: false,
       showPasswordSubmitSuccess: false,
-      showPrivateUserSubmitSuccess: false,
+      showPublicUserSubmitSuccess: false,
       showEmailNotValid: false,
       showPasswordsNotEqual: false,
       showPasswordNotValid: false,
@@ -336,14 +336,14 @@ export default class CurrentUserPage extends React.Component {
       confirmPasswordEdit,
       passwordValid,
       passwordsEqual,
-      privateUser,
+      publicUser,
       showPasswordNotValid,
       showEmailNotValid,
       showEmailPreviouslyUsed,
       showEmailSubmitSuccess,
       showPasswordSubmitSuccess,
       showPasswordsNotEqual,
-      showPrivateUserSubmitSuccess,
+      showPublicUserSubmitSuccess,
       wrongPasswordEmail,
       wrongPasswordPassword,
       wildCardError,
@@ -500,14 +500,14 @@ export default class CurrentUserPage extends React.Component {
             </div>
           }
         </form>
-        <form onSubmit={this.handlePrivateUserSubmit}>
+        <form onSubmit={this.handlePublicUserSubmit}>
           <ControlLabel>Toggle privacy settings for user profile:</ControlLabel>
           <Checkbox
-            name="privateUserCheckbox"
-            checked={privateUser}
+            name="publicUserCheckbox"
+            checked={publicUser}
             onChange={this.handleChange}
           >
-            Uncheck this box to make your user profile public
+            Check this box to make your user profile public
           </Checkbox>
           <Button
             bsStyle="primary"
@@ -516,7 +516,7 @@ export default class CurrentUserPage extends React.Component {
           >
             Confirm public/private change
           </Button>
-          {showPrivateUserSubmitSuccess &&
+          {showPublicUserSubmitSuccess &&
             <div className="text-success">
               Your privacy change was a success.
             </div>
@@ -536,7 +536,7 @@ CurrentUserPage.propTypes = {
   authenticatedUser: PropTypes.shape({
     username: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
-    private: PropTypes.bool.isRequiredy,
+    public: PropTypes.bool.isRequired,
   }).isRequired,
   signInAction: PropTypes.func.isRequired,
 };

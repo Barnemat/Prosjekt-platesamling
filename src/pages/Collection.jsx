@@ -28,9 +28,9 @@ class Collection extends React.Component {
     const { signinButton, registerButton } = this.state;
 
     if (signinButton) {
-      return (<Redirect to="/signin" />);
+      return (<Redirect to="/signin" push />);
     } else if (registerButton) {
-      return (<Redirect to="/register" />);
+      return (<Redirect to="/register" push />);
     }
     return (
       <div>

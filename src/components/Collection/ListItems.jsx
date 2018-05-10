@@ -12,6 +12,20 @@ import { sortArrayOfObjects, getOwnershipFormat } from '../../util';
 import { getCollection, resetCollection } from '../../actions';
 import { getRecordsBySearch } from '../../selectors/collection';
 
+const EmptyCollection = ({ publicUsername }) => (
+  <div className="text-center lead">
+    {publicUsername ? 'The' : 'Your'} collection is empty.
+  </div>
+);
+
+EmptyCollection.propTypes = {
+  publicUsername: PropTypes.string,
+};
+
+EmptyCollection.defaultProps = {
+  publicUsername: null,
+};
+
 class ListItems extends React.Component {
   constructor(props) {
     super(props);
@@ -105,6 +119,7 @@ class ListItems extends React.Component {
     const recordItems = this.getRecordItems();
     const firstHalf = recordItems.slice(0, Math.ceil(recordItems.length / 2));
     const secondHalf = recordItems.slice(Math.ceil(recordItems.length / 2));
+    const { publicUsername } = this.props;
 
     return (
       <Grid fluid>
@@ -119,37 +134,42 @@ class ListItems extends React.Component {
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
-            {this.props.publicUsername &&
-              <h4>
-                You are viewing <strong>{getOwnershipFormat(this.props.publicUsername)}</strong> collection.
-              </h4>}
             <Panel>
-              {!this.props.publicUsername &&
-              <Panel.Body>
-                <AddRecord
-                  addRecordToCollection={this.addRecordToCollection}
-                  loadCollection={this.loadCollection}
-                />
-              </Panel.Body>}
-              {this.state.galleryView &&
-                <Grid fluid>
-                  <Row>
-                    <Col lg={6} md={6} sm={6} xs={6}>
-                      <ListGroup componentClass="ul">
-                        { firstHalf }
-                      </ListGroup>
-                    </Col>
-                    <Col lg={6} md={6} sm={6} xs={6}>
-                      <ListGroup componentClass="ul">
-                        { secondHalf }
-                      </ListGroup>
-                    </Col>
-                  </Row>
-                </Grid>}
-              {!this.state.galleryView &&
-                <ListGroup componentClass="ul">
-                  { recordItems }
-                </ListGroup>}
+              {publicUsername ? (
+                <Panel.Body>
+                  <h4>
+                    You are viewing <strong>{getOwnershipFormat(publicUsername)}</strong> collection.
+                  </h4>
+                </Panel.Body>) : (
+                  <Panel.Body>
+                    <AddRecord
+                      addRecordToCollection={this.addRecordToCollection}
+                      loadCollection={this.loadCollection}
+                    />
+                  </Panel.Body>)}
+              {recordItems.length !== 0 ? (
+                <div>
+                  {this.state.galleryView &&
+                    <Grid fluid>
+                      <Row>
+                        <Col lg={6} md={6} sm={6} xs={6}>
+                          <ListGroup componentClass="ul">
+                            { firstHalf }
+                          </ListGroup>
+                        </Col>
+                        <Col lg={6} md={6} sm={6} xs={6}>
+                          <ListGroup componentClass="ul">
+                            { secondHalf }
+                          </ListGroup>
+                        </Col>
+                      </Row>
+                    </Grid>}
+                  {!this.state.galleryView &&
+                    <ListGroup componentClass="ul">
+                      { recordItems }
+                    </ListGroup>}
+                </div>
+                ) : (<EmptyCollection publicUsername={publicUsername} />)}
             </Panel>
           </Col>
         </Row>
