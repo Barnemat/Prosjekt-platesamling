@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { NavLink, withRouter } from 'react-router-dom';
-import { Navbar, Nav, NavItem, Col, Grid, Row } from 'react-bootstrap';
+import { withRouter, Link } from 'react-router-dom';
+import { Navbar, Nav, NavItem, Col, Grid, Row, Image } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { signOutAction } from '../actions';
+import logo from '../assets/img/logo-vanlig.png';
 
 const Header = ({ authenticated, username, ...props }) => (
   <Navbar inverse fluid collapseOnSelect>
@@ -13,11 +14,12 @@ const Header = ({ authenticated, username, ...props }) => (
         <Col lg={2} md={2} />
         <Col lg={8} md={8}>
           <Navbar.Header>
-            <Navbar.Brand>
-              <NavLink to="/" exact>
-                Record Collection
-              </NavLink>
-            </Navbar.Brand>
+            <Link className="navbar-left" to="/">
+              <Image
+                className="nav-img margin-right"
+                src={logo}
+              />
+            </Link>
             <Navbar.Toggle />
           </Navbar.Header>
           <Navbar.Collapse>

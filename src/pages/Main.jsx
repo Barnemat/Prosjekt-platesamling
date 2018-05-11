@@ -6,6 +6,7 @@ import Signin from './Signin';
 import Signout from './Signout';
 import User from './User';
 import FindUser from './FindUser';
+import PageNotFound from './PageNotFound';
 
 const Main = () => (
   <main>
@@ -17,6 +18,7 @@ const Main = () => (
       <Route path="/user/:username" component={User} />
       <Route path="/find" component={FindUser} />
       <Route path="/signout" component={Signout} />
+      <Route component={PageNotFound} />
     </Switch>
   </main>
 );
