@@ -38,6 +38,10 @@ body.waiting * {
   margin-bottom: 4px;
 }
 
+.margin-right {
+  margin-right: 4px;
+}
+
 .standard-glyph:hover {
   color: grey;
   cursor: pointer;
@@ -49,4 +53,13 @@ body.waiting * {
 
 .yellow-bg {
   background-color: yellow;
+}
+
+.nav-img {
+  height: 46px;
+  pointer-events: none;
+}
+
+.huge-margin-top {
+  margin-top: 50px;
 }

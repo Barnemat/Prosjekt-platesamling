@@ -11,20 +11,19 @@ import { signInAction } from '../actions';
 import WildCardError from '../components/CommonComponents/WildCardError';
 import CurrentUserPage from '../components/User/CurrentUserPage';
 import PublicUserPage from '../components/User/PublicUserPage';
+import PageNotFound from './PageNotFound';
 
 const UsernameNotMatching = ({ usernameFromPath, usernameFromPathExists }) => (
-  <div>
-    {usernameFromPathExists &&
-    <span>The user <strong>{ usernameFromPath }</strong> has an account set to private.</span>
-  }
-    {!usernameFromPathExists &&
-    <span>The user <strong>{ usernameFromPath }</strong> does not exist.</span>
-    /* Maybe redirect to a 404 page later */
-  }
+  !usernameFromPathExists ? (<PageNotFound />) : (
     <div>
-      <Link to="/">Return to front page</Link>
+      {usernameFromPathExists &&
+        <span>The user <strong>{ usernameFromPath }</strong> has an account set to private.</span>
+      }
+      <div>
+        <Link to="/">Return to front page</Link>
+      </div>
     </div>
-  </div>
+  )
 );
 
 UsernameNotMatching.propTypes = {

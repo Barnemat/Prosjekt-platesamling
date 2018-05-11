@@ -29,8 +29,8 @@ const config = {
         loader : 'style-loader!css-loader'
       },
       {
-        test: /\.(png|jpg|jpeg|gif)$/,
-        loader: 'url-loader?limit=5000&name=[path][name].[hash:6].[ext]'
+        test: /\.(png|jpg|jpeg|gif|ico)$/,
+        loader: 'url-loader?limit=5000&name=[path][name].[ext]'
       }
     ]
   },
@@ -48,7 +48,8 @@ const config = {
         title: "Prosjekt platesamling",
         template: "src/index.ejs",
         inject: false,
-        chucksSortMode: 'dependency'
+        chucksSortMode: 'dependency',
+        favicon: 'src/assets/img/favicon.ico'
       })
   ]
 };
