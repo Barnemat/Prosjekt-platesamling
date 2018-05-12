@@ -7,7 +7,7 @@ import { checkTimePassed, setLoadingCursor, getSplittedStringsForSearchFormattin
 import noRecordImg from '../../assets/img/no_record_img.png';
 import tooltip from '../CommonComponents/Tooltip';
 import WildCardError from '../CommonComponents/WildCardError';
-import EditRecord from './EditRecord';
+import AddOrEditRecord from './AddOrEditRecord';
 
 const MinimizedView = ({
   record,
@@ -373,12 +373,12 @@ class RecordItem extends React.Component {
               publicUsername={this.props.publicUsername}
             />}
           {this.state.isEditMode &&
-            <EditRecord
+            <AddOrEditRecord
               record={this.props.record}
               handleShowModal={this.handleShowModal}
-              handleEdit={this.handleEdit}
               handleReset={this.handleReset}
               editRecordInCollection={this.props.editRecordInCollection}
+              edit
             />}
           {this.state.showWildCardError && <WildCardError />}
         </Grid>

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ListGroup, Panel, Grid, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import AddRecord from './AddRecord';
+import AddOrEditRecord from './AddOrEditRecord';
 import RecordItem from './RecordItem';
 import SortModes from './SortModes';
 import { sortArrayOfObjects, getOwnershipFormat } from '../../util';
@@ -142,7 +142,7 @@ class ListItems extends React.Component {
                   </h4>
                 </Panel.Body>) : (
                   <Panel.Body>
-                    <AddRecord
+                    <AddOrEditRecord
                       addRecordToCollection={this.addRecordToCollection}
                       loadCollection={this.loadCollection}
                     />

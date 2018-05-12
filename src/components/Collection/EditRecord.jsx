@@ -13,6 +13,10 @@ import {
   FormGroup,
   FormControl,
   Checkbox,
+  Collapse,
+  ControlLabel,
+  InputGroup,
+  Well,
 } from 'react-bootstrap';
 import Rating from 'react-rating';
 import tooltip from '../CommonComponents/Tooltip';
@@ -27,217 +31,26 @@ export default class EditRecord extends React.Component {
   constructor(props) {
     super(props);
 
-    const { record } = this.props;
-
-    this.state = {
-      title: record.title,
-      artist: record.artist,
-      format: record.format,
-      rating: record.rating,
-      notes: record.notes,
-      wikiHref: record.wikiHref,
-      wikiDesc: record.wikiDesc,
-      wikiImg: record.wikiImg,
-      wikiReqDesc: record.wikiDesc !== '',
-      wikiReqImg: {
-        req: record.wikiImg !== '',
-        searchTerm: record.title,
-      },
-      allowImgReq: record.wikiDesc !== '',
-      selectedCheckboxes: [record.wikiDesc ? 'wikiDescCB' : '', record.wikiImg ? 'wikiImgCB' : ''],
-      image: undefined,
-      imageData: '',
-      ignoreRecordImg: false,
-      invalidImg: false,
-      showWildCardError: false,
-    };
-
-    this.handleEdit = this.handleEdit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleResetWiki = this.handleResetWiki.bind(this);
-    this.handleSearchRequest = this.handleSearchRequest.bind(this);
-    this.handleImgRequest = this.handleImgRequest.bind(this);
-    this.handleCheckbox = this.handleCheckbox.bind(this);
-    this.handleFileUpload = this.handleFileUpload.bind(this);
-    this.handleRemoveImg = this.handleRemoveImg.bind(this);
-    this.handleKeyUp = this.handleKeyUp.bind(this);
+    this.editRecordSubmit = this.editRecordSubmit.bind(this);
   }
 
-  handleEdit(e) {
-    e.preventDefault();
-    setLoadingCursor(true);
+  editRecordSubmit(formData){
+    const { editRecordInCollection, handleReset, setWildCardError } = this.props;
 
-    const keys = ['title', 'artist', 'format', 'rating', 'wikiHref', 'wikiDesc', 'wikiImg', 'notes', 'image'];
-    const formData = new FormData();
-
-    formData.append('id', this.props.record._id);
-    keys.forEach((key) => {
-      if (key === 'image') {
-        if (this.state.ignoreRecordImg) {
-          formData.append(key, undefined);
-        } else if (this.state[key] !== undefined) {
-          formData.append(key, this.state[key]);
-        }
-      } else if (key === 'wikiDesc') {
-        if (this.state.selectedCheckboxes.includes('wikiDescCB')) {
-          formData.append(key, this.state[key]);
-        } else {
-          formData.append(key, '');
-        }
-      } else if (key === 'wikiImg') {
-        if (this.state.selectedCheckboxes.includes('wikiImgCB')) {
-          formData.append(key, this.state[key]);
-        } else {
-          formData.append(key, '');
-        }
-      } else {
-        formData.append(key, this.state[key]);
-      }
-    });
-
-    this.props.editRecordInCollection(formData)
+    editRecordInCollection(formData)
       .then(() => {
-        this.props.handleReset();
+        handleReset();
       })
-      .catch(() => {
-        this.setState({ showWildCardError: true });
+      .catch((err) => {
+        console.error(err);
+        setWildCardError();
       })
       .then(() => {
         setLoadingCursor(false);
       });
   }
 
-  handleChange(e) {
-    e.preventDefault();
-    this.setState({ [e.target.name]: e.target.value, showWildCardError: false });
-  }
-
-  handleResetWiki() {
-    this.setState({
-      allowImgReq: false,
-      selectedCheckboxes: [],
-      wikiHref: '',
-      wikiReqDesc: false,
-      wikiReqImg: {
-        req: false,
-        searchTerm: '',
-      },
-      wikiDesc: '',
-      wikiImg: '',
-    });
-  }
-
-  handleSearchRequest() {
-    if (!this.state.wikiDesc) {
-      const searchRequest = sendDoubleWikiSearchRequest('en', this.state.title, this.state.artist);
-
-      searchRequest
-        .then((res) => {
-          this.setState({
-            allowImgReq: true,
-            wikiDesc: res[2] ? res[2][0] : '',
-            wikiHref: res[3] ? res[3][0] : '',
-            wikiReqImg: {
-              req: this.state.wikiReqImg.req,
-              searchTerm: res[1] && res[1][0] !== '' ? res[1][0] : '',
-            },
-          });
-        })
-        .catch(() => {
-          this.setState({ showWildCardError: true });
-        });
-    }
-  }
-
-  handleImgRequest() {
-    const { searchTerm } = this.state.wikiReqImg;
-    if (searchTerm && !this.state.wikiImg) {
-      sendWikiImageRequest(searchTerm)
-        .then((res) => {
-          this.setState({ wikiImg: getBestImageURL(searchTerm, JSON.parse(res.request.response)) });
-        })
-        .catch(() => {
-          this.setState({ showWildCardError: true });
-        });
-    }
-  }
-
-  handleCheckbox(e) {
-    const { name } = e.target;
-    const { selectedCheckboxes: checkedBoxes } = this.state;
-
-    if (checkedBoxes.indexOf(name) === -1) {
-      checkedBoxes.push(name);
-      this.setState({
-        selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: name === 'wikiDescCB' || this.state.wikiReqDesc,
-        wikiReqImg: {
-          req: name === 'wikiImgCB' || this.state.wikiReqImg.req,
-          searchTerm: this.state.wikiReqImg.searchTerm,
-        },
-      });
-    } else {
-      checkedBoxes.splice(checkedBoxes.indexOf(name), 1);
-      this.setState({
-        selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: name === 'wikiDescCB' ? false : this.state.wikiReqDesc,
-        wikiReqImg: {
-          req: name === 'wikiImgCB' ? false : this.state.wikiReqImg.req,
-          searchTerm: this.state.wikiReqImg.searchTerm,
-        },
-      });
-    }
-  }
-
-  handleFileUpload(e) {
-    e.preventDefault();
-    const reader = new FileReader();
-    const image = e.target.files[0];
-
-    reader.onloadend = () => {
-      this.setState({
-        image,
-        imageData: reader.result,
-        ignoreRecordImg: false,
-        invalidImg: false,
-      });
-    };
-
-    if (image && checkImgValid(image)) {
-      reader.readAsDataURL(image);
-    } else {
-      this.setState({ image: undefined, imageData: '', invalidImg: image !== undefined });
-    }
-  }
-
-  handleRemoveImg(e) {
-    e.preventDefault();
-
-    this.setState({
-      image: undefined,
-      imageData: '',
-      ignoreRecordImg: true,
-      invalidImg: false,
-    });
-  }
-
-  handleKeyUp(e) {
-    if (e.key.toLowerCase() === 'enter') {
-      switch (e.target.id) {
-        case 'delete':
-          this.props.handleShowModal(e);
-          break;
-        case 'edit':
-          this.handleEdit(e);
-          break;
-        default: e.preventDefault();
-      }
-    }
-  }
-
   render() {
-    const { handleShowModal, record } = this.props;
-    const recordImg = record.image ? record.image.data : undefined;
     const {
       title,
       artist,
@@ -254,7 +67,23 @@ export default class EditRecord extends React.Component {
       allowImgReq,
       ignoreRecordImg,
       showWildCardError,
-    } = this.state;
+      rating,
+      invalidImg,
+      recordImg,
+      record,
+      handleShowModal,
+      handleChange,
+      handleKeyUp,
+      handleSubmit,
+      handleRatingChange,
+      handleCheckbox,
+      handleSearchRequest,
+      handleImgRequest,
+      handleResetWiki,
+      handleFileUpload,
+      handleRemoveImg,
+      handleReset,
+    } = this.props;
 
     return (
       <Row>
@@ -286,7 +115,7 @@ export default class EditRecord extends React.Component {
                   value={title}
                   type="text"
                   placeholder="Title..."
-                  onChange={this.handleChange}
+                  onChange={handleChange}
                 />
               </Col>
               <Col lg={5} md={4} sm={5} xs={12}>
@@ -297,7 +126,7 @@ export default class EditRecord extends React.Component {
                   value={artist}
                   type="text"
                   placeholder="Artist..."
-                  onChange={this.handleChange}
+                  onChange={handleChange}
                 />
               </Col>
               <Col lg={2} md={3} sm={2} xs={3}>
@@ -308,7 +137,7 @@ export default class EditRecord extends React.Component {
                     tabIndex={0}
                     className="standard-glyph pull-right md-glyph"
                     onClick={handleShowModal}
-                    onKeyUp={this.handleKeyUp}
+                    onKeyUp={handleKeyUp}
                   >
                     <Glyphicon glyph="trash" />
                   </span>
@@ -319,8 +148,8 @@ export default class EditRecord extends React.Component {
                     role="button"
                     tabIndex={0}
                     className="standard-glyph pull-right md-glyph"
-                    onClick={this.handleEdit}
-                    onKeyUp={this.handleKeyUp}
+                    onClick={e => handleSubmit(e, this.editRecordSubmit)}
+                    onKeyUp={e => handleKeyUp(e, this.editRecordSubmit)}
                   >
                     <Glyphicon glyph="ok" />
                   </span>
@@ -334,7 +163,7 @@ export default class EditRecord extends React.Component {
                   id="formControlsFormat"
                   name="format"
                   value={format}
-                  onChange={this.handleChange}
+                  onChange={handleChange}
                   options={getValidFormatTypes()}
                 />
               </Col>
@@ -345,8 +174,8 @@ export default class EditRecord extends React.Component {
                   <Rating
                     emptySymbol="glyphicon glyphicon-star-empty"
                     fullSymbol="glyphicon glyphicon-star"
-                    initialRating={this.state.rating}
-                    onChange={rating => this.setState({ rating })}
+                    initialRating={rating}
+                    onChange={rating => handleRatingChange(rating)}
                   />
                 </div>
                 {/* eslint-enable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -358,8 +187,8 @@ export default class EditRecord extends React.Component {
                   <Checkbox
                     name="wikiDescCB"
                     onChange={(e) => {
-                      this.handleCheckbox(e);
-                      this.handleSearchRequest();
+                      handleCheckbox(e);
+                      handleSearchRequest();
                     }}
                     checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
                     inline
@@ -369,8 +198,8 @@ export default class EditRecord extends React.Component {
                   <Checkbox
                     name="wikiImgCB"
                     onChange={(e) => {
-                      this.handleCheckbox(e);
-                      this.handleImgRequest();
+                      handleCheckbox(e);
+                      handleImgRequest();
                     }}
                     disabled={!allowImgReq}
                     checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
@@ -379,7 +208,7 @@ export default class EditRecord extends React.Component {
                     Add/edit image from Wikipedia
                   </Checkbox> {' '}
                   {(wikiImg || wikiDesc) &&
-                  <Button onClick={this.handleResetWiki}>
+                  <Button onClick={handleResetWiki}>
                     Reset Wikipedia fields
                   </Button>}
                 </FormGroup>
@@ -400,13 +229,13 @@ export default class EditRecord extends React.Component {
                   type="file"
                   label="Upload an image of the record:"
                   help="If you want to upload your own image. (Max: 2MB)"
-                  onChange={this.handleFileUpload}
+                  onChange={handleFileUpload}
                 />
-                {this.state.invalidImg &&
+                {invalidImg &&
                   <p className="text-danger">The uploaded file is invalid.</p>
                 }
                 {(image || recordImg) &&
-                  <Button onClick={this.handleRemoveImg}>Remove file</Button>
+                  <Button onClick={handleRemoveImg}>Remove file</Button>
                 }
               </Col>
             </Row>
@@ -420,7 +249,7 @@ export default class EditRecord extends React.Component {
                     name="notes"
                     value={notes}
                     placeholder="Record markings, playback speed, record quality..."
-                    onChange={this.handleChange}
+                    onChange={handleChange}
                   />
                 </FormGroup>
               </Col>
@@ -431,8 +260,8 @@ export default class EditRecord extends React.Component {
               </Col>
               <Col lg={5} md={5} sm={5} xs={12}>
                 {showWildCardError && <WildCardError />}
-                <Button className="pull-right" bsStyle="success" onClick={this.handleEdit}>Confirm Edit</Button>
-                <Button className="pull-right" onClick={this.props.handleReset}>Cancel</Button>
+                <Button className="pull-right" bsStyle="success" onClick={e => handleSubmit(e, this.editRecordSubmit)}>Confirm Edit</Button>
+                <Button className="pull-right" onClick={handleReset}>Cancel</Button>
               </Col>
             </Row>
           </Grid>
@@ -443,6 +272,25 @@ export default class EditRecord extends React.Component {
 }
 
 EditRecord.propTypes = {
+  title: PropTypes.string.isRequired,
+  artist: PropTypes.string.isRequired,
+  format: PropTypes.string.isRequired,
+  notes: PropTypes.string.isRequired,
+  imageData: PropTypes.string.isRequired,
+  wikiHref: PropTypes.string.isRequired,
+  wikiDesc: PropTypes.string.isRequired,
+  wikiReqDesc: PropTypes.bool.isRequired,
+  wikiImg: PropTypes.string.isRequired,
+  wikiReqImg: PropTypes.shape({
+    req: PropTypes.bool.isRequired,
+    searchTerm: PropTypes.string.isRequired,
+  }),
+  selectedCheckboxes: PropTypes.arrayOf(PropTypes.string),
+  allowImgReq: PropTypes.bool.isRequired,
+  ignoreRecordImg: PropTypes.bool.isRequired,
+  showWildCardError: PropTypes.bool.isRequired,
+  rating: PropTypes.number.isRequired,
+  invalidImg: PropTypes.bool.isRequired,
   record: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
@@ -454,9 +302,17 @@ EditRecord.propTypes = {
     wikiDesc: PropTypes.string,
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
-  }).isRequired,
+  }),
   handleShowModal: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleKeyUp: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  handleRatingChange: PropTypes.func.isRequired,
+  handleCheckbox: PropTypes.func.isRequired,
+  handleSearchRequest: PropTypes.func.isRequired,
+  handleImgRequest: PropTypes.func.isRequired,
+  handleResetWiki: PropTypes.func.isRequired,
+  handleFileUpload: PropTypes.func.isRequired,
+  handleRemoveImg: PropTypes.func.isRequired,
   handleReset: PropTypes.func.isRequired,
-  editRecordInCollection: PropTypes.func.isRequired,
 };
-
