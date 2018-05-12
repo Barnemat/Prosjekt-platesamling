@@ -1,24 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  FormControl,
-  FormGroup,
-  Button,
-  Glyphicon,
-  InputGroup,
-  ControlLabel,
-  Collapse,
-  OverlayTrigger,
-  Checkbox,
-  Well,
-  Image,
   Grid,
   Col,
-  Row } from 'react-bootstrap';
+  Row,
+  Image,
+  Button,
+  Glyphicon,
+  OverlayTrigger,
+  FormGroup,
+  FormControl,
+  Checkbox,
+  Collapse,
+  ControlLabel,
+  InputGroup,
+  Well,
+} from 'react-bootstrap';
 import Rating from 'react-rating';
-import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
-import { getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
 import tooltip from '../CommonComponents/Tooltip';
+import { setLoadingCursor, getValidFormatTypes } from '../../util';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
 import WildCardError from '../CommonComponents/WildCardError';
@@ -27,275 +27,69 @@ export default class AddRecord extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      title: '',
-      artist: '',
-      format: getValidFormatTypes()[0],
-      selectedCheckboxes: [],
-      rating: 0,
-      allowImgReq: false,
-      wikiHref: '',
-      wikiReqDesc: false,
-      wikiReqImg: {
-        req: false,
-        searchTerm: '',
-      },
-      wikiDesc: '',
-      wikiImg: '',
-      largeForm: false,
-      notes: '',
-      image: undefined,
-      imageData: '',
-      invalidImg: false,
-      showWildCardError: false,
-    };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.toggleLargeForm = this.toggleLargeForm.bind(this);
-    this.handleSearchRequest = this.handleSearchRequest.bind(this);
-    this.handleImgRequest = this.handleImgRequest.bind(this);
-    this.handleCheckbox = this.handleCheckbox.bind(this);
-    this.handleReset = this.handleReset.bind(this);
-    this.handleResetWiki = this.handleResetWiki.bind(this);
-    this.handleFileUpload = this.handleFileUpload.bind(this);
-    this.handleRemoveImg = this.handleRemoveImg.bind(this);
+    this.addRecordSubmit = this.addRecordSubmit.bind(this);
   }
 
-  handleChange(e) {
-    e.preventDefault();
-    if (this.state.title !== '' && !this.state.largeForm) {
-      this.setState({ [e.target.name]: e.target.value, largeForm: true, showWildCardError: false });
-    } else {
-      this.setState({ [e.target.name]: e.target.value, showWildCardError: false });
-    }
-  }
+  addRecordSubmit(formData) {
+    const {
+      addRecordToCollection, loadCollection, handleReset, setWildCardError,
+    } = this.props;
 
-  handleCheckbox(e) {
-    const { name } = e.target;
-    const { selectedCheckboxes: checkedBoxes } = this.state;
-
-    if (checkedBoxes.indexOf(name) === -1) {
-      checkedBoxes.push(name);
-      this.setState({
-        selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: name === 'wikiDescCB' || this.state.wikiReqDesc,
-        wikiReqImg: {
-          req: name === 'wikiImgCB' || this.state.wikiReqImg.req,
-          searchTerm: this.state.wikiReqImg.searchTerm,
-        },
-      });
-    } else {
-      checkedBoxes.splice(checkedBoxes.indexOf(name), 1);
-      this.setState({
-        selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: name === 'wikiDescCB' ? false : this.state.wikiReqDesc,
-        wikiReqImg: {
-          req: name === 'wikiImgCB' ? false : this.state.wikiReqImg.req,
-          searchTerm: this.state.wikiReqImg.searchTerm,
-        },
-      });
-    }
-  }
-
-  handleFileUpload(e) {
-    e.preventDefault();
-    const reader = new FileReader();
-    const image = e.target.files[0];
-
-    reader.onloadend = () => {
-      setLoadingCursor(false);
-      this.setState({
-        image,
-        imageData: reader.result,
-        invalidImg: false,
-      });
-    };
-
-    reader.onerror = () => {
-      setLoadingCursor(false);
-    };
-
-    if (image && checkImgValid(image)) {
-      setLoadingCursor();
-      reader.readAsDataURL(image);
-    } else {
-      this.setState({ image: undefined, imageData: '', invalidImg: image !== undefined });
-    }
-  }
-
-  handleReset(e) {
-    if (e) {
-      e.preventDefault();
-
-      if (e.key !== undefined && e.key.toLowerCase() !== 'enter') {
-        return;
-      }
-    }
-
-    this.setState({
-      title: '',
-      artist: '',
-      format: getValidFormatTypes()[0],
-      selectedCheckboxes: [],
-      rating: 0,
-      allowImgReq: false,
-      wikiHref: '',
-      wikiReqDesc: false,
-      wikiReqImg: {
-        req: false,
-        searchTerm: '',
-      },
-      wikiDesc: '',
-      wikiImg: '',
-      largeForm: false,
-      notes: '',
-      image: undefined,
-      imageData: '',
-      invalidImg: false,
-      showWildCardError: false,
-    });
-  }
-
-  handleResetWiki() {
-    this.setState({
-      allowImgReq: false,
-      selectedCheckboxes: [],
-      wikiHref: '',
-      wikiReqDesc: false,
-      wikiReqImg: {
-        req: false,
-        searchTerm: '',
-      },
-      wikiDesc: '',
-      wikiImg: '',
-    });
-  }
-
-  handleSubmit(e) {
-    e.preventDefault();
-    setLoadingCursor(true);
-
-    const keys = ['title', 'artist', 'format', 'rating', 'wikiHref', 'wikiDesc', 'wikiImg', 'notes', 'image'];
-    const formData = new FormData();
-
-    keys.forEach((key) => {
-      if (key === 'wikiDesc') {
-        if (this.state.selectedCheckboxes.includes('wikiDescCB')) {
-          formData.append(key, this.state[key]);
-        } else {
-          formData.append(key, '');
-        }
-      } else if (key === 'wikiImg') {
-        if (this.state.selectedCheckboxes.includes('wikiImgCB')) {
-          formData.append(key, this.state[key]);
-        } else {
-          formData.append(key, '');
-        }
-      } else {
-        formData.append(key, this.state[key]);
-      }
-    });
-
-    this.props.addRecordToCollection(formData)
+    addRecordToCollection(formData)
       .then(() => {
-        this.props.loadCollection();
-        this.handleReset();
+        loadCollection();
+        handleReset();
       })
       .catch(() => {
-        this.setState({ showWildCardError: true });
+        setWildCardError();
       })
       .then(() => {
         setLoadingCursor(false);
       });
   }
 
-  handleSearchRequest() {
-    if (!this.state.wikiDesc) {
-      setLoadingCursor(true);
-      const searchRequest = sendDoubleWikiSearchRequest('en', this.state.title, this.state.artist);
-
-      searchRequest
-        .then((res) => {
-          this.setState({
-            allowImgReq: true,
-            wikiDesc: res[2] ? res[2][0] : '',
-            wikiHref: res[3] ? res[3][0] : '',
-            wikiReqImg: {
-              req: this.state.wikiReqImg.req,
-              searchTerm: res[1] && res[1][0] !== '' ? res[1][0] : '',
-            },
-          });
-        })
-        .catch(() => {
-          this.setState({ showWildCardError: true });
-        })
-        .then(() => {
-          setLoadingCursor(false);
-        });
-    }
-  }
-
-  handleImgRequest() {
-    const { searchTerm } = this.state.wikiReqImg;
-    if (searchTerm && !this.state.wikiImg) {
-      setLoadingCursor();
-
-      sendWikiImageRequest(searchTerm)
-        .then((res) => {
-          this.setState({ wikiImg: getBestImageURL(searchTerm, JSON.parse(res.request.response)) });
-        })
-        .catch(() => {
-          this.setState({ showWildCardError: true });
-        })
-        .then(() => {
-          setLoadingCursor(false);
-        });
-    }
-  }
-
-  handleRemoveImg(e) {
-    e.preventDefault();
-
-    this.setState({
-      image: undefined,
-      imageData: '',
-      invalidImg: false,
-    });
-  }
-
-  toggleLargeForm(e) {
-    e.preventDefault();
-    this.setState({ largeForm: !this.state.largeForm });
-  }
-
   render() {
     const {
-      largeForm,
+      handleSubmit,
+      showWildCardError,
       title,
+      largeForm,
+      handleChange,
+      handleReset,
+      toggleLargeForm,
       artist,
-      notes,
+      selectedCheckboxes,
       allowImgReq,
-      wikiDesc,
       wikiImg,
+      wikiDesc,
+      handleResetWiki,
       wikiReqImg,
       wikiReqDesc,
       wikiHref,
-      selectedCheckboxes,
-      showWildCardError,
-    } = this.state;
+      handleFileUpload,
+      invalidImg,
+      image,
+      imageData,
+      handleRemoveImg,
+      notes,
+      rating,
+      handleRatingChange,
+      handleCheckbox,
+      handleSearchRequest,
+      handleImgRequest,
+    } = this.props;
 
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={e => handleSubmit(e, this.addRecordSubmit)}>
         {showWildCardError && <WildCardError />}
         <TitleFormGroup
           name="title"
           value={title}
           label={largeForm ? 'The name of your record:' : 'Add a record to your collection:'}
-          handleChange={this.handleChange}
-          handleReset={this.handleReset}
+          handleChange={handleChange}
+          handleReset={handleReset}
           largeForm={largeForm}
-          toggleLargeForm={this.toggleLargeForm}
+          toggleLargeForm={toggleLargeForm}
           glyph={largeForm ? 'minus' : 'plus'}
           tooltip={largeForm ? '' : 'Click here to add a record.'}
         />
@@ -308,42 +102,42 @@ export default class AddRecord extends React.Component {
               type="text"
               label="The artist of the record:"
               placeholder="Artist..."
-              onChange={this.handleChange}
+              onChange={handleChange}
             />
             <SelectFormGroup
               id="formControlsFormat"
               name="format"
               label="The format of the record (e.g. LP, EP, CD):"
-              onChange={this.handleChange}
+              onChange={handleChange}
               options={getValidFormatTypes()}
             />
             <FormGroup>
               <Checkbox
                 name="wikiDescCB"
                 onChange={(e) => {
-                  this.handleCheckbox(e);
-                  this.handleSearchRequest();
-                }}
+                 handleCheckbox(e);
+                 handleSearchRequest();
+               }}
                 checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
                 inline
               >
-                Add description from Wikipedia
+               Add description from Wikipedia
               </Checkbox>
               <Checkbox
                 name="wikiImgCB"
                 onChange={(e) => {
-                  this.handleCheckbox(e);
-                  this.handleImgRequest();
-                }}
+                 handleCheckbox(e);
+                 handleImgRequest();
+               }}
                 disabled={!allowImgReq}
                 checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
                 inline
               >
-                Add image from Wikipedia
+               Add image from Wikipedia
               </Checkbox> {' '}
               {(wikiImg || wikiDesc) &&
-              <Button onClick={this.handleResetWiki}>
-                Reset Wikipedia fields
+              <Button onClick={handleResetWiki}>
+               Reset Wikipedia fields
               </Button>}
             </FormGroup>
             <WikiInfo
@@ -359,25 +153,25 @@ export default class AddRecord extends React.Component {
               type="file"
               label="Upload an image of the record:"
               help="If you want to upload your own image. (Max: 2MB)"
-              onChange={this.handleFileUpload}
+              onChange={handleFileUpload}
             />
-            {this.state.invalidImg &&
-              <p className="text-danger">The uploaded file is invalid.</p>
-            }
-            {this.state.image &&
-              <Grid fluid>
-                <Row>
-                  <Col lg={6} md={7} sm={5} xs={8}>
-                    <Well bsSize="small">
-                      {this.state.imageData &&
-                        <Image src={this.state.imageData} responsive />
-                      }
-                    </Well>
-                    <Button bsSize="small" onClick={this.handleRemoveImg}>Remove file</Button>
-                  </Col>
-                </Row>
-              </Grid>
-            }
+            {invalidImg &&
+            <p className="text-danger">The uploaded file is invalid.</p>
+           }
+            {image &&
+            <Grid fluid>
+              <Row>
+                <Col lg={6} md={7} sm={5} xs={8}>
+                  <Well bsSize="small">
+                    {imageData &&
+                    <Image src={imageData} responsive />
+                     }
+                  </Well>
+                  <Button bsSize="small" onClick={handleRemoveImg}>Remove file</Button>
+                </Col>
+              </Row>
+            </Grid>
+           }
             <FormGroup controlId="formControlsNotes">
               <ControlLabel>Add your own notes here:</ControlLabel>
               <FormControl
@@ -386,17 +180,17 @@ export default class AddRecord extends React.Component {
                 name="notes"
                 value={notes}
                 placeholder="Record markings, playback speed, record quality..."
-                onChange={this.handleChange}
+                onChange={handleChange}
               />
             </FormGroup>
             <Rating
               emptySymbol="glyphicon glyphicon-star-empty"
               fullSymbol="glyphicon glyphicon-star"
-              initialRating={this.state.rating}
-              onChange={rating => this.setState({ rating })}
+              initialRating={rating}
+              onChange={rate => handleRatingChange(rate)}
             />
             <Button bsStyle="primary" type="submit" block>
-              Add record to collection
+             Add record to collection
             </Button>
           </div>
         </Collapse>
@@ -406,8 +200,41 @@ export default class AddRecord extends React.Component {
 }
 
 AddRecord.propTypes = {
-  addRecordToCollection: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  largeForm: PropTypes.bool.isRequired,
+  artist: PropTypes.string.isRequired,
+  selectedCheckboxes: PropTypes.arrayOf(PropTypes.string).isRequired,
+  allowImgReq: PropTypes.bool.isRequired,
+  wikiImg: PropTypes.string.isRequired,
+  wikiDesc: PropTypes.string.isRequired,
+  handleResetWiki: PropTypes.func.isRequired,
+  wikiReqImg: PropTypes.shape({
+    req: PropTypes.bool.isRequired,
+    searchTerm: PropTypes.string.isRequired,
+  }).isRequired,
+  wikiReqDesc: PropTypes.bool.isRequired,
+  wikiHref: PropTypes.string.isRequired,
+  invalidImg: PropTypes.bool.isRequired,
+  imageData: PropTypes.string.isRequired,
+  notes: PropTypes.string.isRequired,
+  rating: PropTypes.number.isRequired,
+  /* eslint-disable react/forbid-prop-types */
+  image: PropTypes.any.isRequired, // Should be file, but I don't know how to specify
+  /* eslint-enable react/prop-types */
   loadCollection: PropTypes.func.isRequired,
+  addRecordToCollection: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleReset: PropTypes.func.isRequired,
+  handleFileUpload: PropTypes.func.isRequired,
+  handleRemoveImg: PropTypes.func.isRequired,
+  handleRatingChange: PropTypes.func.isRequired,
+  handleCheckbox: PropTypes.func.isRequired,
+  handleSearchRequest: PropTypes.func.isRequired,
+  handleImgRequest: PropTypes.func.isRequired,
+  showWildCardError: PropTypes.bool.isRequired,
+  setWildCardError: PropTypes.func.isRequired,
+  toggleLargeForm: PropTypes.func.isRequired,
 };
 
 const TitleFormGroup = ({
