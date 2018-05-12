@@ -18,12 +18,10 @@ import {
 } from 'react-bootstrap';
 import Rating from 'react-rating';
 import tooltip from '../CommonComponents/Tooltip';
-import { checkTimePassed, getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
-import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
+import { setLoadingCursor, getValidFormatTypes } from '../../util';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
 import WildCardError from '../CommonComponents/WildCardError';
-import noRecordImg from '../../assets/img/no_record_img.png';
 
 export default class AddRecord extends React.Component {
   constructor(props) {
@@ -33,20 +31,21 @@ export default class AddRecord extends React.Component {
   }
 
   addRecordSubmit(formData) {
-    const { addRecordToCollection, loadCollection, handleReset, setWildCardError } = this.props;
+    const {
+      addRecordToCollection, loadCollection, handleReset, setWildCardError,
+    } = this.props;
 
     addRecordToCollection(formData)
-    .then(() => {
-      loadCollection();
-      handleReset();
-    })
-    .catch((err) => {
-      console.error(err);
-      setWildCardError();
-    })
-    .then(() => {
-      setLoadingCursor(false);
-    });
+      .then(() => {
+        loadCollection();
+        handleReset();
+      })
+      .catch(() => {
+        setWildCardError();
+      })
+      .then(() => {
+        setLoadingCursor(false);
+      });
   }
 
   render() {
@@ -80,137 +79,131 @@ export default class AddRecord extends React.Component {
       handleImgRequest,
     } = this.props;
 
-    return(
+    return (
       <form onSubmit={e => handleSubmit(e, this.addRecordSubmit)}>
-       {showWildCardError && <WildCardError />}
-       <TitleFormGroup
-         name="title"
-         value={title}
-         label={largeForm ? 'The name of your record:' : 'Add a record to your collection:'}
-         handleChange={handleChange}
-         handleReset={handleReset}
-         largeForm={largeForm}
-         toggleLargeForm={toggleLargeForm}
-         glyph={largeForm ? 'minus' : 'plus'}
-         tooltip={largeForm ? '' : 'Click here to add a record.'}
-       />
-       <Collapse in={largeForm}>
-         <div>
-           <DefaultFormGroup
-             id="formControlsArtist"
-             name="artist"
-             value={artist}
-             type="text"
-             label="The artist of the record:"
-             placeholder="Artist..."
-             onChange={handleChange}
-           />
-           <SelectFormGroup
-             id="formControlsFormat"
-             name="format"
-             label="The format of the record (e.g. LP, EP, CD):"
-             onChange={handleChange}
-             options={getValidFormatTypes()}
-           />
-           <FormGroup>
-             <Checkbox
-               name="wikiDescCB"
-               onChange={(e) => {
+        {showWildCardError && <WildCardError />}
+        <TitleFormGroup
+          name="title"
+          value={title}
+          label={largeForm ? 'The name of your record:' : 'Add a record to your collection:'}
+          handleChange={handleChange}
+          handleReset={handleReset}
+          largeForm={largeForm}
+          toggleLargeForm={toggleLargeForm}
+          glyph={largeForm ? 'minus' : 'plus'}
+          tooltip={largeForm ? '' : 'Click here to add a record.'}
+        />
+        <Collapse in={largeForm}>
+          <div>
+            <DefaultFormGroup
+              id="formControlsArtist"
+              name="artist"
+              value={artist}
+              type="text"
+              label="The artist of the record:"
+              placeholder="Artist..."
+              onChange={handleChange}
+            />
+            <SelectFormGroup
+              id="formControlsFormat"
+              name="format"
+              label="The format of the record (e.g. LP, EP, CD):"
+              onChange={handleChange}
+              options={getValidFormatTypes()}
+            />
+            <FormGroup>
+              <Checkbox
+                name="wikiDescCB"
+                onChange={(e) => {
                  handleCheckbox(e);
                  handleSearchRequest();
                }}
-               checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
-               inline
-             >
+                checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
+                inline
+              >
                Add description from Wikipedia
-             </Checkbox>
-             <Checkbox
-               name="wikiImgCB"
-               onChange={(e) => {
+              </Checkbox>
+              <Checkbox
+                name="wikiImgCB"
+                onChange={(e) => {
                  handleCheckbox(e);
                  handleImgRequest();
                }}
-               disabled={!allowImgReq}
-               checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
-               inline
-             >
+                disabled={!allowImgReq}
+                checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
+                inline
+              >
                Add image from Wikipedia
-             </Checkbox> {' '}
-             {(wikiImg || wikiDesc) &&
-             <Button onClick={handleResetWiki}>
+              </Checkbox> {' '}
+              {(wikiImg || wikiDesc) &&
+              <Button onClick={handleResetWiki}>
                Reset Wikipedia fields
-             </Button>}
-           </FormGroup>
-           <WikiInfo
-             wikiReqDesc={wikiReqDesc}
-             wikiReqImg={wikiReqImg}
-             wikiDesc={wikiDesc}
-             wikiImg={wikiImg}
-             wikiHref={wikiHref}
-           />
-           <DefaultFormGroup
-             id="formControlsImage"
-             name="image"
-             type="file"
-             label="Upload an image of the record:"
-             help="If you want to upload your own image. (Max: 2MB)"
-             onChange={handleFileUpload}
-           />
-           {invalidImg &&
-             <p className="text-danger">The uploaded file is invalid.</p>
+              </Button>}
+            </FormGroup>
+            <WikiInfo
+              wikiReqDesc={wikiReqDesc}
+              wikiReqImg={wikiReqImg}
+              wikiDesc={wikiDesc}
+              wikiImg={wikiImg}
+              wikiHref={wikiHref}
+            />
+            <DefaultFormGroup
+              id="formControlsImage"
+              name="image"
+              type="file"
+              label="Upload an image of the record:"
+              help="If you want to upload your own image. (Max: 2MB)"
+              onChange={handleFileUpload}
+            />
+            {invalidImg &&
+            <p className="text-danger">The uploaded file is invalid.</p>
            }
-           {image &&
-             <Grid fluid>
-               <Row>
-                 <Col lg={6} md={7} sm={5} xs={8}>
-                   <Well bsSize="small">
-                     {imageData &&
-                       <Image src={imageData} responsive />
+            {image &&
+            <Grid fluid>
+              <Row>
+                <Col lg={6} md={7} sm={5} xs={8}>
+                  <Well bsSize="small">
+                    {imageData &&
+                    <Image src={imageData} responsive />
                      }
-                   </Well>
-                   <Button bsSize="small" onClick={handleRemoveImg}>Remove file</Button>
-                 </Col>
-               </Row>
-             </Grid>
+                  </Well>
+                  <Button bsSize="small" onClick={handleRemoveImg}>Remove file</Button>
+                </Col>
+              </Row>
+            </Grid>
            }
-           <FormGroup controlId="formControlsNotes">
-             <ControlLabel>Add your own notes here:</ControlLabel>
-             <FormControl
-               className="vresize"
-               componentClass="textarea"
-               name="notes"
-               value={notes}
-               placeholder="Record markings, playback speed, record quality..."
-               onChange={handleChange}
-             />
-           </FormGroup>
-           <Rating
-             emptySymbol="glyphicon glyphicon-star-empty"
-             fullSymbol="glyphicon glyphicon-star"
-             initialRating={rating}
-             onChange={rating => handleRatingChange(rating)}
-           />
-           <Button bsStyle="primary" type="submit" block>
+            <FormGroup controlId="formControlsNotes">
+              <ControlLabel>Add your own notes here:</ControlLabel>
+              <FormControl
+                className="vresize"
+                componentClass="textarea"
+                name="notes"
+                value={notes}
+                placeholder="Record markings, playback speed, record quality..."
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <Rating
+              emptySymbol="glyphicon glyphicon-star-empty"
+              fullSymbol="glyphicon glyphicon-star"
+              initialRating={rating}
+              onChange={rate => handleRatingChange(rate)}
+            />
+            <Button bsStyle="primary" type="submit" block>
              Add record to collection
-           </Button>
-         </div>
-       </Collapse>
+            </Button>
+          </div>
+        </Collapse>
       </form>
     );
   }
 }
 
 AddRecord.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
-  showWildCardError: PropTypes.bool.isRequired,
-  setWildCardError: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   largeForm: PropTypes.bool.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleReset: PropTypes.func.isRequired,
-  toggleLargeForm: PropTypes.func.isRequired,
   artist: PropTypes.string.isRequired,
-  selectedCheckboxes: PropTypes.arrayOf(PropTypes.string),
+  selectedCheckboxes: PropTypes.arrayOf(PropTypes.string).isRequired,
   allowImgReq: PropTypes.bool.isRequired,
   wikiImg: PropTypes.string.isRequired,
   wikiDesc: PropTypes.string.isRequired,
@@ -218,21 +211,30 @@ AddRecord.propTypes = {
   wikiReqImg: PropTypes.shape({
     req: PropTypes.bool.isRequired,
     searchTerm: PropTypes.string.isRequired,
-  }),
+  }).isRequired,
   wikiReqDesc: PropTypes.bool.isRequired,
   wikiHref: PropTypes.string.isRequired,
-  handleFileUpload: PropTypes.func.isRequired,
   invalidImg: PropTypes.bool.isRequired,
   imageData: PropTypes.string.isRequired,
-  handleRemoveImg: PropTypes.func.isRequired,
   notes: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
+  /* eslint-disable react/forbid-prop-types */
+  image: PropTypes.any.isRequired, // Should be file, but I don't know how to specify
+  /* eslint-enable react/prop-types */
+  loadCollection: PropTypes.func.isRequired,
+  addRecordToCollection: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleReset: PropTypes.func.isRequired,
+  handleFileUpload: PropTypes.func.isRequired,
+  handleRemoveImg: PropTypes.func.isRequired,
   handleRatingChange: PropTypes.func.isRequired,
   handleCheckbox: PropTypes.func.isRequired,
   handleSearchRequest: PropTypes.func.isRequired,
   handleImgRequest: PropTypes.func.isRequired,
-  loadCollection: PropTypes.func.isRequired,
-  addRecordToCollection: PropTypes.func.isRequired,
+  showWildCardError: PropTypes.bool.isRequired,
+  setWildCardError: PropTypes.func.isRequired,
+  toggleLargeForm: PropTypes.func.isRequired,
 };
 
 const TitleFormGroup = ({

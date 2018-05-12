@@ -13,15 +13,10 @@ import {
   FormGroup,
   FormControl,
   Checkbox,
-  Collapse,
-  ControlLabel,
-  InputGroup,
-  Well,
 } from 'react-bootstrap';
 import Rating from 'react-rating';
 import tooltip from '../CommonComponents/Tooltip';
-import { checkTimePassed, getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
-import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
+import { checkTimePassed, getValidFormatTypes, setLoadingCursor } from '../../util';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
 import WildCardError from '../CommonComponents/WildCardError';
@@ -34,15 +29,14 @@ export default class EditRecord extends React.Component {
     this.editRecordSubmit = this.editRecordSubmit.bind(this);
   }
 
-  editRecordSubmit(formData){
+  editRecordSubmit(formData) {
     const { editRecordInCollection, handleReset, setWildCardError } = this.props;
 
     editRecordInCollection(formData)
       .then(() => {
         handleReset();
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
         setWildCardError();
       })
       .then(() => {
@@ -175,7 +169,7 @@ export default class EditRecord extends React.Component {
                     emptySymbol="glyphicon glyphicon-star-empty"
                     fullSymbol="glyphicon glyphicon-star"
                     initialRating={rating}
-                    onChange={rating => handleRatingChange(rating)}
+                    onChange={rate => handleRatingChange(rate)}
                   />
                 </div>
                 {/* eslint-enable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -260,7 +254,9 @@ export default class EditRecord extends React.Component {
               </Col>
               <Col lg={5} md={5} sm={5} xs={12}>
                 {showWildCardError && <WildCardError />}
-                <Button className="pull-right" bsStyle="success" onClick={e => handleSubmit(e, this.editRecordSubmit)}>Confirm Edit</Button>
+                <Button className="pull-right" bsStyle="success" onClick={e => handleSubmit(e, this.editRecordSubmit)}>
+                  Confirm Edit
+                </Button>
                 <Button className="pull-right" onClick={handleReset}>Cancel</Button>
               </Col>
             </Row>
@@ -284,25 +280,29 @@ EditRecord.propTypes = {
   wikiReqImg: PropTypes.shape({
     req: PropTypes.bool.isRequired,
     searchTerm: PropTypes.string.isRequired,
-  }),
-  selectedCheckboxes: PropTypes.arrayOf(PropTypes.string),
+  }).isRequired,
+  selectedCheckboxes: PropTypes.arrayOf(PropTypes.string).isRequired,
   allowImgReq: PropTypes.bool.isRequired,
   ignoreRecordImg: PropTypes.bool.isRequired,
   showWildCardError: PropTypes.bool.isRequired,
   rating: PropTypes.number.isRequired,
   invalidImg: PropTypes.bool.isRequired,
+  /* eslint-disable react/forbid-prop-types */
+  image: PropTypes.any.isRequired, // Should be file, but I don't know how to specify
+  recordImg: PropTypes.any.isRequired, // Should be file, but I don't know how to specify
+  /* eslint-enable react/prop-types */
   record: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     artist: PropTypes.string,
     format: PropTypes.string,
-    rating: PropTypes.num,
+    rating: PropTypes.number,
     wikiHref: PropTypes.string,
     wikiDesc: PropTypes.string,
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
-  }),
+  }).isRequired,
   handleShowModal: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleKeyUp: PropTypes.func.isRequired,
@@ -315,4 +315,6 @@ EditRecord.propTypes = {
   handleFileUpload: PropTypes.func.isRequired,
   handleRemoveImg: PropTypes.func.isRequired,
   handleReset: PropTypes.func.isRequired,
+  editRecordInCollection: PropTypes.func.isRequired,
+  setWildCardError: PropTypes.func.isRequired,
 };

@@ -2,30 +2,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Grid,
-  Col,
-  Row,
-  Image,
-  Button,
-  Glyphicon,
-  OverlayTrigger,
-  FormGroup,
-  FormControl,
-  Checkbox,
-  Collapse,
-  ControlLabel,
-  InputGroup,
-  Well,
-} from 'react-bootstrap';
-import Rating from 'react-rating';
-import tooltip from '../CommonComponents/Tooltip';
-import { checkTimePassed, getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
+import { getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
-import DefaultFormGroup from './FormComponents/DefaultFormGroup';
-import SelectFormGroup from './FormComponents/SelectFormGroup';
-import WildCardError from '../CommonComponents/WildCardError';
-import noRecordImg from '../../assets/img/no_record_img.png';
 import AddRecord from './AddRecord';
 import EditRecord from './EditRecord';
 
@@ -74,6 +52,10 @@ export default class AddOrEditRecord extends React.Component {
     this.toggleLargeForm = this.toggleLargeForm.bind(this);
   }
 
+  setWildCardError() {
+    this.setState({ showWildCardError: true });
+  }
+
   handleChange(e) {
     e.preventDefault();
     const { title, largeForm } = this.state;
@@ -87,7 +69,7 @@ export default class AddOrEditRecord extends React.Component {
   }
 
   handleRatingChange(rating) {
-    this.setState({ rating })
+    this.setState({ rating });
   }
 
   handleSubmit(e, submitFunction) {
@@ -95,7 +77,7 @@ export default class AddOrEditRecord extends React.Component {
     setLoadingCursor(true);
 
     const { ignoreRecordImg, selectedCheckboxes } = this.state;
-    const { record, editRecordInCollection, addRecordToCollection, edit } = this.props;
+    const { record, edit } = this.props;
     const keys = ['title', 'artist', 'format', 'rating', 'wikiHref', 'wikiDesc', 'wikiImg', 'notes', 'image'];
     const formData = new FormData();
 
@@ -303,12 +285,10 @@ export default class AddOrEditRecord extends React.Component {
     this.setState({ largeForm: !this.state.largeForm });
   }
 
-  setWildCardError() {
-    this.setState({ showWildCardError: true });
-  }
-
   render() {
-    const { handleShowModal, record, edit, editRecordInCollection, handleReset, addRecordToCollection, loadCollection } = this.props;
+    const {
+      handleShowModal, record, edit, editRecordInCollection, handleReset, addRecordToCollection, loadCollection,
+    } = this.props;
     const recordImg = edit && record.image ? record.image.data : undefined;
 
     return edit ? (
@@ -330,23 +310,23 @@ export default class AddOrEditRecord extends React.Component {
         handleRemoveImg={this.handleRemoveImg}
         {...this.state}
       />) : (
-      <AddRecord
-        addRecordToCollection={addRecordToCollection}
-        loadCollection={loadCollection}
-        handleReset={this.handleReset}
-        handleSubmit={this.handleSubmit}
-        handleChange={this.handleChange}
-        handleResetWiki={this.handleResetWiki}
-        handleFileUpload={this.handleFileUpload}
-        handleRemoveImg={this.handleRemoveImg}
-        handleRatingChange={this.handleRatingChange}
-        handleCheckbox={this.handleCheckbox}
-        handleSearchRequest={this.handleSearchRequest}
-        handleImgRequest={this.handleImgRequest}
-        toggleLargeForm={this.toggleLargeForm}
-        setWildCardError={this.setWildCardError}
-        {...this.state}
-      />);
+        <AddRecord
+          addRecordToCollection={addRecordToCollection}
+          loadCollection={loadCollection}
+          handleReset={this.handleReset}
+          handleSubmit={this.handleSubmit}
+          handleChange={this.handleChange}
+          handleResetWiki={this.handleResetWiki}
+          handleFileUpload={this.handleFileUpload}
+          handleRemoveImg={this.handleRemoveImg}
+          handleRatingChange={this.handleRatingChange}
+          handleCheckbox={this.handleCheckbox}
+          handleSearchRequest={this.handleSearchRequest}
+          handleImgRequest={this.handleImgRequest}
+          toggleLargeForm={this.toggleLargeForm}
+          setWildCardError={this.setWildCardError}
+          {...this.state}
+        />);
   }
 }
 
@@ -357,7 +337,7 @@ AddOrEditRecord.propTypes = {
     title: PropTypes.string.isRequired,
     artist: PropTypes.string,
     format: PropTypes.string,
-    rating: PropTypes.num,
+    rating: PropTypes.number,
     wikiHref: PropTypes.string,
     wikiDesc: PropTypes.string,
     wikiImg: PropTypes.string,
