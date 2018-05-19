@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Col, Grid, Row, Glyphicon, OverlayTrigger, Button, ButtonToolbar, Form } from 'react-bootstrap';
+import { Col, Grid, Row, Glyphicon, OverlayTrigger, Button, ButtonGroup, Form } from 'react-bootstrap';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
 import DefaultFormGroup from './FormComponents/DefaultFormGroup';
 import tooltip from '../CommonComponents/Tooltip';
@@ -48,7 +48,7 @@ class SortModes extends React.Component {
 
   render() {
     return (
-      <Grid fluid>
+      <Grid className="no-padding" fluid>
         <Row>
           <Col lg={3} md={3} sm={3} xs={3}>
             <SelectFormGroup
@@ -58,7 +58,7 @@ class SortModes extends React.Component {
               options={Object.values(this.state.sortModes)}
             />
           </Col>
-          <Col lg={3} md={3} sm={3} xs={3}>
+          <Col lg={3} md={3} sm={3} xs={3} className="no-padding">
             <Form inline>
               <DefaultFormGroup
                 id="formControlsSearch"
@@ -81,10 +81,10 @@ class SortModes extends React.Component {
             </Form>
           </Col>
           <Col lg={6} md={6} sm={6} xs={6}>
-            <ButtonToolbar>
+            <ButtonGroup className="pull-right">
               <OverlayTrigger placement="top" overlay={tooltip('Enable gallery view')}>
                 <Button
-                  className="pull-right rm-focus-outline"
+                  className="rm-focus-outline"
                   active={this.props.galleryView}
                   onClick={this.props.handleGalleryView}
                 >
@@ -93,14 +93,14 @@ class SortModes extends React.Component {
               </OverlayTrigger>
               <OverlayTrigger placement="top" overlay={tooltip('Enable list view')}>
                 <Button
-                  className="pull-right rm-focus-outline"
+                  className="rm-focus-outline"
                   active={!this.props.galleryView}
                   onClick={this.props.handleGalleryView}
                 >
                   <Glyphicon glyph="th-list" />
                 </Button>
               </OverlayTrigger>
-            </ButtonToolbar>
+            </ButtonGroup>
           </Col>
         </Row>
       </Grid>

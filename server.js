@@ -49,7 +49,6 @@ mongoStore.on('connected', (res) => {
 
 mongoStore.on('error', (err) => {
   console.error('MongoDBStore encountered an error connecting to MongoDB');
-
 });
 
 app.use(session({

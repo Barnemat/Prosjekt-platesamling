@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Col, Grid, Row, Jumbotron, Button } from 'react-bootstrap';
 import { Redirect, Link } from 'react-router-dom';
 import ListItems from '../components/Collection/ListItems';
+import Filter from '../components/Filter/Filter';
 
 class Collection extends React.Component {
   constructor(props) {
@@ -14,6 +15,7 @@ class Collection extends React.Component {
       signinButton: false,
       registerButton: false,
     };
+
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -25,7 +27,10 @@ class Collection extends React.Component {
   }
 
   render() {
-    const { signinButton, registerButton } = this.state;
+    const {
+      signinButton, registerButton, url,
+    } = this.state;
+    const { authenticated } = this.props;
 
     if (signinButton) {
       return (<Redirect to="/signin" push />);
@@ -36,12 +41,15 @@ class Collection extends React.Component {
       <div>
         <Grid fluid>
           <Row className="show-grid">
-            <Col lg={2} md={2} />
+            <Col lg={2} md={2}>
+              {authenticated &&
+                <Filter />}
+            </Col>
             <Col lg={8} md={8} sm={12} xs={12}>
-              {this.props.authenticated &&
-                <ListItems url={this.state.url} />
+              {authenticated &&
+                <ListItems url={url} />
               }
-              {!this.props.authenticated &&
+              {!authenticated &&
                 <Jumbotron>
                   <h1>You have not signed in!</h1>
                   <p>

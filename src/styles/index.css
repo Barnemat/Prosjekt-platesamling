@@ -13,11 +13,19 @@ body.waiting * {
   padding: 0;
 }
 
+.no-padding-bottom {
+  padding-bottom: 0;
+}
+
 .vresize {
   resize: vertical;
 }
 
 .rm-focus-outline:focus {
+  outline: none;
+}
+
+.rm-outline {
   outline: none;
 }
 

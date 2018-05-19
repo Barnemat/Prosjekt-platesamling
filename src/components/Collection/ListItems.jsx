@@ -10,16 +10,21 @@ import RecordItem from './RecordItem';
 import SortModes from './SortModes';
 import { sortArrayOfObjects, getOwnershipFormat } from '../../util';
 import { getCollection, resetCollection } from '../../actions';
-import { getRecordsBySearch } from '../../selectors/collection';
+import { getRecordsBySearchAndFilter } from '../../selectors/collection';
 
-const EmptyCollection = ({ publicUsername }) => (
+const EmptyCollection = ({ publicUsername, collectionHasEntries }) => (
   <div className="text-center lead">
-    {publicUsername ? 'The' : 'Your'} collection is empty.
+    {collectionHasEntries ?
+      'The search and/or filter doesn\'t match any records'
+      :
+      `${publicUsername ? 'The' : 'Your'} collection is empty.`
+    }
   </div>
 );
 
 EmptyCollection.propTypes = {
   publicUsername: PropTypes.string,
+  collectionHasEntries: PropTypes.bool.isRequired,
 };
 
 EmptyCollection.defaultProps = {
@@ -45,7 +50,7 @@ class ListItems extends React.Component {
   }
 
   componentWillMount() {
-    this.loadCollection();
+    this.loadCollection(this.props.publicUsername);
   }
 
   getRecordItems() {
@@ -104,8 +109,8 @@ class ListItems extends React.Component {
     this.setState({ galleryView: !this.state.galleryView });
   }
 
-  loadCollection() {
-    const { authenticatedUser, publicUsername } = this.props;
+  loadCollection(publicUsername) {
+    const { authenticatedUser } = this.props;
     if (authenticatedUser && authenticatedUser.username && !publicUsername) {
       this.props.getCollection(authenticatedUser.username, this.state.sortMode);
     } else if (publicUsername) {
@@ -119,7 +124,7 @@ class ListItems extends React.Component {
     const recordItems = this.getRecordItems();
     const firstHalf = recordItems.slice(0, Math.ceil(recordItems.length / 2));
     const secondHalf = recordItems.slice(Math.ceil(recordItems.length / 2));
-    const { publicUsername } = this.props;
+    const { publicUsername, collectionHasEntries } = this.props;
 
     return (
       <Grid fluid>
@@ -169,7 +174,7 @@ class ListItems extends React.Component {
                       { recordItems }
                     </ListGroup>}
                 </div>
-                ) : (<EmptyCollection publicUsername={publicUsername} />)}
+                ) : (<EmptyCollection publicUsername={publicUsername} collectionHasEntries={collectionHasEntries} />)}
             </Panel>
           </Col>
         </Row>
@@ -189,6 +194,7 @@ ListItems.propTypes = {
     email: PropTypes.string,
   }),
   publicUsername: PropTypes.string,
+  collectionHasEntries: PropTypes.bool.isRequired,
 };
 
 ListItems.defaultProps = {
@@ -200,7 +206,8 @@ ListItems.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  records: getRecordsBySearch(state),
+  records: getRecordsBySearchAndFilter(state),
+  collectionHasEntries: state.collection.records ? Object.keys(state.collection.records).length > 1 : false,
   authenticatedUser: state.authenticate.user,
 });
 
