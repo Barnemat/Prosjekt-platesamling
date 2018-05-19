@@ -9,10 +9,16 @@ import AddOrEditRecord from './AddOrEditRecord';
 import RecordItem from './RecordItem';
 import SortModes from './SortModes';
 import { sortArrayOfObjects, getOwnershipFormat } from '../../util';
+import { getCollection, resetCollection } from '../../actions';
+import { getRecordsBySearchAndFilter } from '../../selectors/collection';
 
-const EmptyCollection = ({ publicUsername }) => (
+const EmptyCollection = ({ publicUsername, collectionHasEntries }) => (
   <div className="text-center lead">
-    {publicUsername ? 'The' : 'Your'} collection is empty.
+    {collectionHasEntries ?
+      'The search and/or filter doesn\'t match any records'
+      :
+      `${publicUsername ? 'The' : 'Your'} collection is empty.`
+    }
   </div>
 );
 
@@ -24,12 +30,13 @@ EmptyCollection.defaultProps = {
   publicUsername: null,
 };
 
-export default class ListItems extends React.Component {
+class ListItems extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       galleryView: false,
+      sortMode: { date: -1 },
     };
 
     this.addRecordToCollection = this.addRecordToCollection.bind(this);
@@ -37,22 +44,24 @@ export default class ListItems extends React.Component {
     this.editRecordInCollection = this.editRecordInCollection.bind(this);
     this.handleGalleryView = this.handleGalleryView.bind(this);
     this.getRecordItems = this.getRecordItems.bind(this);
+    this.handleSortMode = this.handleSortMode.bind(this);
+    this.loadCollection = this.loadCollection.bind(this);
   }
 
   componentWillMount() {
-    this.props.loadCollection(this.props.publicUsername);
+    this.loadCollection(this.props.publicUsername);
   }
 
   getRecordItems() {
-    const type = Object.keys(this.props.sortMode)[0];
-    const order = Object.values(this.props.sortMode)[0];
+    const type = Object.keys(this.state.sortMode)[0];
+    const order = Object.values(this.state.sortMode)[0];
 
     return sortArrayOfObjects(this.props.records, type, order).map(record => (
       <RecordItem
         record={record}
         key={record._id}
         handleDelete={this.removeRecordFromCollection}
-        loadCollection={this.props.loadCollection}
+        loadCollection={this.loadCollection}
         editRecordInCollection={this.editRecordInCollection}
         publicUsername={this.props.publicUsername}
       />));
@@ -85,11 +94,36 @@ export default class ListItems extends React.Component {
     this.setState({ galleryView: !this.state.galleryView });
   }
 
+  handleSortMode(key) {
+    const possibleSortModes = {
+      newest: { date: -1 },
+      oldest: { date: 1 },
+      albumDesc: { title: 1 },
+      albumAsc: { title: -1 },
+      artistDesc: { artist: 1 },
+      artistAsc: { artist: -1 },
+    };
+
+    const sortMode = possibleSortModes[key];
+    this.setState({ sortMode });
+  }
+
+  loadCollection(publicUsername) {
+    const { authenticatedUser } = this.props;
+    if (authenticatedUser && authenticatedUser.username && !publicUsername) {
+      this.props.getCollection(authenticatedUser.username, this.state.sortMode);
+    } else if (publicUsername) {
+      this.props.getCollection(publicUsername, this.state.sortMode);
+    } else {
+      this.props.resetCollection();
+    }
+  }
+
   render() {
     const recordItems = this.getRecordItems();
     const firstHalf = recordItems.slice(0, Math.ceil(recordItems.length / 2));
     const secondHalf = recordItems.slice(Math.ceil(recordItems.length / 2));
-    const { publicUsername } = this.props;
+    const { publicUsername, collectionHasEntries } = this.props;
 
     return (
       <Grid fluid>
@@ -97,7 +131,7 @@ export default class ListItems extends React.Component {
           <Col lg={12} md={12} sm={12} xs={12}>
             <SortModes
               galleryView={this.state.galleryView}
-              handleSortMode={this.props.handleSortMode}
+              handleSortMode={this.handleSortMode}
               handleGalleryView={this.handleGalleryView}
             />
           </Col>
@@ -114,7 +148,7 @@ export default class ListItems extends React.Component {
                   <Panel.Body>
                     <AddOrEditRecord
                       addRecordToCollection={this.addRecordToCollection}
-                      loadCollection={this.props.loadCollection}
+                      loadCollection={this.loadCollection}
                     />
                   </Panel.Body>)}
               {recordItems.length !== 0 ? (
@@ -139,7 +173,7 @@ export default class ListItems extends React.Component {
                       { recordItems }
                     </ListGroup>}
                 </div>
-                ) : (<EmptyCollection publicUsername={publicUsername} />)}
+                ) : (<EmptyCollection publicUsername={publicUsername} collectionHasEntries={collectionHasEntries} />)}
             </Panel>
           </Col>
         </Row>
@@ -166,3 +200,16 @@ ListItems.defaultProps = {
   },
   publicUsername: null,
 };
+
+const mapStateToProps = state => ({
+  records: getRecordsBySearchAndFilter(state),
+  collectionHasEntries: state.collection.records ? Object.keys(state.collection.records).length > 1 : false,
+  authenticatedUser: state.authenticate.user,
+});
+
+const mapDispatchToProps = {
+  getCollection,
+  resetCollection,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListItems);

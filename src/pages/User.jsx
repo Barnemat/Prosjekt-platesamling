@@ -5,13 +5,15 @@ import axios from 'axios';
 import {
   Grid,
   Col,
-  Row } from 'react-bootstrap';
+  Row,
+} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { signInAction } from '../actions';
 import WildCardError from '../components/CommonComponents/WildCardError';
 import CurrentUserPage from '../components/User/CurrentUserPage';
 import PublicUserPage from '../components/User/PublicUserPage';
 import PageNotFound from './PageNotFound';
+import Filter from '../components/Filter/Filter';
 
 const UsernameNotMatching = ({ usernameFromPath, usernameFromPathExists }) => (
   !usernameFromPathExists ? (<PageNotFound />) : (
@@ -95,20 +97,24 @@ class User extends React.Component {
     ) : (
       <Grid fluid>
         <Row className="show-grid">
-          <Col lg={2} md={2} />
+          <Col lg={2} md={2}>
+            {usernameFromPathExists && usernameFromPathPublic &&
+              <Filter />
+            }
+          </Col>
           <Col lg={8} md={8} sm={12} xs={12}>
             {showWildCardError && <WildCardError />}
             {!usernameFromPathPublic &&
-            <UsernameNotMatching
-              usernameFromPath={usernameFromPath}
-              usernameFromPathExists={usernameFromPathExists}
-            />
-              }
+              <UsernameNotMatching
+                usernameFromPath={usernameFromPath}
+                usernameFromPathExists={usernameFromPathExists}
+              />
+            }
             {usernameFromPathExists && usernameFromPathPublic &&
-            <PublicUserPage
-              url={url}
-              usernameFromPath={usernameFromPath}
-            />
+              <PublicUserPage
+                url={url}
+                usernameFromPath={usernameFromPath}
+              />
               }
           </Col>
           <Col lg={2} md={2} />

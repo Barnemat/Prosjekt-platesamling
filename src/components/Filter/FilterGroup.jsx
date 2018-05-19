@@ -17,6 +17,13 @@ export default class FilterGroup extends React.Component {
     this.toggleExpand = this.toggleExpand.bind(this);
   }
 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (prevState.expand && nextProps.hasReset) {
+      return { expand: false };
+    }
+    return {};
+  }
+
   getFilterItems() {
     const { tags, groupName, handleUpdate } = this.props;
     return Object.keys(tags).map(item => (
@@ -38,25 +45,25 @@ export default class FilterGroup extends React.Component {
     const filterItems = this.getFilterItems();
     return (
       <Row>
-        <Col  lg={2} md={2} className="no-padding"/>
-        <Col  lg={10} md={10} sm={12} xs={12} className="no-padding">
-        <ListGroupItem className="darker-onhover no-padding-bottom rm-outline" onClick={this.toggleExpand}>
-          <FormGroup>
-            <ControlLabel>{`${capitalize(groupName)}:`}</ControlLabel>
-            <span
+        <Col lg={2} md={2} className="no-padding" />
+        <Col lg={10} md={10} sm={12} xs={12} className="no-padding">
+          <ListGroupItem className="darker-onhover no-padding-bottom rm-outline" onClick={this.toggleExpand}>
+            <FormGroup>
+              <ControlLabel>{`${capitalize(groupName === 'date' ? `${groupName} added` : groupName)}:`}</ControlLabel>
+              <span
                 role="button"
                 tabIndex={0}
                 className="standard-glyph pull-right md-glyph"
               >
                 <Glyphicon glyph={this.state.expand ? 'chevron-down' : 'chevron-right'} />
-            </span>
-            <Collapse in={this.state.expand}>
-              <div>
-              { filterItems }
-              </div>
-            </Collapse>
-          </FormGroup>
-        </ListGroupItem>
+              </span>
+              <Collapse in={this.state.expand}>
+                <div>
+                  { filterItems }
+                </div>
+              </Collapse>
+            </FormGroup>
+          </ListGroupItem>
         </Col>
       </Row>
     );

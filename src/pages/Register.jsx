@@ -8,7 +8,8 @@ import {
   Button,
   Grid,
   Col,
-  Row } from 'react-bootstrap';
+  Row,
+} from 'react-bootstrap';
 import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
 import { setLoadingCursor } from '../util';
 import WildCardError from '../components/CommonComponents/WildCardError';

@@ -14,7 +14,8 @@ class Filter extends React.Component {
     this.state = {
       filter: {},
       records: [],
-    }
+      hasReset: false,
+    };
 
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleReset = this.handleReset.bind(this);
@@ -30,12 +31,13 @@ class Filter extends React.Component {
   }
 
   getFilterGroups() {
-    const { filter } = this.state;
+    const { filter, hasReset } = this.state;
     return Object.keys(filter).map(groupName => (
       <FilterGroup
         key={groupName}
         groupName={groupName}
         tags={filter[groupName]}
+        hasReset={hasReset}
         handleUpdate={this.handleUpdate}
       />));
   }
@@ -51,7 +53,7 @@ class Filter extends React.Component {
 
     this.props.setFilterItem(groupName, tag);
     filter[groupName][tag] = !filter[groupName][tag];
-    this.setState({ filter });
+    this.setState({ filter, hasReset: false });
   }
 
   handleReset(e) {
@@ -60,7 +62,7 @@ class Filter extends React.Component {
     const { records } = this.props;
     const filter = getFilter(records);
     this.props.setFilter(filter);
-    this.setState({ filter: {}, records: [] });
+    this.setState({ filter: {}, records: [], hasReset: true });
   }
 
   render() {
@@ -71,14 +73,14 @@ class Filter extends React.Component {
         <ListGroup>
           { filterGroups }
           <Row>
-            <Col  lg={2} md={2} className="no-padding" />
-            <Col  lg={10} md={10} sm={12} xs={12} className="no-padding">
+            <Col lg={2} md={2} className="no-padding" />
+            <Col lg={10} md={10} sm={12} xs={12} className="no-padding">
               <Button onClick={this.handleReset} block>Clear filter</Button>
             </Col>
           </Row>
         </ListGroup>
       </Grid>
-      );
+    );
   }
 }
 

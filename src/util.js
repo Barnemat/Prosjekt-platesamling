@@ -207,15 +207,17 @@ export const getOwnershipFormat = (name) => {
     `${name.substring(0, name.length)}'s`;
 };
 
-export const getFilterGroups = () => {
-  return ['artist', 'date', 'format', 'rating'];
-};
+export const getFilterGroups = () => ['artist', 'date', 'format', 'rating'];
 
 export const getFilter = (records) => {
-  let artists = {};
+  const artists = {};
   let isNoArtist = false;
-  records.sort().forEach((record) => {
-    const value = record['artist'];
+  records.sort((a,b) => {
+    const artistA = a.artist.toLowerCase();
+    const artistB = b.artist.toLowerCase();
+    return artistA < artistB ? -1 : 1;
+  }).forEach((record) => {
+    const value = record.artist;
     if (value) {
       artists[value.toLowerCase()] = false;
     } else {
@@ -225,8 +227,8 @@ export const getFilter = (records) => {
 
   if (isNoArtist) artists['no artist'] = false;
 
-  let formats = {};
-  getValidFormatTypes().forEach(format => {
+  const formats = {};
+  getValidFormatTypes().forEach((format) => {
     formats[format.toLowerCase()] = false;
   });
 
@@ -246,9 +248,7 @@ export const getFilter = (records) => {
       1: false,
       unrated: false,
     },
-  };;
+  };
 };
 
-export const capitalize = (string) => {
-  return `${string[0].toUpperCase()}${string.substr(1)}`;
-};
+export const capitalize = string => `${string[0].toUpperCase()}${string.substr(1)}`;

@@ -5,8 +5,6 @@ import { Col, Grid, Row, Jumbotron, Button } from 'react-bootstrap';
 import { Redirect, Link } from 'react-router-dom';
 import ListItems from '../components/Collection/ListItems';
 import Filter from '../components/Filter/Filter';
-import { getCollection, resetCollection } from '../actions';
-import { getRecordsBySearchAndFilter } from '../selectors/collection';
 
 class Collection extends React.Component {
   constructor(props) {
@@ -16,11 +14,9 @@ class Collection extends React.Component {
       url: 'http://localhost:8080/api/records',
       signinButton: false,
       registerButton: false,
-      sortMode: { date: -1 },
     };
+
     this.handleClick = this.handleClick.bind(this);
-    this.handleSortMode = this.handleSortMode.bind(this);
-    this.loadCollection = this.loadCollection.bind(this);
   }
 
   handleClick(e) {
@@ -30,34 +26,11 @@ class Collection extends React.Component {
     this.setState({ [name]: true });
   }
 
-  handleSortMode(key) {
-    const possibleSortModes = {
-      newest: { date: -1 },
-      oldest: { date: 1 },
-      albumDesc: { title: 1 },
-      albumAsc: { title: -1 },
-      artistDesc: { artist: 1 },
-      artistAsc: { artist: -1 },
-    };
-
-    const sortMode = possibleSortModes[key];
-    this.setState({ sortMode });
-  }
-
-  loadCollection(publicUsername) {
-    const { authenticatedUser } = this.props;
-    if (authenticatedUser && authenticatedUser.username && !publicUsername) {
-      this.props.getCollection(authenticatedUser.username, this.state.sortMode);
-    } else if (publicUsername) {
-      this.props.getCollection(publicUsername, this.state.sortMode);
-    } else {
-      this.props.resetCollection();
-    }
-  }
-
   render() {
-    const { signinButton, registerButton, url, sortMode } = this.state;
-    const { authenticated, authenticatedUser, records } = this.props;
+    const {
+      signinButton, registerButton, url,
+    } = this.state;
+    const { authenticated } = this.props;
 
     if (signinButton) {
       return (<Redirect to="/signin" push />);
@@ -74,14 +47,7 @@ class Collection extends React.Component {
             </Col>
             <Col lg={8} md={8} sm={12} xs={12}>
               {authenticated &&
-                <ListItems
-                  url={url}
-                  sortMode={sortMode}
-                  authenticatedUser={authenticatedUser}
-                  records={records}
-                  handleSortMode={this.handleSortMode}
-                  loadCollection={this.loadCollection}
-                />
+                <ListItems url={url} />
               }
               {!authenticated &&
                 <Jumbotron>
@@ -123,14 +89,7 @@ Collection.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  records: getRecordsBySearchAndFilter(state),
   authenticated: state.authenticate.authenticated || false,
-  authenticatedUser: state.authenticate.user,
 });
 
-const mapDispatchToProps = {
-  getCollection,
-  resetCollection,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Collection);
+export default connect(mapStateToProps)(Collection);

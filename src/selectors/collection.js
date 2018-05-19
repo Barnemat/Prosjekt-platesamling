@@ -19,8 +19,10 @@ export const getRecordsBySearch = createSelector(
 
 export const getRecordsBySearchAndFilter = createSelector(
   [getRecordsBySearch, getFilter],
-  (records = [], filter={}) => {
-    let matching = { artist: [], date: [], format: [], rating: [] };
+  (records = [], filter = {}) => {
+    const matching = {
+      artist: [], date: [], format: [], rating: [],
+    };
     const now = new Date();
 
     return records.reduce((res, record) => {
@@ -34,15 +36,19 @@ export const getRecordsBySearchAndFilter = createSelector(
           const checked = filter[groupName][tag];
 
           if (checked && !matching[groupName].includes(tag)) {
-            if(groupName === 'artist') {
+            if (groupName === 'artist') {
               if (tag === 'no artist' && record.artist === '') {
                 matching[groupName].push('no artist');
               } else {
                 matching[groupName].push(tag.toLowerCase());
               }
             } else if (groupName === 'date') {
-              if ((weekDistance < 1 && tag === 'week') || (monthDistance < 1 && tag === 'month') || (yearDistance < 1 && tag === 'year')) {
+              if ((weekDistance < 1 && tag === 'week') ||
+                (monthDistance < 1 && tag === 'month') ||
+                (yearDistance < 1 && tag === 'year')) {
                 matching[groupName].push(tag.toLowerCase());
+              } else {
+                matching[groupName].push('no_date_match');
               }
             } else if (groupName === 'format') {
               matching[groupName].push(tag.toLowerCase());
@@ -53,21 +59,34 @@ export const getRecordsBySearchAndFilter = createSelector(
         });
       });
 
-      let match = false;
-      if(matching['artist'].includes(record.artist.toLowerCase()) || matching['artist'].includes('no artist') && record.artist === '') {
-        match = true;
-      } else if ((weekDistance < 1 && matching['date'].includes('week')) || (monthDistance < 1 && matching['date'].includes('month')) || (yearDistance < 1 && matching['date'].includes('year'))) {
-        match = true;
-      } else if (matching['format'].includes(record.format.toLowerCase())) {
-        match = true;
-      } else if (matching['rating'].includes(record.rating.toString()) || record.rating === 0 && matching['rating'].includes('unrated')) {
-        match = true;
-      } else if (Object.keys(matching).reduce((res, groupName) => {
-          return res && matching[groupName].length === 0;
-        }, true)) {
-        match = true;
+      let matches = { artist: false, date: false, format: false, rating: false };
+      if (matching.artist.includes(record.artist.toLowerCase()) ||
+        (matching.artist.includes('no artist') && record.artist === '') ||
+        matching.artist.length === 0) {
+        matches.artist = true;
       }
 
-      return match ? [...res, record] : res;
-      }, []);
-});
+      if ((weekDistance < 1 && matching.date.includes('week')) ||
+        (monthDistance < 1 && matching.date.includes('month')) ||
+        (yearDistance < 1 && matching.date.includes('year')) ||
+        matching.date.length === 0) {
+        matches.date = true;
+      }
+
+      if (matching.format.includes(record.format.toLowerCase()) ||
+        matching.format.length === 0) {
+        matches.format = true;
+      }
+
+      if (matching.rating.includes(record.rating.toString()) ||
+        (record.rating === 0 && matching.rating.includes('unrated')) ||
+        matching.rating.length === 0) {
+        matches.rating = true;
+      }
+
+      return Object.keys(matching).reduce((res, groupName) => {
+        return res && (matches[groupName]);
+      }, true) ? [...res, record] : res;
+    }, []);
+  },
+);
