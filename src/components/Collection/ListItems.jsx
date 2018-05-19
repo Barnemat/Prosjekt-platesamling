@@ -9,8 +9,6 @@ import AddOrEditRecord from './AddOrEditRecord';
 import RecordItem from './RecordItem';
 import SortModes from './SortModes';
 import { sortArrayOfObjects, getOwnershipFormat } from '../../util';
-import { getCollection, resetCollection } from '../../actions';
-import { getRecordsBySearch } from '../../selectors/collection';
 
 const EmptyCollection = ({ publicUsername }) => (
   <div className="text-center lead">
@@ -26,38 +24,35 @@ EmptyCollection.defaultProps = {
   publicUsername: null,
 };
 
-class ListItems extends React.Component {
+export default class ListItems extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      sortMode: { date: -1 },
       galleryView: false,
     };
 
-    this.loadCollection = this.loadCollection.bind(this);
     this.addRecordToCollection = this.addRecordToCollection.bind(this);
     this.removeRecordFromCollection = this.removeRecordFromCollection.bind(this);
     this.editRecordInCollection = this.editRecordInCollection.bind(this);
-    this.handleSortMode = this.handleSortMode.bind(this);
     this.handleGalleryView = this.handleGalleryView.bind(this);
     this.getRecordItems = this.getRecordItems.bind(this);
   }
 
   componentWillMount() {
-    this.loadCollection();
+    this.props.loadCollection(this.props.publicUsername);
   }
 
   getRecordItems() {
-    const type = Object.keys(this.state.sortMode)[0];
-    const order = Object.values(this.state.sortMode)[0];
+    const type = Object.keys(this.props.sortMode)[0];
+    const order = Object.values(this.props.sortMode)[0];
 
     return sortArrayOfObjects(this.props.records, type, order).map(record => (
       <RecordItem
         record={record}
         key={record._id}
         handleDelete={this.removeRecordFromCollection}
-        loadCollection={this.loadCollection}
+        loadCollection={this.props.loadCollection}
         editRecordInCollection={this.editRecordInCollection}
         publicUsername={this.props.publicUsername}
       />));
@@ -85,34 +80,9 @@ class ListItems extends React.Component {
     return Promise.resolve('Not allowed.');
   }
 
-  handleSortMode(key) {
-    const possibleSortModes = {
-      newest: { date: -1 },
-      oldest: { date: 1 },
-      albumDesc: { title: 1 },
-      albumAsc: { title: -1 },
-      artistDesc: { artist: 1 },
-      artistAsc: { artist: -1 },
-    };
-
-    const sortMode = possibleSortModes[key];
-    this.setState({ sortMode });
-  }
-
   handleGalleryView(e) {
     e.preventDefault();
     this.setState({ galleryView: !this.state.galleryView });
-  }
-
-  loadCollection() {
-    const { authenticatedUser, publicUsername } = this.props;
-    if (authenticatedUser && authenticatedUser.username && !publicUsername) {
-      this.props.getCollection(authenticatedUser.username, this.state.sortMode);
-    } else if (publicUsername) {
-      this.props.getCollection(publicUsername, this.state.sortMode);
-    } else {
-      this.props.resetCollection();
-    }
   }
 
   render() {
@@ -127,7 +97,7 @@ class ListItems extends React.Component {
           <Col lg={12} md={12} sm={12} xs={12}>
             <SortModes
               galleryView={this.state.galleryView}
-              handleSortMode={this.handleSortMode}
+              handleSortMode={this.props.handleSortMode}
               handleGalleryView={this.handleGalleryView}
             />
           </Col>
@@ -144,7 +114,7 @@ class ListItems extends React.Component {
                   <Panel.Body>
                     <AddOrEditRecord
                       addRecordToCollection={this.addRecordToCollection}
-                      loadCollection={this.loadCollection}
+                      loadCollection={this.props.loadCollection}
                     />
                   </Panel.Body>)}
               {recordItems.length !== 0 ? (
@@ -182,8 +152,6 @@ class ListItems extends React.Component {
 ListItems.propTypes = {
   url: PropTypes.string.isRequired,
   records: PropTypes.array.isRequired,
-  getCollection: PropTypes.func.isRequired,
-  resetCollection: PropTypes.func.isRequired,
   authenticatedUser: PropTypes.shape({
     username: PropTypes.string,
     email: PropTypes.string,
@@ -198,18 +166,3 @@ ListItems.defaultProps = {
   },
   publicUsername: null,
 };
-
-const mapStateToProps = state => ({
-  records: getRecordsBySearch(state),
-  authenticatedUser: state.authenticate.user,
-});
-
-const mapDispatchToProps = {
-  getCollection,
-  resetCollection,
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ListItems);

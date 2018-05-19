@@ -51,10 +51,16 @@ export function signOutAction() {
       .then(() => {
         dispatch({ type: 'UNAUTHENTICATED' });
         dispatch({ type: 'CLEAR_AUTH_ERROR' });
+        dispatch({ type: 'RESET_FILTER' });
+        dispatch({ type: 'RESET_COLLECTION' });
+        dispatch({ type: 'RESET_SEARCH' });
       })
       .catch(() => {
         dispatch({ type: 'UNAUTHENTICATED' });
         dispatch({ type: 'CLEAR_AUTH_ERROR' });
+        dispatch({ type: 'RESET_FILTER' });
+        dispatch({ type: 'RESET_COLLECTION' });
+        dispatch({ type: 'RESET_SEARCH' });
       });
   };
 }

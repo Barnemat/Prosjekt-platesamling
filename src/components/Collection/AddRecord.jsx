@@ -219,7 +219,7 @@ AddRecord.propTypes = {
   notes: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
   /* eslint-disable react/forbid-prop-types */
-  image: PropTypes.any.isRequired, // Should be file, but I don't know how to specify
+  image: PropTypes.any, // Should be file, but I don't know how to specify
   /* eslint-enable react/prop-types */
   loadCollection: PropTypes.func.isRequired,
   addRecordToCollection: PropTypes.func.isRequired,

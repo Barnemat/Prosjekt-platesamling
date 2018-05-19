@@ -206,3 +206,49 @@ export const getOwnershipFormat = (name) => {
     :
     `${name.substring(0, name.length)}'s`;
 };
+
+export const getFilterGroups = () => {
+  return ['artist', 'date', 'format', 'rating'];
+};
+
+export const getFilter = (records) => {
+  let artists = {};
+  let isNoArtist = false;
+  records.sort().forEach((record) => {
+    const value = record['artist'];
+    if (value) {
+      artists[value.toLowerCase()] = false;
+    } else {
+      isNoArtist = true;
+    }
+  });
+
+  if (isNoArtist) artists['no artist'] = false;
+
+  let formats = {};
+  getValidFormatTypes().forEach(format => {
+    formats[format.toLowerCase()] = false;
+  });
+
+  return {
+    artist: artists,
+    date: {
+      week: false,
+      month: false,
+      year: false,
+    },
+    format: formats,
+    rating: {
+      5: false,
+      4: false,
+      3: false,
+      2: false,
+      1: false,
+      unrated: false,
+    },
+  };;
+};
+
+export const capitalize = (string) => {
+  return `${string[0].toUpperCase()}${string.substr(1)}`;
+};

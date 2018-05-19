@@ -28,6 +28,5 @@ export function getCollection(username, sortMode = { date: -1 }) {
 export function resetCollection() {
   return {
     type: 'RESET_COLLECTION',
-    payload: {},
   };
 }
