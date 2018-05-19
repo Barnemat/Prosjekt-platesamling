@@ -43,6 +43,7 @@ class User extends React.Component {
       authenticatedUser: this.props.authenticatedUser || { username: '', email: '', public: false },
       usernameFromPath: this.props.match.params.username,
       usernameFromPathExists: false,
+      existCheckRun: false,
       usernameFromPathPublic: false,
       showWildCardError: false,
     };
@@ -60,11 +61,13 @@ class User extends React.Component {
       .then((res) => {
         const { user } = res.data;
         if (user.username) {
-          this.setState({ usernameFromPathExists: true, usernameFromPathPublic: user.public });
+          this.setState({ usernameFromPathExists: true, usernameFromPathPublic: user.public, existCheckRun: true });
+        } else {
+          this.setState({ existCheckRun: true });
         }
       })
       .catch(() => {
-        this.setState({ showWildCardError: true });
+        this.setState({ showWildCardError: true, existCheckRun: true });
       });
   }
 
@@ -77,6 +80,7 @@ class User extends React.Component {
       usernameFromPathExists,
       usernameFromPathPublic,
       showWildCardError,
+      existCheckRun,
     } = this.state;
 
     return authenticatedUser.username === usernameFromPath ? (
@@ -104,7 +108,7 @@ class User extends React.Component {
           </Col>
           <Col lg={8} md={8} sm={12} xs={12}>
             {showWildCardError && <WildCardError />}
-            {!usernameFromPathPublic &&
+            {!usernameFromPathPublic && existCheckRun &&
               <UsernameNotMatching
                 usernameFromPath={usernameFromPath}
                 usernameFromPathExists={usernameFromPathExists}

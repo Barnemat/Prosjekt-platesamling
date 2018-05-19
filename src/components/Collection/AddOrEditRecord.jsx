@@ -16,7 +16,7 @@ export default class AddOrEditRecord extends React.Component {
     this.state = {
       title: edit ? record.title : '',
       artist: edit ? record.artist : '',
-      format: edit ? record.format : '',
+      format: edit ? record.format : 'CD',
       rating: edit ? record.rating : 0,
       notes: edit ? record.notes : '',
       wikiHref: edit ? record.wikiHref : '',
@@ -308,6 +308,7 @@ export default class AddOrEditRecord extends React.Component {
         handleResetWiki={this.handleResetWiki}
         handleFileUpload={this.handleFileUpload}
         handleRemoveImg={this.handleRemoveImg}
+        setWildCardError={this.setWildCardError}
         {...this.state}
       />) : (
         <AddRecord

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Button, Col, Grid, Row, ListGroup, Checkbox } from 'react-bootstrap';
+import { Checkbox } from 'react-bootstrap';
 import { capitalize } from '../../util';
 
 export default class FilterItem extends React.Component {
@@ -15,9 +14,9 @@ export default class FilterItem extends React.Component {
     const { groupName, tag } = this.props;
 
     if (groupName === 'artist') {
-      let split = tag.split(' ');
+      const split = tag.split(' ');
       return split.reduce((res, word) => `${res} ${capitalize(word)}`, '');
-    } else if(groupName === 'date') {
+    } else if (groupName === 'date') {
       return `Last ${tag}`;
     } else if (groupName === 'format') {
       switch (tag) {
@@ -27,19 +26,28 @@ export default class FilterItem extends React.Component {
     } else if (groupName === 'rating') {
       switch (tag) {
         case 'unrated': return 'Unrated';
-        default: return `${tag} star${tag > 1 ? 's' : ''}`
+        default: return `${tag} star${tag > 1 ? 's' : ''}`;
       }
     }
     return tag;
   }
 
   render() {
-    return (<Checkbox checked={this.props.tagValue} onChange={e => this.props.handleUpdate(e, this.props.groupName, this.props.tag)}>{this.getTagName()}</Checkbox>);
+    return (
+      <Checkbox
+        checked={this.props.tagValue}
+        onChange={e => this.props.handleUpdate(e, this.props.groupName, this.props.tag)}
+      >
+        {this.getTagName()}
+      </Checkbox>);
   }
 }
 
-FilterItem.propTypes = {};
+FilterItem.propTypes = {
+  groupName: PropTypes.string.isRequired,
+  tag: PropTypes.string.isRequired,
+  tagValue: PropTypes.bool.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
+};
 
 FilterItem.defaultProps = {};
-
-const mapStateToProps = state => ({});

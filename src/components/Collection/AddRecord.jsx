@@ -237,6 +237,10 @@ AddRecord.propTypes = {
   toggleLargeForm: PropTypes.func.isRequired,
 };
 
+AddRecord.defaultProps = {
+  image: null,
+};
+
 const TitleFormGroup = ({
   value,
   glyph,

@@ -289,7 +289,7 @@ EditRecord.propTypes = {
   invalidImg: PropTypes.bool.isRequired,
   /* eslint-disable react/forbid-prop-types */
   image: PropTypes.any, // Should be file, but I don't know how to specify
-  recordImg: PropTypes.any.isRequired, // Should be file, but I don't know how to specify
+  recordImg: PropTypes.any, // Should be file, but I don't know how to specify
   /* eslint-enable react/prop-types */
   record: PropTypes.shape({
     _id: PropTypes.string.isRequired,
@@ -317,4 +317,9 @@ EditRecord.propTypes = {
   handleReset: PropTypes.func.isRequired,
   editRecordInCollection: PropTypes.func.isRequired,
   setWildCardError: PropTypes.func.isRequired,
+};
+
+EditRecord.defaultProps = {
+  image: null,
+  recordImg: null,
 };

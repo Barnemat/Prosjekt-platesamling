@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Button, Col, Grid, Row, ListGroup } from 'react-bootstrap';
 import { getFilter } from '../../util';
-import { setFilter, setFilterItem, resetFilter } from '../../actions';
+import { setFilter, setFilterItem } from '../../actions';
 import FilterGroup from './FilterGroup';
 import { getRecords } from '../../selectors/collection';
 
@@ -45,9 +45,9 @@ class Filter extends React.Component {
   handleUpdate(e, groupName, tag) {
     let filter;
     if (Object.keys(this.props.filter).length > 0) {
-      filter = this.props.filter;
+      ({ filter } = this.props);
     } else {
-      filter = this.state.filter;
+      ({ filter } = this.state);
       this.props.setFilter(filter);
     }
 
@@ -75,7 +75,7 @@ class Filter extends React.Component {
           <Row>
             <Col lg={2} md={2} className="no-padding" />
             <Col lg={10} md={10} sm={12} xs={12} className="no-padding">
-              <Button onClick={this.handleReset} block>Clear filter</Button>
+              <Button className="rm-focus-outline" onClick={this.handleReset} block>Clear filter</Button>
             </Col>
           </Row>
         </ListGroup>
@@ -84,19 +84,21 @@ class Filter extends React.Component {
   }
 }
 
-Filter.propTypes = {};
-
-Filter.defaultProps = {};
+Filter.propTypes = {
+  filter: PropTypes.shape({}).isRequired,
+  records: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  setFilter: PropTypes.func.isRequired,
+  setFilterItem: PropTypes.func.isRequired,
+};
 
 const mapDispatchToProps = {
   setFilter,
   setFilterItem,
-  resetFilter,
 };
 
 const mapStateToProps = state => ({
   filter: state.filter,
-  records: getRecords(state),
+  records: getRecords(state) || [],
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filter);

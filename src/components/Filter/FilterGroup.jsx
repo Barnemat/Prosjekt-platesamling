@@ -1,7 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { Button, Col, Grid, Row, ListGroup, FormGroup, ControlLabel, Collapse, ListGroupItem, Glyphicon } from 'react-bootstrap';
+import {
+  Col,
+  Row,
+  FormGroup,
+  ControlLabel,
+  Collapse,
+  ListGroupItem,
+  Glyphicon,
+} from 'react-bootstrap';
 import FilterItem from './FilterItem';
 import { capitalize } from '../../util';
 
@@ -70,9 +77,8 @@ export default class FilterGroup extends React.Component {
   }
 }
 
-FilterGroup.propTypes = {};
-
-FilterGroup.defaultProps = {};
-
-const mapStateToProps = state => ({});
-
+FilterGroup.propTypes = {
+  groupName: PropTypes.string.isRequired,
+  tags: PropTypes.shape({}).isRequired,
+  handleUpdate: PropTypes.func.isRequired,
+};

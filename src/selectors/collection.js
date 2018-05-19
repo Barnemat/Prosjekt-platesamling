@@ -59,34 +59,35 @@ export const getRecordsBySearchAndFilter = createSelector(
         });
       });
 
-      let matches = { artist: false, date: false, format: false, rating: false };
-      if (matching.artist.includes(record.artist.toLowerCase()) ||
+      const matches = {
+        artist: false, date: false, format: false, rating: false,
+      };
+      if (matching.artist.length === 0 ||
         (matching.artist.includes('no artist') && record.artist === '') ||
-        matching.artist.length === 0) {
+        matching.artist.includes(record.artist.toLowerCase())) {
         matches.artist = true;
       }
 
-      if ((weekDistance < 1 && matching.date.includes('week')) ||
+      if (matching.date.length === 0 ||
+        (weekDistance < 1 && matching.date.includes('week')) ||
         (monthDistance < 1 && matching.date.includes('month')) ||
-        (yearDistance < 1 && matching.date.includes('year')) ||
-        matching.date.length === 0) {
+        (yearDistance < 1 && matching.date.includes('year'))) {
         matches.date = true;
       }
 
-      if (matching.format.includes(record.format.toLowerCase()) ||
-        matching.format.length === 0) {
+      if (matching.format.length === 0 ||
+        matching.format.includes(record.format.toLowerCase())) {
         matches.format = true;
       }
 
-      if (matching.rating.includes(record.rating.toString()) ||
+      if (matching.rating.length === 0 ||
         (record.rating === 0 && matching.rating.includes('unrated')) ||
-        matching.rating.length === 0) {
+        matching.rating.includes(record.rating.toString())) {
         matches.rating = true;
       }
 
-      return Object.keys(matching).reduce((res, groupName) => {
-        return res && (matches[groupName]);
-      }, true) ? [...res, record] : res;
+      return Object.keys(matching).reduce((acc, groupName) => acc && (matches[groupName]), true) ?
+        [...res, record] : res;
     }, []);
   },
 );

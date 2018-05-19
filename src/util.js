@@ -207,12 +207,10 @@ export const getOwnershipFormat = (name) => {
     `${name.substring(0, name.length)}'s`;
 };
 
-export const getFilterGroups = () => ['artist', 'date', 'format', 'rating'];
-
 export const getFilter = (records) => {
   const artists = {};
   let isNoArtist = false;
-  records.sort((a,b) => {
+  records.sort((a, b) => {
     const artistA = a.artist.toLowerCase();
     const artistB = b.artist.toLowerCase();
     return artistA < artistB ? -1 : 1;

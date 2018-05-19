@@ -24,6 +24,7 @@ const EmptyCollection = ({ publicUsername, collectionHasEntries }) => (
 
 EmptyCollection.propTypes = {
   publicUsername: PropTypes.string,
+  collectionHasEntries: PropTypes.bool.isRequired,
 };
 
 EmptyCollection.defaultProps = {
@@ -35,17 +36,17 @@ class ListItems extends React.Component {
     super(props);
 
     this.state = {
-      galleryView: false,
       sortMode: { date: -1 },
+      galleryView: false,
     };
 
+    this.loadCollection = this.loadCollection.bind(this);
     this.addRecordToCollection = this.addRecordToCollection.bind(this);
     this.removeRecordFromCollection = this.removeRecordFromCollection.bind(this);
     this.editRecordInCollection = this.editRecordInCollection.bind(this);
+    this.handleSortMode = this.handleSortMode.bind(this);
     this.handleGalleryView = this.handleGalleryView.bind(this);
     this.getRecordItems = this.getRecordItems.bind(this);
-    this.handleSortMode = this.handleSortMode.bind(this);
-    this.loadCollection = this.loadCollection.bind(this);
   }
 
   componentWillMount() {
@@ -89,11 +90,6 @@ class ListItems extends React.Component {
     return Promise.resolve('Not allowed.');
   }
 
-  handleGalleryView(e) {
-    e.preventDefault();
-    this.setState({ galleryView: !this.state.galleryView });
-  }
-
   handleSortMode(key) {
     const possibleSortModes = {
       newest: { date: -1 },
@@ -106,6 +102,11 @@ class ListItems extends React.Component {
 
     const sortMode = possibleSortModes[key];
     this.setState({ sortMode });
+  }
+
+  handleGalleryView(e) {
+    e.preventDefault();
+    this.setState({ galleryView: !this.state.galleryView });
   }
 
   loadCollection(publicUsername) {
@@ -186,11 +187,14 @@ class ListItems extends React.Component {
 ListItems.propTypes = {
   url: PropTypes.string.isRequired,
   records: PropTypes.array.isRequired,
+  getCollection: PropTypes.func.isRequired,
+  resetCollection: PropTypes.func.isRequired,
   authenticatedUser: PropTypes.shape({
     username: PropTypes.string,
     email: PropTypes.string,
   }),
   publicUsername: PropTypes.string,
+  collectionHasEntries: PropTypes.bool.isRequired,
 };
 
 ListItems.defaultProps = {
@@ -212,4 +216,7 @@ const mapDispatchToProps = {
   resetCollection,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ListItems);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ListItems);
