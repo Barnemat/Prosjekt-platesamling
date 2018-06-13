@@ -13,7 +13,9 @@ const app = express();
 const buildDir = 'dist';
 const appDir = 'src';
 
+const indexFile = path.join(__dirname, buildDir, 'index.html');
 const mongoDBConnection = 'mongodb://localhost:27017/record_collection'; // Change in production, if needed
+const isProd = process.env.NODE_ENV === 'production';
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -68,8 +70,16 @@ const api = require('./server/routes/api');
 app.use(express.static(path.join(__dirname, buildDir)));
 app.use('/api', api);
 
+// Catch all error handler
+app.use((err, req, res, next) => {
+  if (!isProd) {
+    console.error(err);
+  }
+  res.status(500).send('500 - Internal Server Error');
+});
+
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, buildDir, 'index.html'));
+  res.sendFile(indexFile);
 });
 
 const PORT = 8080;
