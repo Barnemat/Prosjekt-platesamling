@@ -8,7 +8,7 @@
     "build:prod": "NODE_ENV=production webpack -p",
     "dev": "webpack-dev-server",
     "serve": "node server.js",
-    "servebuild": "yarn run build && node server.js",
+    "servebuild": "yarn build && nodemon server.js",
     "start": "webpack -d --watch",
     "test": "",
     "eslint": "eslint src/ --ext .js,.jsx"
@@ -49,6 +49,7 @@
     "md5": "^2.2.1",
     "mongoose": "^5.0.1",
     "mongoose-file": "^0.0.2",
+    "nodemon": "^1.17.4",
     "password-validator": "^4.1.1",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
