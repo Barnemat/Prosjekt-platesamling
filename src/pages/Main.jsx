@@ -7,12 +7,14 @@ import Signout from './Signout';
 import User from './User';
 import FindUser from './FindUser';
 import PageNotFound from './PageNotFound';
+import Wishlist from './Wishlist';
 
 const Main = () => (
   <main>
     <Switch>
       <Route exact path="/" component={Collection} />
-      <Route path="/collection/:username" component={Collection} />
+      <Route path="/collection" component={Collection} />
+      <Route path="/wishlist" component={Wishlist} />
       <Route path="/register" component={Register} />
       <Route path="/signin" component={Signin} />
       <Route path="/user/:username" component={User} />
