@@ -11,11 +11,12 @@ class Wishlist extends React.Component {
 
     this.state = {
       url: 'http://localhost:8080/api/wishlist',
+      recordUrl: 'http://localhost:8080/api/records',
     };
   }
 
   render() {
-    const { url } = this.state;
+    const { url, recordUrl } = this.state;
     const { authenticated } = this.props;
 
     return (
@@ -25,7 +26,7 @@ class Wishlist extends React.Component {
             <Col lg={2} md={2} />
             <Col lg={8} md={8} sm={12} xs={12}>
               {authenticated &&
-                <ListWishlistItems url={url} />
+                <ListWishlistItems url={url} recordUrl={recordUrl} />
               }
               {!authenticated &&
                 <SignInJumbotron />

@@ -8,6 +8,7 @@ import axios from 'axios';
 import { getWishlist, resetWishlist } from '../../actions';
 import { getWishlistBySearch } from '../../selectors/wishlist';
 import AddToWishlist from './AddToWishlist';
+import WishlistItem from './WishlistItem';
 
 const EmptyWishlist = ({ publicUsername, wishlistHasEntries }) => (
   <div className="text-center lead">
@@ -34,7 +35,8 @@ class ListWishlistItems extends React.Component {
 
     this.loadWishlist = this.loadWishlist.bind(this);
     this.addRecordToWishlist = this.addRecordToWishlist.bind(this);
-    this.removeRecordFromWishList = this.removeRecordFromWishList.bind(this);
+    this.addRecordToCollection = this.addRecordToCollection.bind(this);
+    this.removeRecordFromWishlist = this.removeRecordFromWishlist.bind(this);
     this.getWishlistItems = this.getWishlistItems.bind(this);
   }
 
@@ -44,17 +46,25 @@ class ListWishlistItems extends React.Component {
 
   getWishlistItems() {
     return this.props.wishlist.map(record => (
-      <div>
-        {record.title}
-        {record.artist}
-      </div>));
+      <WishlistItem
+        record={record}
+        key={record._id}
+        handleDelete={this.removeRecordFromWishlist}
+        loadWishlist={this.loadWishlist}
+        addRecordToCollection={this.addRecordToCollection}
+      />));
+  }
+
+  addRecordToCollection(record) {
+    record.append('username', this.props.authenticatedUser.username);
+    return axios.post(this.props.recordUrl, record);
   }
 
   addRecordToWishlist(record) {
     return axios.post(this.props.url, record);
   }
 
-  removeRecordFromWishList(record) {
+  removeRecordFromWishlist(record) {
     return axios.delete(`${this.props.url}?_id=${record._id}`);
   }
 
@@ -101,6 +111,7 @@ class ListWishlistItems extends React.Component {
 /* eslint react/forbid-prop-types:[0] */
 ListWishlistItems.propTypes = {
   url: PropTypes.string.isRequired,
+  recordUrl: PropTypes.string.isRequired,
   wishlist: PropTypes.array.isRequired,
   getWishlist: PropTypes.func.isRequired,
   resetWishlist: PropTypes.func.isRequired,

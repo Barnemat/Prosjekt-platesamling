@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import {
   Button,
   Glyphicon,
+  Collapse,
 } from 'react-bootstrap';
-import { setLoadingCursor } from '../../util';
+import { setLoadingCursor, getValidFormatTypes } from '../../util';
 import DefaultFormGroup from '../Collection/FormComponents/DefaultFormGroup';
+import SelectFormGroup from '../Collection/FormComponents/SelectFormGroup';
 import WildCardError from '../CommonComponents/WildCardError';
 
 export default class AddToWishlist extends React.Component {
@@ -15,6 +17,7 @@ export default class AddToWishlist extends React.Component {
     this.state = {
       title: '',
       artist: '',
+      format: 'CD',
       show: false,
       showWildCardError: false,
     };
@@ -34,11 +37,13 @@ export default class AddToWishlist extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     const {
-      title, artist,
+      title, artist, format,
     } = this.state;
 
     setLoadingCursor(true);
-    this.props.addRecordToWishlist({ title, artist, username: this.props.authenticatedUsername })
+    this.props.addRecordToWishlist({
+      title, artist, format, username: this.props.authenticatedUsername,
+    })
       .then(() => {
         this.props.loadWishlist();
         this.handleReset();
@@ -82,7 +87,7 @@ export default class AddToWishlist extends React.Component {
         <Button className="margin-bottom" onClick={this.toggleShow} block>
           <Glyphicon glyph={show ? 'minus' : 'plus'} />
         </Button>
-        {show &&
+        <Collapse in={show}>
           <form onSubmit={this.handleSubmit}>
             {showWildCardError && <WildCardError />}
             <DefaultFormGroup
@@ -103,11 +108,18 @@ export default class AddToWishlist extends React.Component {
               placeholder="Artist..."
               onChange={this.handleChange}
             />
+            <SelectFormGroup
+              id="formControlsFormat"
+              name="format"
+              label="The format of the record (e.g. LP, EP, CD):"
+              onChange={this.handleChange}
+              options={getValidFormatTypes()}
+            />
             <Button bsStyle="primary" type="submit" block>
               Add record to wishlist
             </Button>
           </form>
-        }
+        </Collapse>
       </div>
     );
   }

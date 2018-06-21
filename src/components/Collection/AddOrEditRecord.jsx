@@ -11,12 +11,14 @@ export default class AddOrEditRecord extends React.Component {
   constructor(props) {
     super(props);
 
-    const { record, edit } = this.props;
+    const {
+      record, edit, title, artist, format,
+    } = this.props;
 
     this.state = {
-      title: edit ? record.title : '',
-      artist: edit ? record.artist : '',
-      format: edit ? record.format : 'CD',
+      title: edit ? record.title : title,
+      artist: edit ? record.artist : artist,
+      format: edit ? record.format : format,
       rating: edit ? record.rating : 0,
       notes: edit ? record.notes : '',
       wikiHref: edit ? record.wikiHref : '',
@@ -34,7 +36,7 @@ export default class AddOrEditRecord extends React.Component {
       ignoreRecordImg: false,
       invalidImg: false,
       showWildCardError: false,
-      largeForm: false,
+      largeForm: this.props.expand,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -124,7 +126,7 @@ export default class AddOrEditRecord extends React.Component {
     });
   }
 
-  handleReset(e) {
+  handleReset(e, submitted) {
     if (e) {
       e.preventDefault();
 
@@ -133,10 +135,16 @@ export default class AddOrEditRecord extends React.Component {
       }
     }
 
+    const {
+      title, artist, format, expand,
+    } = this.props;
+
+    if (this.props.handleReset) this.props.handleReset(submitted);
+
     this.setState({
-      title: '',
-      artist: '',
-      format: getValidFormatTypes()[0],
+      title: title || '',
+      artist: artist || '',
+      format: format || getValidFormatTypes()[0],
       selectedCheckboxes: [],
       rating: 0,
       allowImgReq: false,
@@ -148,7 +156,7 @@ export default class AddOrEditRecord extends React.Component {
       },
       wikiDesc: '',
       wikiImg: '',
-      largeForm: false,
+      largeForm: expand,
       notes: '',
       image: undefined,
       imageData: '',
@@ -287,7 +295,14 @@ export default class AddOrEditRecord extends React.Component {
 
   render() {
     const {
-      handleShowModal, record, edit, editRecordInCollection, handleReset, addRecordToCollection, loadCollection,
+      handleShowModal,
+      record,
+      edit,
+      editRecordInCollection,
+      handleReset,
+      addRecordToCollection,
+      loadCollection,
+      disableWishlistFields,
     } = this.props;
     const recordImg = edit && record.image ? record.image.data : undefined;
 
@@ -326,6 +341,7 @@ export default class AddOrEditRecord extends React.Component {
           handleImgRequest={this.handleImgRequest}
           toggleLargeForm={this.toggleLargeForm}
           setWildCardError={this.setWildCardError}
+          disableWishlistFields={disableWishlistFields}
           {...this.state}
         />);
   }
@@ -350,6 +366,11 @@ AddOrEditRecord.propTypes = {
   addRecordToCollection: PropTypes.func,
   loadCollection: PropTypes.func,
   edit: PropTypes.bool,
+  title: PropTypes.string,
+  artist: PropTypes.string,
+  format: PropTypes.string,
+  expand: PropTypes.bool,
+  disableWishlistFields: PropTypes.bool,
 };
 
 AddOrEditRecord.defaultProps = {
@@ -360,4 +381,9 @@ AddOrEditRecord.defaultProps = {
   loadCollection: null,
   handleShowModal: null,
   edit: false,
+  expand: false,
+  title: '',
+  artist: '',
+  format: 'CD',
+  disableWishlistFields: false,
 };

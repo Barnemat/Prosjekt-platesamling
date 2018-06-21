@@ -163,6 +163,7 @@ router.route('/wishlist')
               _id: record._id,
               title: record.title,
               artist: record.artist,
+              format: record.format,
             };
           }));
         }).lean();
@@ -187,6 +188,7 @@ router.route('/wishlist')
           const newWishlistRecord = new WishlistRecord({
             title: req.body.title,
             artist: req.body.artist,
+            format: req.body.format,
             userId: user._id,
           });
 

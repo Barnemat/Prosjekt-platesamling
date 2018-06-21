@@ -18,6 +18,10 @@ const schema = new Schema({
     type: String,
     maxlength: 50,
   },
+  format: {
+    type: String,
+    maxlength: 20,
+  },
 });
 
 const WishlistRecord = module.exports = mongoose.model('WishlistRecord', schema);
