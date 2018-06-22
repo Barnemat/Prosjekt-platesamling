@@ -15,7 +15,8 @@ export default class FilterItem extends React.Component {
 
     if (groupName === 'artist') {
       const split = tag.split(' ');
-      return split.reduce((res, word) => `${res} ${capitalize(word)}`, '');
+      const formattedString = split.reduce((res, word) => `${res} ${capitalize(word)}`, '');
+      return tag.length > 30 ? `${formattedString.substr(0, 30)}...` : formattedString;
     } else if (groupName === 'date') {
       return `Last ${tag}`;
     } else if (groupName === 'format') {

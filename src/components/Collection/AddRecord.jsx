@@ -299,12 +299,12 @@ const TitleFormGroup = ({
       <InputGroup.Button>
         { props.tooltip ?
           <OverlayTrigger placement="right" overlay={tooltip(props.tooltip)}>
-            <Button onClick={toggleLargeForm}>
+            <Button onClick={toggleLargeForm} disabled={disabled}>
               <Glyphicon glyph={glyph} />
             </Button>
           </OverlayTrigger>
           :
-          <Button onClick={toggleLargeForm}>
+          <Button onClick={toggleLargeForm} disabled={disabled}>
             <Glyphicon glyph={glyph} />
           </Button>}
       </InputGroup.Button>

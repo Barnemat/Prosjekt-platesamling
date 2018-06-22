@@ -6,9 +6,10 @@ import { connect } from 'react-redux';
 import { ListGroup, Panel, Grid, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import { getWishlist, resetWishlist } from '../../actions';
-import { getWishlistBySearch } from '../../selectors/wishlist';
+import { getWishlistBySearchAndFilter } from '../../selectors/wishlist';
 import AddToWishlist from './AddToWishlist';
 import WishlistItem from './WishlistItem';
+import SearchField from '../CommonComponents/SearchField';
 
 const EmptyWishlist = ({ publicUsername, wishlistHasEntries }) => (
   <div className="text-center lead">
@@ -84,6 +85,11 @@ class ListWishlistItems extends React.Component {
     return (
       <Grid fluid>
         <Row>
+          <Col lg={12} md={12} sm={12} xs={12} className="margin-bottom" >
+            <SearchField wishlist />
+          </Col>
+        </Row>
+        <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
             <Panel>
               <Panel.Body>
@@ -130,8 +136,8 @@ ListWishlistItems.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  wishlist: getWishlistBySearch(state),
-  wishlistHasEntries: state.collection.wishlist ? Object.keys(state.wishlist).length > 1 : false,
+  wishlist: getWishlistBySearchAndFilter(state),
+  wishlistHasEntries: state.wishlist ? Object.keys(state.wishlist).length > 1 : false,
   authenticatedUser: state.authenticate.user,
 });
 

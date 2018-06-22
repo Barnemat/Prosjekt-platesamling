@@ -1,8 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Col,
-  Row,
   FormGroup,
   ControlLabel,
   Collapse,
@@ -51,28 +49,23 @@ export default class FilterGroup extends React.Component {
     const { groupName } = this.props;
     const filterItems = this.getFilterItems();
     return (
-      <Row>
-        <Col lg={2} md={2} className="no-padding" />
-        <Col lg={10} md={10} sm={12} xs={12} className="no-padding">
-          <ListGroupItem className="darker-onhover no-padding-bottom rm-outline" onClick={this.toggleExpand}>
-            <FormGroup>
-              <ControlLabel>{`${capitalize(groupName === 'date' ? `${groupName} added` : groupName)}:`}</ControlLabel>
-              <span
-                role="button"
-                tabIndex={0}
-                className="standard-glyph pull-right md-glyph"
-              >
-                <Glyphicon glyph={this.state.expand ? 'chevron-down' : 'chevron-right'} />
-              </span>
-              <Collapse in={this.state.expand}>
-                <div>
-                  { filterItems }
-                </div>
-              </Collapse>
-            </FormGroup>
-          </ListGroupItem>
-        </Col>
-      </Row>
+      <ListGroupItem className="darker-onhover no-padding-bottom rm-outline" onClick={this.toggleExpand}>
+        <FormGroup>
+          <ControlLabel>{`${capitalize(groupName === 'date' ? `${groupName} added` : groupName)}:`}</ControlLabel>
+          <span
+            role="button"
+            tabIndex={0}
+            className="standard-glyph pull-right md-glyph"
+          >
+            <Glyphicon glyph={this.state.expand ? 'chevron-down' : 'chevron-right'} />
+          </span>
+          <Collapse in={this.state.expand}>
+            <div>
+              { filterItems }
+            </div>
+          </Collapse>
+        </FormGroup>
+      </ListGroupItem>
     );
   }
 }

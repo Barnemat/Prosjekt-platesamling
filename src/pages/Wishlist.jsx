@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { Col, Grid, Row } from 'react-bootstrap';
 import SignInJumbotron from '../components/CommonComponents/SignInJumbotron';
 import ListWishlistItems from '../components/Wishlist/ListWishlistItems';
+import Filter from '../components/Filter/Filter';
 
 class Wishlist extends React.Component {
   constructor(props) {
@@ -23,7 +24,10 @@ class Wishlist extends React.Component {
       <div>
         <Grid fluid>
           <Row className="show-grid">
-            <Col lg={2} md={2} />
+            <Col lg={2} md={2}>
+              {authenticated &&
+                <Filter wishlist />}
+            </Col>
             <Col lg={8} md={8} sm={12} xs={12}>
               {authenticated &&
                 <ListWishlistItems url={url} recordUrl={recordUrl} />
