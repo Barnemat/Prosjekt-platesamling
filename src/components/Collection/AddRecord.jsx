@@ -38,7 +38,7 @@ export default class AddRecord extends React.Component {
     addRecordToCollection(formData)
       .then(() => {
         loadCollection();
-        handleReset();
+        handleReset(undefined, true);
       })
       .catch(() => {
         setWildCardError();
@@ -58,6 +58,7 @@ export default class AddRecord extends React.Component {
       handleReset,
       toggleLargeForm,
       artist,
+      format,
       selectedCheckboxes,
       allowImgReq,
       wikiImg,
@@ -77,6 +78,7 @@ export default class AddRecord extends React.Component {
       handleCheckbox,
       handleSearchRequest,
       handleImgRequest,
+      disableWishlistFields,
     } = this.props;
 
     return (
@@ -92,6 +94,7 @@ export default class AddRecord extends React.Component {
           toggleLargeForm={toggleLargeForm}
           glyph={largeForm ? 'minus' : 'plus'}
           tooltip={largeForm ? '' : 'Click here to add a record.'}
+          disabled={disableWishlistFields}
         />
         <Collapse in={largeForm}>
           <div>
@@ -103,13 +106,16 @@ export default class AddRecord extends React.Component {
               label="The artist of the record:"
               placeholder="Artist..."
               onChange={handleChange}
+              disabled={disableWishlistFields}
             />
             <SelectFormGroup
               id="formControlsFormat"
               name="format"
+              value={format}
               label="The format of the record (e.g. LP, EP, CD):"
               onChange={handleChange}
               options={getValidFormatTypes()}
+              disabled={disableWishlistFields}
             />
             <FormGroup>
               <Checkbox
@@ -190,7 +196,10 @@ export default class AddRecord extends React.Component {
               onChange={rate => handleRatingChange(rate)}
             />
             <Button bsStyle="primary" type="submit" block>
-             Add record to collection
+              Add record to collection
+            </Button>
+            <Button onClick={handleReset} block>
+              Discard submition
             </Button>
           </div>
         </Collapse>
@@ -203,6 +212,7 @@ AddRecord.propTypes = {
   title: PropTypes.string.isRequired,
   largeForm: PropTypes.bool.isRequired,
   artist: PropTypes.string.isRequired,
+  format: PropTypes.string.isRequired,
   selectedCheckboxes: PropTypes.arrayOf(PropTypes.string).isRequired,
   allowImgReq: PropTypes.bool.isRequired,
   wikiImg: PropTypes.string.isRequired,
@@ -235,10 +245,12 @@ AddRecord.propTypes = {
   showWildCardError: PropTypes.bool.isRequired,
   setWildCardError: PropTypes.func.isRequired,
   toggleLargeForm: PropTypes.func.isRequired,
+  disableWishlistFields: PropTypes.bool,
 };
 
 AddRecord.defaultProps = {
   image: null,
+  disableWishlistFields: false,
 };
 
 const TitleFormGroup = ({
@@ -250,6 +262,7 @@ const TitleFormGroup = ({
   largeForm,
   toggleLargeForm,
   name,
+  disabled,
   ...props
 }) => (
   <FormGroup controlId="formControlsTitle">
@@ -281,16 +294,17 @@ const TitleFormGroup = ({
         value={value}
         placeholder="Record title..."
         onChange={handleChange}
+        disabled={disabled}
       />
       <InputGroup.Button>
         { props.tooltip ?
           <OverlayTrigger placement="right" overlay={tooltip(props.tooltip)}>
-            <Button onClick={toggleLargeForm}>
+            <Button onClick={toggleLargeForm} disabled={disabled}>
               <Glyphicon glyph={glyph} />
             </Button>
           </OverlayTrigger>
           :
-          <Button onClick={toggleLargeForm}>
+          <Button onClick={toggleLargeForm} disabled={disabled}>
             <Glyphicon glyph={glyph} />
           </Button>}
       </InputGroup.Button>
@@ -308,6 +322,11 @@ TitleFormGroup.propTypes = {
   handleChange: PropTypes.func.isRequired,
   handleReset: PropTypes.func.isRequired,
   toggleLargeForm: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
+};
+
+TitleFormGroup.defaultProps = {
+  disabled: false,
 };
 
 const WikiInfo = ({

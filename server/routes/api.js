@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 
 const Record = require('../models/record');
 const User = require('../models/user');
+const WishlistRecord = require('../models/wishlist-record');
 
 // Allows that there is no access control in dev mode
 const isProd = process.env.NODE_ENV === 'production';
@@ -143,6 +144,88 @@ router.route('/records')
             });
           } else {
             res.status(401).send('401 - Unauthorized');
+          }
+        });
+      }
+    });
+  });
+
+router.route('/wishlist')
+  .get((req, res, next) => {
+    User.findOne({ username: req.query.username }, (err, user) => {
+      if (err) return next(err);
+
+      if (user && (user.public || (req.session.user && user.username === req.session.user.username) || !isProd)) {
+        WishlistRecord.find({ userId: user._id }, (recordErr, records) => {
+          if (recordErr) return next(err);
+          res.status(200).json(records.map(record => {
+            return {
+              _id: record._id,
+              title: record.title,
+              artist: record.artist,
+              format: record.format,
+            };
+          }));
+        }).lean();
+      } else {
+        if (user) {
+          res.status(401).send('401 - Unauthorized');
+        } else {
+          res.status(404).send('404 - Not found');
+        }
+      }
+    })
+    .lean();
+  })
+  .post((req, res, next) => {
+    if (!req.body || !req.body.title || !req.body.username) {
+      res.status(204).send({ error: 'Request lacking required fields.' });
+    } else {
+      User.findOne({ username: req.body.username }, (userError, user) => {
+        if (userError) return next(err);
+
+        if (user && ((req.session.user && user.username === req.session.user.username) || !isProd)) {
+          const newWishlistRecord = new WishlistRecord({
+            title: req.body.title,
+            artist: req.body.artist,
+            format: req.body.format,
+            userId: user._id,
+          });
+
+          newWishlistRecord.save((err) => {
+            if (err) {
+              return next(err);
+            } else {
+              res.status(200).json({ msg: 'Record added' });
+            }
+          });
+        } else {
+          res.status(401).send('401 - Unauthorized');
+        }
+      })
+    .lean();
+    }
+  })
+  .delete((req, res, next) => {
+    WishlistRecord.findById(req.query._id, (err, record) => {
+      if (err) {
+        return next(err);
+      } else {
+        User.findById(record.userId, (userErr, user) => {
+          if (userErr) {
+            return next(err);
+          } else {
+            if (user && ((req.session.user && user.username === req.session.user.username) || !isProd)) {
+              WishlistRecord.remove({ _id: req.query._id }, (recordErr) => {
+                if (recordErr) {
+                  return next(err);
+                } else {
+                  res.status(200).json({ msg: 'Record removed' });
+                }
+              });
+            } else {
+              res.status(401).send('401 - Unauthorized');
+            }
           }
         });
       }

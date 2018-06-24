@@ -29,8 +29,13 @@ const Header = ({ authenticated, username, ...props }) => (
                   Collection
                 </NavItem>
               </LinkContainer>
-              <LinkContainer to="/find">
+              <LinkContainer to="/wishlist">
                 <NavItem eventKey={2}>
+                  Wishlist
+                </NavItem>
+              </LinkContainer>
+              <LinkContainer to="/find">
+                <NavItem eventKey={3}>
                   Find users
                 </NavItem>
               </LinkContainer>

@@ -207,7 +207,7 @@ export const getOwnershipFormat = (name) => {
     `${name.substring(0, name.length)}'s`;
 };
 
-export const getFilter = (records) => {
+export const getFilter = (records, isWishlist) => {
   const artists = {};
   let isNoArtist = false;
   records.sort((a, b) => {
@@ -230,7 +230,7 @@ export const getFilter = (records) => {
     formats[format.toLowerCase()] = false;
   });
 
-  return {
+  return isWishlist ? { artist: artists, format: formats } : {
     artist: artists,
     date: {
       week: false,

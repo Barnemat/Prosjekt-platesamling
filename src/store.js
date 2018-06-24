@@ -2,7 +2,7 @@
 
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { setSearch, authenticatedAction, resetCollection } from './actions';
+import { setSearch, authenticatedAction, resetCollection, resetWishlist } from './actions';
 import reducer from './reducer';
 
 const initialState = {};
@@ -23,6 +23,7 @@ const initialSearch = '';
 
 store.dispatch(authenticatedAction());
 store.dispatch(resetCollection());
+store.dispatch(resetWishlist());
 store.dispatch(setSearch(initialSearch));
 
 export default store;
