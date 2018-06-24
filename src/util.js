@@ -5,21 +5,14 @@ export const getValidLanugages = () => ['no', 'en'];
 
 export const getValidImgTypes = () => ['gif', 'ico', 'img', 'jpe', 'jpeg', 'jpg', 'jpx', 'png'];
 
-export const getSortModes = noDate => (noDate ?
-  {
-    albumDesc: 'Album (A-Z)',
-    albumAsc: 'Album (Z-A)',
-    artistDesc: 'Artist (A-Z)',
-    artistAsc: 'Artist (Z-A)',
-  }
-  : {
-    newest: 'Newest first',
-    oldest: 'Oldest first',
-    albumDesc: 'Album (A-Z)',
-    albumAsc: 'Album (Z-A)',
-    artistDesc: 'Artist (A-Z)',
-    artistAsc: 'Artist (Z-A)',
-  });
+export const getSortModes = () => ({
+  newest: 'Newest first',
+  oldest: 'Oldest first',
+  albumDesc: 'Album (A-Z)',
+  albumAsc: 'Album (Z-A)',
+  artistDesc: 'Artist (A-Z)',
+  artistAsc: 'Artist (Z-A)',
+});
 
 const getFileEnding = file => file.split('.').pop().toLowerCase();
 
