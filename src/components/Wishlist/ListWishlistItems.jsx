@@ -11,23 +11,18 @@ import AddToWishlist from './AddToWishlist';
 import WishlistItem from './WishlistItem';
 import SearchField from '../CommonComponents/SearchField';
 
-const EmptyWishlist = ({ publicUsername, wishlistHasEntries }) => (
+const EmptyWishlist = ({ wishlistHasEntries }) => (
   <div className="text-center lead">
     {wishlistHasEntries ?
       'The search and/or filter doesn\'t match any records'
       :
-      `${publicUsername ? 'The' : 'Your'} wishlist is empty.`
+      'Your wishlist is empty.'
     }
   </div>
 );
 
 EmptyWishlist.propTypes = {
-  publicUsername: PropTypes.string,
   wishlistHasEntries: PropTypes.bool.isRequired,
-};
-
-EmptyWishlist.defaultProps = {
-  publicUsername: null,
 };
 
 class ListWishlistItems extends React.Component {
