@@ -13,6 +13,7 @@ import {
 import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
 import { setLoadingCursor } from '../util';
 import WildCardError from '../components/CommonComponents/WildCardError';
+import { signInAction } from '../actions';
 
 class Register extends React.Component {
   constructor(props) {
@@ -168,6 +169,7 @@ class Register extends React.Component {
                 if (innerRes.data.unique) {
                   axios.post(this.state.url, { username, email, password })
                     .then(() => {
+                      this.props.signInAction({ username, password, remember: false });
                       this.setState({ registered: true });
                     })
                     .catch(() => {
@@ -354,4 +356,8 @@ const mapStateToProps = state => ({
   authenticated: state.authenticate.authenticated,
 });
 
-export default connect(mapStateToProps)(Register);
+const mapDispatchToProps = {
+  signInAction,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
