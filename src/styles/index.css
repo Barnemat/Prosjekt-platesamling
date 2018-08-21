@@ -75,3 +75,7 @@ body.waiting * {
 .huge-margin-top {
   margin-top: 50px;
 }
+
+.underline-onhover:hover {
+  text-decoration: underline;
+}

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { Button, Col, Grid, Row, ListGroup } from 'react-bootstrap';
+import { Button, Col, Grid, Row, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
 import WildCardError from '../components/CommonComponents/WildCardError';
@@ -20,6 +20,7 @@ class FindUser extends React.Component {
       users: [],
       gotoUserPage: false,
       currentUsername: '',
+      searchAtLastSubmit: '',
     };
 
     this.initialSearchField = this.props.location.search.substr(1);
@@ -52,7 +53,7 @@ class FindUser extends React.Component {
 
   handleChange(e) {
     e.preventDefault();
-    this.setState({ [e.target.name]: e.target.value, showWildCardError: false });
+    this.setState({ [e.target.name]: e.target.value, showWildCardError: false, searchAtLastSubmit: '' });
   }
 
   handleClick(e, username) {
@@ -72,10 +73,10 @@ class FindUser extends React.Component {
     history.replace(`${pathname}?${searchField}`);
     axios.get(`${url}?username=${searchField}`)
       .then((res) => {
-        this.setState({ users: res.data });
+        this.setState({ users: res.data, searchAtLastSubmit: searchField });
       })
       .catch(() => {
-        this.setState({ showWildCardError: true });
+        this.setState({ showWildCardError: true, searchAtLastSubmit: searchField });
       })
       .then(() => {
         setLoadingCursor(false);
@@ -84,9 +85,9 @@ class FindUser extends React.Component {
 
   render() {
     const {
-      searchField, gotoUserPage, currentUsername, showWildCardError,
+      searchField, gotoUserPage, currentUsername, showWildCardError, searchAtLastSubmit,
     } = this.state;
-    const userItems = this.getUserItems();
+    const userItems = searchField.length > 0 ? this.getUserItems() : [];
 
     return gotoUserPage ? (<Redirect to={`/user/${currentUsername}`} push />) : (
       <Grid fluid>
@@ -117,15 +118,17 @@ class FindUser extends React.Component {
                   </form>
                 </Col>
               </Row>
-              <Row>
-                <Col lg={12} md={12} sm={12} xs={12}>
-                  {userItems.length > 0 &&
-                  <ListGroup componentClass="ul">
-                    { userItems }
-                  </ListGroup>
-                    }
-                </Col>
-              </Row>
+              {(searchAtLastSubmit.length > 0 || userItems.length > 0) &&
+                <Row>
+                  <Col lg={12} md={12} sm={12} xs={12}>
+                    <ListGroup componentClass="ul">
+                      {userItems.length > 0 ? userItems : (
+                        <ListGroupItem>
+                          <strong>{`The search "${searchAtLastSubmit}" does not match any users...`}</strong>
+                        </ListGroupItem>)}
+                    </ListGroup>
+                  </Col>
+                </Row>}
             </Grid>
           </Col>
           <Col lg={2} md={2} />

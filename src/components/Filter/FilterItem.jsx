@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Checkbox } from 'react-bootstrap';
 import { capitalize } from '../../util';
+import ExtendTag from './ExtendTag';
 
 export default class FilterItem extends React.Component {
   constructor(props) {
@@ -16,7 +17,7 @@ export default class FilterItem extends React.Component {
     if (groupName === 'artist') {
       const split = tag.split(' ');
       const formattedString = split.reduce((res, word) => `${res} ${capitalize(word)}`, '');
-      return tag.length > 30 ? `${formattedString.substr(0, 30)}...` : formattedString;
+      return formattedString;
     } else if (groupName === 'date') {
       return `Last ${tag}`;
     } else if (groupName === 'format') {
@@ -34,12 +35,14 @@ export default class FilterItem extends React.Component {
   }
 
   render() {
+    const tag = this.getTagName();
+
     return (
       <Checkbox
         checked={this.props.tagValue}
         onChange={e => this.props.handleUpdate(e, this.props.groupName, this.props.tag)}
       >
-        {this.getTagName()}
+        {tag.length > 30 ? <ExtendTag tag={tag} /> : tag}
       </Checkbox>);
   }
 }
