@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ListGroupItem, Grid, Col, Row, Image, Button, Glyphicon, Modal, OverlayTrigger } from 'react-bootstrap';
 import Rating from 'react-rating';
-import { checkTimePassed, setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
+import { setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
 import noRecordImg from '../../assets/img/no_record_img.png';
 import tooltip from '../CommonComponents/Tooltip';
 import WildCardError from '../CommonComponents/WildCardError';
 import AddOrEditRecord from './AddOrEditRecord';
+import DateAdded from './DateAdded';
 
 const MinimizedView = ({
   record,
@@ -54,7 +55,7 @@ const MinimizedView = ({
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
-            <small>{checkTimePassed(record.date)}</small>
+            <DateAdded date={record.date} small />
             <Button
               className="pull-right"
               bsSize="small"
@@ -157,7 +158,7 @@ const ExpandedView = ({
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
-            <h6>{checkTimePassed(record.date)}</h6>
+            <DateAdded date={record.date} />
             <Button
               className="pull-right"
               bsSize="small"
