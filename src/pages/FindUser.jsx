@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { Button, Col, Grid, Row, ListGroup } from 'react-bootstrap';
+import { Button, Col, Grid, Row, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
 import WildCardError from '../components/CommonComponents/WildCardError';
@@ -119,11 +119,12 @@ class FindUser extends React.Component {
               </Row>
               <Row>
                 <Col lg={12} md={12} sm={12} xs={12}>
-                  {userItems.length > 0 &&
                   <ListGroup componentClass="ul">
-                    { userItems }
+                    {userItems.length > 0 ? userItems : (
+                      <ListGroupItem>
+                        <strong>{`The search "${searchField}" does not match any users...`}</strong>
+                      </ListGroupItem>)}
                   </ListGroup>
-                    }
                 </Col>
               </Row>
             </Grid>
