@@ -2,7 +2,7 @@
 An application for managing record collections
 
 ## Examples of use
-As there is currently no live application running, theres been added a few basic examples of use in the [examples folder](https://github.com/Barnemat/Prosjekt-platesamling/tree/master/examples).
+As there is currently no live application running, there's been added a few basic examples of use in the [examples folder](https://github.com/Barnemat/Prosjekt-platesamling/tree/master/examples).
 An example of use (the adding of records) may also be seen below. ![Adding records example](https://github.com/Barnemat/Prosjekt-platesamling/blob/master/examples/add_records.gif)
 
 ## Setting up the project locally
