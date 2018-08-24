@@ -2,7 +2,7 @@
 
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { setSearch, authenticatedAction, resetCollection, resetWishlist } from './actions';
+import { setSearch, authenticatedAction, resetCollection, resetWishlist, resetSuggestions } from './actions';
 import reducer from './reducer';
 
 const initialState = {};
@@ -21,9 +21,18 @@ const store = tmpStore;
 
 const initialSearch = '';
 
-store.dispatch(authenticatedAction());
+store.dispatch({
+  type: 'AUTHENTICATED',
+  payload: {
+    username: 'passwordTest',
+    email: 'asddwwdwdawdawdasdasda@ddddddd.dfgd',
+    public: 'true',
+  },
+});
+// store.dispatch(authenticatedAction());
 store.dispatch(resetCollection());
 store.dispatch(resetWishlist());
 store.dispatch(setSearch(initialSearch));
+store.dispatch(resetSuggestions());
 
 export default store;

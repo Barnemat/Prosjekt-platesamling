@@ -5,6 +5,7 @@ import search from './reducers/search';
 import authenticate from './reducers/authenticate';
 import filter from './reducers/filter';
 import wishlist from './reducers/wishlist';
+import suggestions from './reducers/suggestions';
 
 export default combineReducers({
   collection,
@@ -12,5 +13,6 @@ export default combineReducers({
   search,
   authenticate,
   filter,
+  suggestions,
   form: formReducer,
 });

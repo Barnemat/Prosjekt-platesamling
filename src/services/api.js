@@ -1,4 +1,5 @@
 import axios from 'axios';
+import jQuery from 'jquery';
 import { getValidLanugages, getBestSearchResult } from '../util';
 
 const sendWikiRequest = (params, lang) => {
@@ -11,12 +12,12 @@ const sendWikiRequest = (params, lang) => {
   return request;
 };
 
-export const sendWikiSearchRequest = (lang, query) => {
+export const sendWikiSearchRequest = (lang, query, limit) => {
   const params = {
     action: 'opensearch',
     search: `${query}`,
     format: 'json',
-    limit: 1,
+    limit: (!limit || limit > 10) ? 1 : limit,
     origin: '*',
     redirects: 'resolve',
   };
@@ -49,6 +50,70 @@ export const sendDoubleWikiSearchRequest = (lang, query, extraTerm) => {
       })
       .catch((err) => {
         reject(err);
+      });
+  });
+};
+
+export const sendWikiDiscographyRequest = (query, limit) => {
+  return new Promise((resolve, reject) => {
+    sendWikiSearchRequest('en', query)
+      .then(artistRes => {
+        const splittedLink = artistRes.data[3][0].split('/');
+        const page = splittedLink[splittedLink.length-1];
+
+        const params = {
+          action: 'parse',
+          prop: 'sections',
+          format: 'json',
+          formatversion: 2,
+          origin: '*',
+          page,
+        };
+
+        sendWikiRequest(params)
+          .then(sectionRes => {
+            const sections = sectionRes.data.parse.sections;
+            //console.log(sections)
+            const discographyIndex = Object.keys(sections).reduce((res, section) => {
+              return sections[section]['line'].toLowerCase() === 'discography' ? sections[section]['index'] : res;
+            }, 0);
+
+            const queryParams = {
+              action: 'parse',
+              prop: 'text',
+              format: 'json',
+              formatversion: 2,
+              origin: '*',
+              section: discographyIndex,
+              page,
+            };
+
+            sendWikiRequest(queryParams)
+              .then(queryRes => {
+                const res = queryRes.data.parse.text
+                  .split('<li>')
+                  .filter(item => item.startsWith('<i>'))
+                  .map(item => {
+                    const sanitized = jQuery(item)
+                      .text()
+                      .replace(/(\r\n|\n|\r)+.*$/g, '')
+                      .replace(/(\()+.*$/g, '')
+                      .trim();
+
+                    return { [artistRes.data[1][0]]: sanitized };
+                  });
+                resolve(res);
+              })
+              .catch(queryErr => {
+                resolve([]);
+              });
+          })
+          .catch(sectionErr => {
+            resolve([]);
+          });
+      })
+      .catch(err => {
+        resolve([]);
       });
   });
 };
