@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
-import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/api';
+import { sendDoubleWikiSearchRequest, sendWikiImageRequest } from '../../services/wikipediaApi';
 import AddRecord from './AddRecord';
 import EditRecord from './EditRecord';
 

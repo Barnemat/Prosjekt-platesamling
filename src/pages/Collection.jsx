@@ -28,42 +28,24 @@ class Collection extends React.Component {
     }
   }
 
-  /*static getDerivedStateFromProps(nextProps, prevState) {
-    console.log(prevState.records, nextProps.records, nextProps.suggestions);
-    if (prevState.records !== nextProps.records && nextProps.records && nextProps.suggestions.length === 0) {
-      console.log('suggestions')
-      setSuggestions(nextProps.records);
-      return { records: nextProps.records };
-    }
-    return {};
-  }*/
-
-  /*componentDidMount() {
-    const { records, suggestions, setSuggestions } = this.props;
-    console.log(records);
-    console.log(suggestions);
-    if (records && !suggestions) {
-      console.log('asdasd')
-      setSuggestions(records);
-    }
-  }*/
-
   componentDidUpdate() {
     const { records, suggestions, wishlist, setSuggestions } = this.props;
-    if (records && suggestions.length === 0) {
+    if (records.length > 0 && wishlist && suggestions.length === 0) {
       setSuggestions(records, wishlist);
     }
   }
 
   render() {
     const { url } = this.state;
-    const { authenticated } = this.props;
+    const {
+      authenticated, suggestions, records, wishlist,
+    } = this.props;
 
     return (
       <div>
         <Grid fluid>
           <Row className="show-grid">
-            <Col lg={2} md={2}>
+            <Col lg={2} md={2} sm={12} xs={12}>
               {authenticated &&
                 <Filter />}
             </Col>
@@ -75,9 +57,13 @@ class Collection extends React.Component {
                 <SignInJumbotron />
               }
             </Col>
-            <Col lg={2} md={2}>
+            <Col className="no-padding-left" lg={2} md={3} sm={12} xs={12}>
               {authenticated &&
-                <Suggestions />}
+                <Suggestions
+                  suggestions={suggestions}
+                  records={records}
+                  wishlist={wishlist}
+                />}
             </Col>
           </Row>
         </Grid>
@@ -88,6 +74,17 @@ class Collection extends React.Component {
 
 Collection.propTypes = {
   authenticated: PropTypes.bool.isRequired,
+  authenticatedUser: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    public: PropTypes.bool.isRequired,
+  }).isRequired,
+  records: PropTypes.array.isRequired,
+  wishlist: PropTypes.array.isRequired,
+  suggestions: PropTypes.array.isRequired,
+  setSuggestions: PropTypes.func.isRequired,
+  getWishlist: PropTypes.func.isRequired,
+  resetWishlist: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
@@ -99,7 +96,7 @@ const mapDispatchToProps = {
 const mapStateToProps = state => ({
   authenticated: state.authenticate.authenticated || false,
   authenticatedUser: state.authenticate.user,
-  records: state.collection.records,
+  records: state.collection.records || [],
   wishlist: state.wishlist,
   suggestions: state.suggestions.suggestions,
 });

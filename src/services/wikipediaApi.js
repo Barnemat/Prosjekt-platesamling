@@ -1,6 +1,6 @@
 import axios from 'axios';
 import jQuery from 'jquery';
-import { getValidLanugages, getBestSearchResult } from '../util';
+import { getValidLanugages, getBestSearchResult, generateRandIndex } from '../util';
 
 const sendWikiRequest = (params, lang) => {
   const validLang = getValidLanugages().includes(lang) ? lang : 'en';
@@ -12,12 +12,12 @@ const sendWikiRequest = (params, lang) => {
   return request;
 };
 
-export const sendWikiSearchRequest = (lang, query, limit) => {
+export const sendWikiSearchRequest = (lang, query) => {
   const params = {
     action: 'opensearch',
     search: `${query}`,
     format: 'json',
-    limit: (!limit || limit > 10) ? 1 : limit,
+    limit: 1,
     origin: '*',
     redirects: 'resolve',
   };
@@ -54,7 +54,7 @@ export const sendDoubleWikiSearchRequest = (lang, query, extraTerm) => {
   });
 };
 
-export const sendWikiDiscographyRequest = (query, limit) => {
+const sendWikiDiscographyRequest = (query) => {
   return new Promise((resolve, reject) => {
     sendWikiSearchRequest('en', query)
       .then(artistRes => {
@@ -73,7 +73,6 @@ export const sendWikiDiscographyRequest = (query, limit) => {
         sendWikiRequest(params)
           .then(sectionRes => {
             const sections = sectionRes.data.parse.sections;
-            //console.log(sections)
             const discographyIndex = Object.keys(sections).reduce((res, section) => {
               return sections[section]['line'].toLowerCase() === 'discography' ? sections[section]['index'] : res;
             }, 0);
@@ -114,6 +113,41 @@ export const sendWikiDiscographyRequest = (query, limit) => {
       })
       .catch(err => {
         resolve([]);
+      });
+  });
+};
+
+export const requestAlbumSuggestions = (records, wishlist) => {
+  const distinctArtists = records ? records.reduce((res, record) => {
+    const artist = record.artist.toLowerCase().trim();
+    return res.includes(artist) || artist === '' ? res : [...res, artist];
+  }, []) : [];
+
+  const length = distinctArtists.length >= 3 ? 3 : distinctArtists.length;
+  let randomIndexes = [];
+  for (let i = 0; i < length; i++) {
+    randomIndexes.push(generateRandIndex(distinctArtists.length, randomIndexes));
+  }
+
+  const requests = randomIndexes.map(index => sendWikiDiscographyRequest(distinctArtists[index]));;
+
+  return new Promise((resolve, reject) => {
+    Promise.all(requests)
+      .then(res => {
+        const albumsInCollection = records.reduce((acc, record) => [...acc, record.title.toLowerCase()], []);
+        const albumsInWishlist = wishlist.reduce((acc, record) => [...acc, record.title.toLowerCase()], []);
+
+        const albums = res
+          .reduce((acc, album) => [...acc, ...album], [])
+          .filter(album => {
+            for (let key in album) {
+              return !albumsInCollection.includes(album[key].toLowerCase()) && !albumsInWishlist.includes(album[key].toLowerCase());
+            }
+          });
+        resolve(albums);
+      })
+      .catch(() => {
+        reject('Could not find any suggestions');
       });
   });
 };

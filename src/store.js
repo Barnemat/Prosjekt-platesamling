@@ -26,7 +26,7 @@ store.dispatch({
   payload: {
     username: 'passwordTest',
     email: 'asddwwdwdawdawdasdasda@ddddddd.dfgd',
-    public: 'true',
+    public: true,
   },
 });
 // store.dispatch(authenticatedAction());
