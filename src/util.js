@@ -47,8 +47,8 @@ export const getBestImageURL = (album, response) => {
 * @returns {Array} || {Boolean}
 */
 export const getBestSearchResult = (res1, res2) => {
-  let res1String = res1[2] ? res1[2][0] : '';
-  let res2String = res2[2] ? res2[2][0] : '';
+  let res1String = res1[3] ? res1[3][0] : '';
+  let res2String = res2[3] ? res2[3][0] : '';
 
   if (!res1String) res1String = '';
   if (!res2String) res2String = '';
