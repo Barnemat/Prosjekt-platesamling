@@ -21,15 +21,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(fileUpload());
 
-app.use((req, res, next) => {
- res.setHeader('Access-Control-Allow-Origin', '*'); // Change in production
- res.setHeader('Access-Control-Allow-Credentials', 'true');
- res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS, POST, PUT, DELETE');
- res.setHeader('Access-Control-Allow-Headers', 'Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
- next();
-});
+const mongooseConfig = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
+};
 
-mongoose.connect(mongoDBConnection);
+mongoose.connect(mongoDBConnection, mongooseConfig);
 
 mongoose.connection.on('connected', (res) => {
   console.log('Mongoose connected to MongoDB, succesfully.');
@@ -62,6 +61,7 @@ app.use(session({
     secure: false,
     maxAge: 1000 * 60 * 60 * 336, // Two weeks
     httpOnly: true,
+    sameSite: true
   },
 }));
 

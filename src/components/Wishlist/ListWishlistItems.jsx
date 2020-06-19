@@ -36,7 +36,7 @@ class ListWishlistItems extends React.Component {
     this.getWishlistItems = this.getWishlistItems.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.loadWishlist();
   }
 

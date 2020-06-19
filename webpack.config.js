@@ -12,7 +12,7 @@ const config = {
     filename: 'bundle.js'
   },
   module : {
-    loaders : [
+    rules : [
       {
         test : /\.(js|jsx)$/,
         include : APP_DIR,

@@ -51,7 +51,7 @@ class User extends React.Component {
     this.setUserFromPathExistsAndPublic = this.setUserFromPathExistsAndPublic.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.setUserFromPathExistsAndPublic();
   }
 

@@ -94,7 +94,7 @@ router.route('/records')
             return next(err);
           } else {
             if (user && ((req.session.user && user.username === req.session.user.username) || !isProd)) {
-              Record.remove({ _id: req.query._id }, (recordErr) => {
+              Record.deleteOne({ _id: req.query._id }, (recordErr) => {
                 if (recordErr) {
                   return next(err);
                 } else {
@@ -216,7 +216,7 @@ router.route('/wishlist')
             return next(err);
           } else {
             if (user && ((req.session.user && user.username === req.session.user.username) || !isProd)) {
-              WishlistRecord.remove({ _id: req.query._id }, (recordErr) => {
+              WishlistRecord.deleteOne({ _id: req.query._id }, (recordErr) => {
                 if (recordErr) {
                   return next(err);
                 } else {
@@ -348,7 +348,7 @@ router.route('/user')
       if (err) return next(err);
 
       if (user && ((req.session.user && user.username === req.session.user.username) || !isProd)) {
-        User.remove({ username: req.query.username }, (innerErr) => {
+        User.deleteOne({ username: req.query.username }, (innerErr) => {
           if (innerErr) return next(err);
 
           res.status(200).json({ msg: 'User removed' });

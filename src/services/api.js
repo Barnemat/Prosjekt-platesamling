@@ -8,7 +8,24 @@ const sendWikiRequest = (params, lang) => {
     headers: { 'Api-User-Agent': 'Prosjekt-platesamling-dev' },
     params,
   });
+
   return request;
+};
+
+export const sendDescRequest = (lang, query) => {
+  const params = {
+    action: 'query',
+    titles: query,
+    prop: 'extracts',
+    exsentences: 3,
+    exlimit: 1,
+    explaintext: 1,
+    format: 'json',
+    formatversion: 2,
+    origin: '*',
+  };
+
+  return sendWikiRequest(params, lang);
 };
 
 export const sendWikiSearchRequest = (lang, query) => {
