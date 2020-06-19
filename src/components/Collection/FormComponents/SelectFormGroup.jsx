@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props, react/jsx-props-no-spreading */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -31,7 +32,6 @@ SelectFormGroup.propTypes = {
   onChange: PropTypes.func,
 };
 
-/* eslint react/require-default-props:[0] */
 /* defaultProps does not work properly
 SelectFormGroup.defaultProps = {
   label: '',

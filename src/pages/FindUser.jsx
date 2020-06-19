@@ -17,7 +17,7 @@ class FindUser extends React.Component {
 
     this.state = {
       url: 'http://localhost:8080/api/allMatchingUsers',
-      searchField: this.props.location.search.substr(1),
+      searchField: props.location.search.substr(1),
       showWildCardError: false,
       users: [],
       gotoUserPage: false,
@@ -25,7 +25,7 @@ class FindUser extends React.Component {
       searchAtLastSubmit: '',
     };
 
-    this.initialSearchField = this.props.location.search.substr(1);
+    this.initialSearchField = props.location.search.substr(1);
 
     this.getUserItems = this.getUserItems.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -42,12 +42,13 @@ class FindUser extends React.Component {
   }
 
   getUserItems() {
+    const { users } = this.state;
     const { authenticatedUser } = this.props;
-    return this.state.users.map((user) => (
+    return users.map((user) => (
       <UserItem
         key={user.username}
         username={user.username}
-        public={user.public}
+        isPublic={user.public}
         usernamesEqual={authenticatedUser.username === user.username}
         handleClick={this.handleClick}
       />
@@ -69,8 +70,8 @@ class FindUser extends React.Component {
   handleSubmit(e) {
     if (e) e.preventDefault();
     const { url, searchField } = this.state;
-    const { pathname } = this.props.location;
-    const { history } = this.props;
+    const { history, location } = this.props;
+    const { pathname } = location;
 
     setLoadingCursor(true);
     history.replace(`${pathname}?${searchField}`);
@@ -157,7 +158,9 @@ FindUser.propTypes = {
     email: PropTypes.string,
     public: PropTypes.bool,
   }),
-  history: PropTypes.shape({}).isRequired,
+  history: PropTypes.shape({
+    replace: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 FindUser.defaultProps = {

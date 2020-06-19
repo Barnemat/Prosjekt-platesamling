@@ -25,16 +25,20 @@ class WishlistItem extends React.Component {
 
   handleAdd(e) {
     e.preventDefault();
-    this.setState({ isAddMode: !this.state.isAddMode, showWildCardError: false });
+    this.setState((state) => ({
+      isAddMode: !state.isAddMode, showWildCardError: false,
+    }));
   }
 
   handleDelete(e) {
     if (e) e.preventDefault();
     setLoadingCursor(true);
 
-    this.props.handleDelete(this.props.record)
+    const { record, loadWishlist, ...props } = this.props;
+
+    props.handleDelete(record)
       .then(() => {
-        this.props.loadWishlist();
+        loadWishlist();
       })
       .catch(() => {
         this.setState({ showWildCardError: true });

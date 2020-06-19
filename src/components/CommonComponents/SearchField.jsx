@@ -15,27 +15,31 @@ class SearchField extends React.Component {
 
   handleSearch(e) {
     e.preventDefault();
+    const { ...props } = this.props;
     const { value } = e.target;
-    this.props.setSearch(value);
+    props.setSearch(value);
   }
 
   clearSearch(e) {
     e.preventDefault();
-    this.props.resetSearch();
+    const { ...props } = this.props;
+    props.resetSearch();
   }
 
   render() {
+    const { search, wishlist } = this.props;
+
     return (
       <Form inline>
         <DefaultFormGroup
           id="formControlsSearch"
           name="search"
           type="text"
-          value={this.props.search}
-          placeholder={`Search in ${this.props.wishlist ? 'wishlist...' : 'collection...'}`}
+          value={search}
+          placeholder={`Search in ${wishlist ? 'wishlist...' : 'collection...'}`}
           onChange={this.handleSearch}
         />
-        {this.props.search
+        {search
           && (
           <span
             role="button"

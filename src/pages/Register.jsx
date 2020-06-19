@@ -86,12 +86,15 @@ class Register extends React.Component {
   }
 
   getPasswordValid(password) {
-    const validation = this.passwordValidator.validate(password || this.state.password) ? 'success' : 'error';
+    const { ...state } = this.state;
+
+    const validation = this.passwordValidator.validate(password || state.password) ? 'success' : 'error';
     return validation;
   }
 
   getEmailValid(email = '') {
-    const currentEmail = email || this.state.email;
+    const { ...state } = this.state;
+    const currentEmail = email || state.email;
 
     if (currentEmail.length === 0) return null;
     return currentEmail.includes('@', 1) && currentEmail.includes('.', 2) ? 'success' : 'error';
@@ -158,6 +161,8 @@ class Register extends React.Component {
       username, email, password, url,
     } = this.state;
 
+    const { ...props } = this.props;
+
     if (!this.getDisable()) {
       setLoadingCursor(true);
       axios.get(`${url}?username=${username}`)
@@ -166,9 +171,9 @@ class Register extends React.Component {
             axios.get(`${url}?email=${email}`)
               .then((innerRes) => {
                 if (innerRes.data.unique) {
-                  axios.post(this.state.url, { username, email, password })
+                  axios.post(url, { username, email, password })
                     .then(() => {
-                      this.props.signInAction({ username, password, remember: false });
+                      props.signInAction({ username, password, remember: false });
                       this.setState({ registered: true });
                     })
                     .catch(() => {
@@ -230,7 +235,9 @@ class Register extends React.Component {
       wildCardError,
     } = this.state;
 
-    return this.props.authenticated || registered ? (<Redirect to="/" />) : (
+    const { authenticated } = this.props;
+
+    return authenticated || registered ? (<Redirect to="/" />) : (
       <div>
         <Grid fluid>
           <Row className="show-grid">
@@ -349,6 +356,7 @@ class Register extends React.Component {
 
 Register.propTypes = {
   authenticated: PropTypes.bool,
+  signInAction: PropTypes.func.isRequired,
 };
 
 Register.defaultProps = {

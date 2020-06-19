@@ -22,6 +22,7 @@ export default class SortModes extends React.Component {
   handleSortChange(e) {
     e.preventDefault();
     const { sortModes } = this.state;
+    const { handleSortMode } = this.props;
     const { value } = e.target;
     const keys = Object.keys(sortModes);
 
@@ -30,10 +31,13 @@ export default class SortModes extends React.Component {
       if (sortModes[k] === value) key = k;
     });
 
-    if (key) this.props.handleSortMode(key);
+    if (key) handleSortMode(key);
   }
 
   render() {
+    const { sortModes } = this.state;
+    const { galleryView, handleGalleryView } = this.props;
+
     return (
       <Grid className="no-padding" fluid>
         <Row>
@@ -42,7 +46,7 @@ export default class SortModes extends React.Component {
               id="formControlsSort"
               name="sortMode"
               onChange={this.handleSortChange}
-              options={Object.values(this.state.sortModes)}
+              options={Object.values(sortModes)}
             />
           </Col>
           <Col lg={3} md={3} sm={3} xs={3} className="no-padding">
@@ -53,8 +57,8 @@ export default class SortModes extends React.Component {
               <OverlayTrigger placement="top" overlay={tooltip('Enable gallery view')}>
                 <Button
                   className="rm-focus-outline"
-                  active={this.props.galleryView}
-                  onClick={this.props.handleGalleryView}
+                  active={galleryView}
+                  onClick={handleGalleryView}
                 >
                   <Glyphicon glyph="th-large" />
                 </Button>
@@ -62,8 +66,8 @@ export default class SortModes extends React.Component {
               <OverlayTrigger placement="top" overlay={tooltip('Enable list view')}>
                 <Button
                   className="rm-focus-outline"
-                  active={!this.props.galleryView}
-                  onClick={this.props.handleGalleryView}
+                  active={!galleryView}
+                  onClick={handleGalleryView}
                 >
                   <Glyphicon glyph="th-list" />
                 </Button>

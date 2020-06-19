@@ -53,8 +53,8 @@ export default class CurrentUserPage extends React.Component {
       showPasswordNotValid: false,
       showPasswordsNotEqual: false,
       wildCardError: false,
-      publicUser: this.props.authenticatedUser && this.props.authenticatedUser.public !== undefined
-        ? this.props.authenticatedUser.public
+      publicUser: props.authenticatedUser && props.authenticatedUser.public !== undefined
+        ? props.authenticatedUser.public
         : false,
       showPublicUserSubmitSuccess: false,
     };
@@ -73,13 +73,16 @@ export default class CurrentUserPage extends React.Component {
   }
 
   getPasswordValid(password = '') {
-    if (this.state.newPassword.length === 0 && password.length === 0) return null;
-    const validation = this.passwordValidator.validate(password || this.state.newPassword) ? 'success' : 'error';
+    const { newPassword } = this.state;
+
+    if (newPassword.length === 0 && password.length === 0) return null;
+    const validation = this.passwordValidator.validate(password || newPassword) ? 'success' : 'error';
     return validation;
   }
 
   getEmailValid(email = '') {
-    const currentEmail = email || this.state.newEmail;
+    const { newEmail } = this.state;
+    const currentEmail = email || newEmail;
 
     if (currentEmail.length === 0) return null;
     return currentEmail.includes('@', 1) && currentEmail.includes('.', 2) ? 'success' : 'error';
@@ -118,7 +121,9 @@ export default class CurrentUserPage extends React.Component {
   handleEmailSubmit(e) {
     e.preventDefault();
     const { newEmail, confirmEmailPassword, emailValid } = this.state;
-    const { url, passwordValidUrl, authenticatedUser } = this.props;
+    const {
+      url, passwordValidUrl, authenticatedUser, ...props
+    } = this.props;
 
     if (emailValid) {
       setLoadingCursor(true);
@@ -130,7 +135,7 @@ export default class CurrentUserPage extends React.Component {
                 if (innerRes.data.success) {
                   axios.put(url, { username: authenticatedUser.username, email: newEmail })
                     .then(() => {
-                      this.props.signInAction({
+                      props.signInAction({
                         username: authenticatedUser.username,
                         password: confirmEmailPassword,
                       });

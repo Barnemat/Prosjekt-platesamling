@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props, react/jsx-props-no-spreading */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -33,7 +34,6 @@ DefaultFormGroup.propTypes = {
   feedback: PropTypes.bool,
 };
 
-/* eslint react/require-default-props:[0] */
 /* defaultProps does not work properly
 DefaultFormGroup.defaultProps = {
   label: '',

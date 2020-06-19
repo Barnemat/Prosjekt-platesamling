@@ -50,43 +50,52 @@ class ListItems extends React.Component {
   }
 
   componentDidMount() {
-    this.loadCollection(this.props.publicUsername);
+    const { publicUsername } = this.props;
+    this.loadCollection(publicUsername);
   }
 
   getRecordItems() {
-    const type = Object.keys(this.state.sortMode)[0];
-    const order = Object.values(this.state.sortMode)[0];
+    const { sortMode } = this.state;
+    const { records, publicUsername } = this.props;
 
-    return sortArrayOfObjects(this.props.records, type, order).map((record) => (
+    const type = Object.keys(sortMode)[0];
+    const order = Object.values(sortMode)[0];
+
+    return sortArrayOfObjects(records, type, order).map((record) => (
       <RecordItem
         record={record}
         key={record._id}
         handleDelete={this.removeRecordFromCollection}
         loadCollection={this.loadCollection}
         editRecordInCollection={this.editRecordInCollection}
-        publicUsername={this.props.publicUsername}
+        publicUsername={publicUsername}
       />
     ));
   }
 
   addRecordToCollection(record) {
-    if (!this.props.publicUsername) {
-      record.append('username', this.props.authenticatedUser.username);
-      return axios.post(this.props.url, record);
+    const { publicUsername, url, authenticatedUser } = this.props;
+    if (!publicUsername) {
+      record.append('username', authenticatedUser.username);
+      return axios.post(url, record);
     }
     return Promise.resolve('Not allowed.');
   }
 
   removeRecordFromCollection(record) {
-    if (!this.props.publicUsername) {
-      return axios.delete(`${this.props.url}?_id=${record._id}`);
+    const { publicUsername, url } = this.props;
+
+    if (!publicUsername) {
+      return axios.delete(`${url}?_id=${record._id}`);
     }
     return Promise.resolve('Not allowed.');
   }
 
   editRecordInCollection(record) {
-    if (!this.props.publicUsername) {
-      return axios.put(this.props.url, record);
+    const { publicUsername, url } = this.props;
+
+    if (!publicUsername) {
+      return axios.put(url, record);
     }
     return Promise.resolve('Not allowed.');
   }
@@ -107,32 +116,38 @@ class ListItems extends React.Component {
 
   handleGalleryView(e) {
     e.preventDefault();
-    this.setState({ galleryView: !this.state.galleryView });
+    this.setState((state) => ({
+      galleryView: !state.galleryView,
+    }));
   }
 
   loadCollection(publicUsername) {
-    const { authenticatedUser } = this.props;
+    const { sortMode } = this.state;
+    const { authenticatedUser, ...props } = this.props;
+
     if (authenticatedUser && authenticatedUser.username && !publicUsername) {
-      this.props.getCollection(authenticatedUser.username, this.state.sortMode);
+      props.getCollection(authenticatedUser.username, sortMode);
     } else if (publicUsername) {
-      this.props.getCollection(publicUsername, this.state.sortMode);
+      props.getCollection(publicUsername, sortMode);
     } else {
-      this.props.resetCollection();
+      props.resetCollection();
     }
   }
 
   render() {
+    const { galleryView } = this.state;
+    const { publicUsername, collectionHasEntries } = this.props;
+
     const recordItems = this.getRecordItems();
     const firstHalf = recordItems.slice(0, Math.ceil(recordItems.length / 2));
     const secondHalf = recordItems.slice(Math.ceil(recordItems.length / 2));
-    const { publicUsername, collectionHasEntries } = this.props;
 
     return (
       <Grid fluid>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
             <SortModes
-              galleryView={this.state.galleryView}
+              galleryView={galleryView}
               handleSortMode={this.handleSortMode}
               handleGalleryView={this.handleGalleryView}
             />
@@ -161,7 +176,7 @@ class ListItems extends React.Component {
               )}
               {recordItems.length !== 0 ? (
                 <div>
-                  {this.state.galleryView
+                  {galleryView
                     && (
                     <Grid fluid>
                       <Row>
@@ -178,7 +193,7 @@ class ListItems extends React.Component {
                       </Row>
                     </Grid>
                     )}
-                  {!this.state.galleryView
+                  {!galleryView
                     && (
                     <ListGroup componentClass="ul">
                       { recordItems }

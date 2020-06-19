@@ -258,7 +258,11 @@ export default class EditRecord extends React.Component {
               </Col>
               <Col lg={5} md={5} sm={5} xs={12}>
                 {showWildCardError && <WildCardError />}
-                <Button className="pull-right" bsStyle="success" onClick={(e) => handleSubmit(e, this.editRecordSubmit)}>
+                <Button
+                  className="pull-right"
+                  bsStyle="success"
+                  onClick={(e) => handleSubmit(e, this.editRecordSubmit)}
+                >
                   Confirm Edit
                 </Button>
                 <Button className="pull-right" onClick={handleReset}>Cancel</Button>

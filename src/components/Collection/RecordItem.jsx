@@ -295,31 +295,43 @@ class RecordItem extends React.Component {
   }
 
   toggleExpand(e) {
+    const { isEditMode } = this.state;
+    const { record } = this.props;
     const {
       notes,
       wikiDesc,
       wikiImg,
-    } = this.props.record;
+    } = record;
 
     const isGlyph = e.target.className.split(' ').includes('glyphicon');
 
-    if ((notes || wikiDesc || wikiImg) && (!isGlyph || this.state.isEditMode)) {
-      this.setState({ expand: !this.state.expand, showWildCardError: false });
+    if ((notes || wikiDesc || wikiImg) && (!isGlyph || isEditMode)) {
+      this.setState((state) => ({
+        expand: !state.expand,
+        showWildCardError: false,
+      }));
     }
   }
 
   handleEdit(e) {
     e.preventDefault();
-    this.setState({ isEditMode: !this.state.isEditMode, expand: !this.state.isEditMode, showWildCardError: false });
+
+    this.setState((state) => ({
+      isEditMode: !state.isEditMode,
+      expand: !state.isEditMode,
+      showWildCardError: false,
+    }));
   }
 
   handleDelete(e) {
     e.preventDefault();
     setLoadingCursor(true);
 
-    this.props.handleDelete(this.props.record)
+    const { record, handleDelete, loadCollection } = this.props;
+
+    handleDelete(record)
       .then(() => {
-        this.props.loadCollection();
+        loadCollection();
       })
       .catch(() => {
         this.setState({ showWildCardError: true });
@@ -340,7 +352,9 @@ class RecordItem extends React.Component {
   }
 
   handleReset() {
-    this.props.loadCollection();
+    const { loadCollection } = this.props;
+
+    loadCollection();
     this.setState({
       expand: false,
       showModal: false,
@@ -350,11 +364,17 @@ class RecordItem extends React.Component {
   }
 
   render() {
-    const image = this.props.record.image ? this.props.record.image.data : undefined;
+    const {
+      showModal, expand, isEditMode, showWildCardError,
+    } = this.state;
+    const {
+      record, search, publicUsername, editRecordInCollection,
+    } = this.props;
+    const image = record.image ? record.image.data : undefined;
 
     return (
       <ListGroupItem className="darker-onhover">
-        <Modal show={this.state.showModal} onHide={this.handleHideModal}>
+        <Modal show={showModal} onHide={this.handleHideModal}>
           <Modal.Header closeButton>
             <Modal.Title>Remove record</Modal.Title>
           </Modal.Header>
@@ -368,39 +388,39 @@ class RecordItem extends React.Component {
           </Modal.Footer>
         </Modal>
         <Grid onClick={this.toggleExpand} fluid>
-          {(this.state.expand && !this.state.isEditMode)
+          {(expand && !isEditMode)
             && (
             <ExpandedView
-              record={this.props.record}
+              record={record}
               image={image}
-              search={this.props.search}
+              search={search}
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
-              publicUsername={this.props.publicUsername}
+              publicUsername={publicUsername}
             />
             )}
-          {(!this.state.expand && !this.state.isEditMode)
+          {(!expand && !isEditMode)
             && (
             <MinimizedView
-              record={this.props.record}
+              record={record}
               image={image}
-              search={this.props.search}
+              search={search}
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
-              publicUsername={this.props.publicUsername}
+              publicUsername={publicUsername}
             />
             )}
-          {this.state.isEditMode
+          {isEditMode
             && (
             <AddOrEditRecord
-              record={this.props.record}
+              record={record}
               handleShowModal={this.handleShowModal}
               handleReset={this.handleReset}
-              editRecordInCollection={this.props.editRecordInCollection}
+              editRecordInCollection={editRecordInCollection}
               edit
             />
             )}
-          {this.state.showWildCardError && <WildCardError />}
+          {showWildCardError && <WildCardError />}
         </Grid>
       </ListGroupItem>
     );

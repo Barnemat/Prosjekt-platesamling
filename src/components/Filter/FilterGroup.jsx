@@ -26,6 +26,7 @@ export default class FilterGroup extends React.Component {
     if (prevState.expand && nextProps.hasReset) {
       return { expand: false };
     }
+
     return {};
   }
 
@@ -43,10 +44,15 @@ export default class FilterGroup extends React.Component {
   }
 
   toggleExpand(e) {
-    if (e.target.className) this.setState({ expand: !this.state.expand });
+    if (e.target.className) {
+      this.setState((state) => ({
+        expand: !state.expand,
+      }));
+    }
   }
 
   render() {
+    const { expand } = this.state;
     const { groupName } = this.props;
     const filterItems = this.getFilterItems();
     return (
@@ -58,9 +64,9 @@ export default class FilterGroup extends React.Component {
             tabIndex={0}
             className="standard-glyph pull-right md-glyph"
           >
-            <Glyphicon glyph={this.state.expand ? 'chevron-down' : 'chevron-right'} />
+            <Glyphicon glyph={expand ? 'chevron-down' : 'chevron-right'} />
           </span>
-          <Collapse in={this.state.expand}>
+          <Collapse in={expand}>
             <div>
               { filterItems }
             </div>
@@ -75,4 +81,5 @@ FilterGroup.propTypes = {
   groupName: PropTypes.string.isRequired,
   tags: PropTypes.shape({}).isRequired,
   handleUpdate: PropTypes.func.isRequired,
+  hasReset: PropTypes.bool.isRequired,
 };

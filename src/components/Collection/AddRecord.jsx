@@ -266,7 +266,7 @@ const TitleFormGroup = ({
   toggleLargeForm,
   name,
   disabled,
-  ...props
+  ...rest
 }) => (
   <FormGroup controlId="formControlsTitle">
     <Grid fluid>
@@ -302,9 +302,9 @@ const TitleFormGroup = ({
         disabled={disabled}
       />
       <InputGroup.Button>
-        { props.tooltip
+        { rest.tooltip
           ? (
-            <OverlayTrigger placement="right" overlay={tooltip(props.tooltip)}>
+            <OverlayTrigger placement="right" overlay={tooltip(rest.tooltip)}>
               <Button onClick={toggleLargeForm} disabled={disabled}>
                 <Glyphicon glyph={glyph} />
               </Button>

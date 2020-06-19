@@ -38,12 +38,14 @@ export default class SignInJumbotron extends React.Component {
         <p>
           To view a collection on this page, you need to
           {' '}
+          {/* eslint-disable jsx-a11y/anchor-is-valid */}
           {<Link href="#" to="/signin">sign in</Link>}
           {' '}
           first.
           If you don&apos;t have a user yet, you can
           {' '}
           {<Link href="#" to="/register">register here.</Link>}
+          {/* eslint-enable jsx-a11y/anchor-is-valid */}
         </p>
         <p>
           <Button

@@ -14,7 +14,7 @@ const getBsStyle = (isPublic, usernamesEqual) => {
 };
 
 const UserItem = ({
-  username, usernamesEqual, handleClick, ...props
+  username, usernamesEqual, handleClick, isPublic,
 }) => (
   <ListGroupItem className="darker-onhover">
     <Grid fluid>
@@ -28,7 +28,7 @@ const UserItem = ({
           <div>
             The user has a
             {' '}
-            {props.public ? 'public' : 'private'}
+            {isPublic ? 'public' : 'private'}
             {' '}
             account.
           </div>
@@ -38,7 +38,7 @@ const UserItem = ({
           <div>
             You have a
             {' '}
-            {props.public ? 'public' : 'private'}
+            {isPublic ? 'public' : 'private'}
             {' '}
             account.
           </div>
@@ -46,16 +46,16 @@ const UserItem = ({
           <Button
             name="gotoUserPage"
             className="pull-right"
-            bsStyle={getBsStyle(props.public, usernamesEqual)}
+            bsStyle={getBsStyle(isPublic, usernamesEqual)}
             bsSize="small"
-            disabled={!props.public && !usernamesEqual}
+            disabled={!isPublic && !usernamesEqual}
             onClick={(e) => {
               handleClick(e, username);
             }}
           >
-            {!usernamesEqual && !props.public
+            {!usernamesEqual && !isPublic
                 && 'Private'}
-            {!usernamesEqual && props.public
+            {!usernamesEqual && isPublic
                 && 'Go to the user\'s collection'}
             {usernamesEqual
                 && 'Go to your user page'}
@@ -69,12 +69,12 @@ const UserItem = ({
 UserItem.propTypes = {
   username: PropTypes.string.isRequired,
   usernamesEqual: PropTypes.bool.isRequired,
-  public: PropTypes.bool,
+  isPublic: PropTypes.bool,
   handleClick: PropTypes.func.isRequired,
 };
 
 UserItem.defaultProps = {
-  public: false,
+  isPublic: false,
 };
 
 export default UserItem;

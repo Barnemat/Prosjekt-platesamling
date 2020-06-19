@@ -35,12 +35,15 @@ export default class FilterItem extends React.Component {
   }
 
   render() {
+    const {
+      tagValue, handleUpdate, groupName, ...props
+    } = this.props;
     const tag = this.getTagName();
 
     return (
       <Checkbox
-        checked={this.props.tagValue}
-        onChange={(e) => this.props.handleUpdate(e, this.props.groupName, this.props.tag)}
+        checked={tagValue}
+        onChange={(e) => handleUpdate(e, groupName, props.tag)}
       >
         {tag.length > 30 ? <ExtendTag tag={tag} /> : tag}
       </Checkbox>

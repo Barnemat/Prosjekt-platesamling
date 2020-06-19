@@ -40,12 +40,15 @@ export default class AddToWishlist extends React.Component {
       title, artist, format,
     } = this.state;
 
+    const { addRecordToWishlist, loadWishlist, authenticatedUsername } = this.props;
+
     setLoadingCursor(true);
-    this.props.addRecordToWishlist({
-      title, artist, format, username: this.props.authenticatedUsername,
+
+    addRecordToWishlist({
+      title, artist, format, username: authenticatedUsername,
     })
       .then(() => {
-        this.props.loadWishlist();
+        loadWishlist();
         this.handleReset();
       })
       .catch(() => {
@@ -67,7 +70,9 @@ export default class AddToWishlist extends React.Component {
 
   toggleShow(e) {
     e.preventDefault();
-    if (!this.state.show) {
+    const { show } = this.state;
+
+    if (!show) {
       this.setState({ show: true });
     } else {
       this.handleReset();

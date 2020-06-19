@@ -41,7 +41,8 @@ class ListWishlistItems extends React.Component {
   }
 
   getWishlistItems() {
-    return this.props.wishlist.map((record) => (
+    const { wishlist } = this.props;
+    return wishlist.map((record) => (
       <WishlistItem
         record={record}
         key={record._id}
@@ -53,24 +54,30 @@ class ListWishlistItems extends React.Component {
   }
 
   addRecordToCollection(record) {
-    record.append('username', this.props.authenticatedUser.username);
-    return axios.post(this.props.recordUrl, record);
+    const { authenticatedUser, recordUrl } = this.props;
+
+    record.append('username', authenticatedUser.username);
+    return axios.post(recordUrl, record);
   }
 
   addRecordToWishlist(record) {
-    return axios.post(this.props.url, record);
+    const { url } = this.props;
+
+    return axios.post(url, record);
   }
 
   removeRecordFromWishlist(record) {
-    return axios.delete(`${this.props.url}?_id=${record._id}`);
+    const { url } = this.props;
+
+    return axios.delete(`${url}?_id=${record._id}`);
   }
 
   loadWishlist() {
-    const { authenticatedUser } = this.props;
+    const { authenticatedUser, ...props } = this.props;
     if (authenticatedUser && authenticatedUser.username) {
-      this.props.getWishlist(authenticatedUser.username);
+      props.getWishlist(authenticatedUser.username);
     } else {
-      this.props.resetWishlist();
+      props.resetWishlist();
     }
   }
 

@@ -9,7 +9,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { signOutAction } from '../actions';
 import logo from '../assets/img/logo-vanlig.png';
 
-const Header = ({ authenticated, username, ...props }) => (
+const Header = ({ authenticated, username, ...rest }) => (
   <Navbar inverse fluid collapseOnSelect>
     <Grid fluid>
       <Row>
@@ -50,7 +50,7 @@ const Header = ({ authenticated, username, ...props }) => (
                   </NavItem>
                 </LinkContainer>
                 <LinkContainer to="/signout">
-                  <NavItem eventKey={5} onClick={props.signOutAction}>
+                  <NavItem eventKey={5} onClick={rest.signOutAction}>
                     Sign out
                   </NavItem>
                 </LinkContainer>
