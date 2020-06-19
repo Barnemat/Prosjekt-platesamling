@@ -64,6 +64,13 @@ export const getBestSearchResult = (res1, res2) => {
 
   if (bestMatch === res1String) return res1;
   if (bestMatch === res2String) return res2;
+
+  if (res2String.length > 0) {
+    return res2;
+  } else if (res1String.length > 0) {
+    return res1;
+  }
+
   return false;
 };
 

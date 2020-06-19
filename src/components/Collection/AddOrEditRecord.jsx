@@ -168,7 +168,7 @@ export default class AddOrEditRecord extends React.Component {
   handleSearchRequest() {
     if (!this.state.wikiDesc) {
       setLoadingCursor(true);
-      const searchRequest = sendDoubleWikiSearchRequest('en', this.state.title, this.state.artist);
+      const searchRequest = sendDoubleWikiSearchRequest('en', this.state.title, 'album');
 
       searchRequest
         .then((res) => {
