@@ -2,7 +2,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
+import {
+  getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor,
+} from '../../util';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest, sendDescRequest } from '../../services/api';
 import AddRecord from './AddRecord';
 import EditRecord from './EditRecord';
@@ -178,7 +180,7 @@ export default class AddOrEditRecord extends React.Component {
             sendDescRequest('en', res[1][0])
               .then((descRes) => {
                 const page = descRes.data.query.pages ? descRes.data.query.pages[0] : { extract: '' };
-                const desc = page['extract']
+                const desc = page.extract;
 
                 this.setState({
                   allowImgReq: true,
@@ -189,13 +191,13 @@ export default class AddOrEditRecord extends React.Component {
                     searchTerm: res[1] && res[1][0] !== '' ? res[1][0] : '',
                   },
                 });
-            })
-            .catch(() => {
-              this.setState({ showWildCardError: true });
-            })
-            .then(() => {
-              setLoadingCursor(false);
-            });
+              })
+              .catch(() => {
+                this.setState({ showWildCardError: true });
+              })
+              .then(() => {
+                setLoadingCursor(false);
+              });
           } else {
             this.setState({
               allowImgReq: true,
@@ -351,25 +353,27 @@ export default class AddOrEditRecord extends React.Component {
         handleRemoveImg={this.handleRemoveImg}
         setWildCardError={this.setWildCardError}
         {...this.state}
-      />) : (
-        <AddRecord
-          addRecordToCollection={addRecordToCollection}
-          loadCollection={loadCollection}
-          handleReset={this.handleReset}
-          handleSubmit={this.handleSubmit}
-          handleChange={this.handleChange}
-          handleResetWiki={this.handleResetWiki}
-          handleFileUpload={this.handleFileUpload}
-          handleRemoveImg={this.handleRemoveImg}
-          handleRatingChange={this.handleRatingChange}
-          handleCheckbox={this.handleCheckbox}
-          handleSearchRequest={this.handleSearchRequest}
-          handleImgRequest={this.handleImgRequest}
-          toggleLargeForm={this.toggleLargeForm}
-          setWildCardError={this.setWildCardError}
-          disableWishlistFields={disableWishlistFields}
-          {...this.state}
-        />);
+      />
+    ) : (
+      <AddRecord
+        addRecordToCollection={addRecordToCollection}
+        loadCollection={loadCollection}
+        handleReset={this.handleReset}
+        handleSubmit={this.handleSubmit}
+        handleChange={this.handleChange}
+        handleResetWiki={this.handleResetWiki}
+        handleFileUpload={this.handleFileUpload}
+        handleRemoveImg={this.handleRemoveImg}
+        handleRatingChange={this.handleRatingChange}
+        handleCheckbox={this.handleCheckbox}
+        handleSearchRequest={this.handleSearchRequest}
+        handleImgRequest={this.handleImgRequest}
+        toggleLargeForm={this.toggleLargeForm}
+        setWildCardError={this.setWildCardError}
+        disableWishlistFields={disableWishlistFields}
+        {...this.state}
+      />
+    );
   }
 }
 

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Col, Grid, Row, Glyphicon, OverlayTrigger, Button, ButtonGroup } from 'react-bootstrap';
+import {
+  Col, Grid, Row, Glyphicon, OverlayTrigger, Button, ButtonGroup,
+} from 'react-bootstrap';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
 import tooltip from '../CommonComponents/Tooltip';
 import SearchField from '../CommonComponents/SearchField';

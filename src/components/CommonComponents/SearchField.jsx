@@ -35,16 +35,18 @@ class SearchField extends React.Component {
           placeholder={`Search in ${this.props.wishlist ? 'wishlist...' : 'collection...'}`}
           onChange={this.handleSearch}
         />
-        {this.props.search &&
+        {this.props.search
+          && (
           <span
             role="button"
             tabIndex={0}
             className="standard-glyph lg-glyph"
             onClick={this.clearSearch}
-            onKeyUp={e => e.key.toLowerCase() === 'enter' && this.clearSearch(e)}
+            onKeyUp={(e) => e.key.toLowerCase() === 'enter' && this.clearSearch(e)}
           >
             <Glyphicon glyph="remove" />
-          </span>}
+          </span>
+          )}
       </Form>
     );
   }
@@ -61,7 +63,7 @@ SearchField.defaultProps = {
   wishlist: false,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   search: state.search,
 });
 

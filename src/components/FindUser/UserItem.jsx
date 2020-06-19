@@ -1,11 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Col, Grid, Row, ListGroupItem } from 'react-bootstrap';
+import {
+  Button, Col, Grid, Row, ListGroupItem,
+} from 'react-bootstrap';
 
 const getBsStyle = (isPublic, usernamesEqual) => {
   if (!usernamesEqual && isPublic) {
     return 'success';
-  } else if (!usernamesEqual && !isPublic) {
+  } if (!usernamesEqual && !isPublic) {
     return 'danger';
   }
   return 'default';
@@ -21,16 +23,26 @@ const UserItem = ({
           <strong>{username}</strong>
         </Col>
         <Col lg={12} md={12} sm={12} xs={12}>
-          {!usernamesEqual &&
+          {!usernamesEqual
+          && (
           <div>
-                The user has a {props.public ? 'public' : 'private'} account.
+            The user has a
+            {' '}
+            {props.public ? 'public' : 'private'}
+            {' '}
+            account.
           </div>
-            }
-          {usernamesEqual &&
+          )}
+          {usernamesEqual
+          && (
           <div>
-                You have a {props.public ? 'public' : 'private'} account.
+            You have a
+            {' '}
+            {props.public ? 'public' : 'private'}
+            {' '}
+            account.
           </div>
-            }
+          )}
           <Button
             name="gotoUserPage"
             className="pull-right"
@@ -38,18 +50,15 @@ const UserItem = ({
             bsSize="small"
             disabled={!props.public && !usernamesEqual}
             onClick={(e) => {
-                handleClick(e, username);
-              }}
+              handleClick(e, username);
+            }}
           >
-            {!usernamesEqual && !props.public &&
-                'Private'
-              }
-            {!usernamesEqual && props.public &&
-                'Go to the user\'s collection'
-              }
-            {usernamesEqual &&
-                'Go to your user page'
-              }
+            {!usernamesEqual && !props.public
+                && 'Private'}
+            {!usernamesEqual && props.public
+                && 'Go to the user\'s collection'}
+            {usernamesEqual
+                && 'Go to your user page'}
           </Button>
         </Col>
       </Row>

@@ -82,7 +82,7 @@ export default class AddRecord extends React.Component {
     } = this.props;
 
     return (
-      <form onSubmit={e => handleSubmit(e, this.addRecordSubmit)}>
+      <form onSubmit={(e) => handleSubmit(e, this.addRecordSubmit)}>
         {showWildCardError && <WildCardError />}
         <TitleFormGroup
           name="title"
@@ -121,30 +121,34 @@ export default class AddRecord extends React.Component {
               <Checkbox
                 name="wikiDescCB"
                 onChange={(e) => {
-                 handleCheckbox(e);
-                 handleSearchRequest();
-               }}
+                  handleCheckbox(e);
+                  handleSearchRequest();
+                }}
                 checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
                 inline
               >
-               Add description from Wikipedia
+                Add description from Wikipedia
               </Checkbox>
               <Checkbox
                 name="wikiImgCB"
                 onChange={(e) => {
-                 handleCheckbox(e);
-                 handleImgRequest();
-               }}
+                  handleCheckbox(e);
+                  handleImgRequest();
+                }}
                 disabled={!allowImgReq}
                 checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
                 inline
               >
-               Add image from Wikipedia
-              </Checkbox> {' '}
-              {(wikiImg || wikiDesc) &&
+                Add image from Wikipedia
+              </Checkbox>
+              {' '}
+              {' '}
+              {(wikiImg || wikiDesc)
+              && (
               <Button onClick={handleResetWiki}>
-               Reset Wikipedia fields
-              </Button>}
+                Reset Wikipedia fields
+              </Button>
+              )}
             </FormGroup>
             <WikiInfo
               wikiReqDesc={wikiReqDesc}
@@ -161,23 +165,22 @@ export default class AddRecord extends React.Component {
               help="If you want to upload your own image. (Max: 2MB)"
               onChange={handleFileUpload}
             />
-            {invalidImg &&
-            <p className="text-danger">The uploaded file is invalid.</p>
-           }
-            {image &&
+            {invalidImg
+            && <p className="text-danger">The uploaded file is invalid.</p>}
+            {image
+            && (
             <Grid fluid>
               <Row>
                 <Col lg={6} md={7} sm={5} xs={8}>
                   <Well bsSize="small">
-                    {imageData &&
-                    <Image src={imageData} responsive />
-                     }
+                    {imageData
+                    && <Image src={imageData} responsive />}
                   </Well>
                   <Button bsSize="small" onClick={handleRemoveImg}>Remove file</Button>
                 </Col>
               </Row>
             </Grid>
-           }
+            )}
             <FormGroup controlId="formControlsNotes">
               <ControlLabel>Add your own notes here:</ControlLabel>
               <FormControl
@@ -193,7 +196,7 @@ export default class AddRecord extends React.Component {
               emptySymbol="glyphicon glyphicon-star-empty"
               fullSymbol="glyphicon glyphicon-star"
               initialRating={rating}
-              onChange={rate => handleRatingChange(rate)}
+              onChange={(rate) => handleRatingChange(rate)}
             />
             <Button bsStyle="primary" type="submit" block>
               Add record to collection
@@ -272,7 +275,8 @@ const TitleFormGroup = ({
           {label && <ControlLabel>{label}</ControlLabel>}
         </Col>
         <Col className="no-padding text-right" lg={1} md={1} sm={1} xs={1}>
-          {(largeForm || value) &&
+          {(largeForm || value)
+            && (
             <OverlayTrigger placement="right" overlay={tooltip('Click here to discard submition.')}>
               <span
                 role="button"
@@ -283,7 +287,8 @@ const TitleFormGroup = ({
               >
                 <Glyphicon glyph="trash" />
               </span>
-            </OverlayTrigger>}
+            </OverlayTrigger>
+            )}
         </Col>
       </Row>
     </Grid>
@@ -297,16 +302,19 @@ const TitleFormGroup = ({
         disabled={disabled}
       />
       <InputGroup.Button>
-        { props.tooltip ?
-          <OverlayTrigger placement="right" overlay={tooltip(props.tooltip)}>
+        { props.tooltip
+          ? (
+            <OverlayTrigger placement="right" overlay={tooltip(props.tooltip)}>
+              <Button onClick={toggleLargeForm} disabled={disabled}>
+                <Glyphicon glyph={glyph} />
+              </Button>
+            </OverlayTrigger>
+          )
+          : (
             <Button onClick={toggleLargeForm} disabled={disabled}>
               <Glyphicon glyph={glyph} />
             </Button>
-          </OverlayTrigger>
-          :
-          <Button onClick={toggleLargeForm} disabled={disabled}>
-            <Glyphicon glyph={glyph} />
-          </Button>}
+          )}
       </InputGroup.Button>
     </InputGroup>
   </FormGroup>
@@ -337,55 +345,53 @@ const WikiInfo = ({
   wikiHref,
 }) => (
   <Collapse in={wikiReqDesc || wikiReqImg.req}>
-    {wikiReqDesc && wikiReqImg.req ?
-      <div>
-        <Well>
-          <Grid fluid>
-            <Row>
-              <Col lg={4} md={5} sm={5}>
-                <Collapse in={wikiReqImg.req}>
-                  <div>
-                    {wikiImg ?
-                      <Image src={wikiImg} rounded responsive />
-                      :
-                      'No image was found.'
-                    }
-                  </div>
-                </Collapse>
-              </Col>
-              <Col lg={8} md={7} sm={7}>
-                <Collapse in={wikiReqDesc}>
-                  <div>
-                    {wikiDesc || 'No information was found.'}
-                  </div>
-                </Collapse>
-                {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
-              </Col>
-            </Row>
-          </Grid>
-        </Well>
-      </div>
-    :
-      <div>
-        <Well>
-          <Collapse in={wikiReqImg.req}>
-            <div>
-              {wikiImg ?
-                <Image src={wikiImg} rounded responsive />
-                :
-                'No image was found.'
-              }
-            </div>
-          </Collapse>
-          <Collapse in={wikiReqDesc}>
-            <div>
-              {wikiDesc || 'No information was found.'}
-            </div>
-          </Collapse>
-          {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
-        </Well>
-      </div>
-  }
+    {wikiReqDesc && wikiReqImg.req
+      ? (
+        <div>
+          <Well>
+            <Grid fluid>
+              <Row>
+                <Col lg={4} md={5} sm={5}>
+                  <Collapse in={wikiReqImg.req}>
+                    <div>
+                      {wikiImg
+                        ? <Image src={wikiImg} rounded responsive />
+                        : 'No image was found.'}
+                    </div>
+                  </Collapse>
+                </Col>
+                <Col lg={8} md={7} sm={7}>
+                  <Collapse in={wikiReqDesc}>
+                    <div>
+                      {wikiDesc || 'No information was found.'}
+                    </div>
+                  </Collapse>
+                  {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
+                </Col>
+              </Row>
+            </Grid>
+          </Well>
+        </div>
+      )
+      : (
+        <div>
+          <Well>
+            <Collapse in={wikiReqImg.req}>
+              <div>
+                {wikiImg
+                  ? <Image src={wikiImg} rounded responsive />
+                  : 'No image was found.'}
+              </div>
+            </Collapse>
+            <Collapse in={wikiReqDesc}>
+              <div>
+                {wikiDesc || 'No information was found.'}
+              </div>
+            </Collapse>
+            {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
+          </Well>
+        </div>
+      )}
   </Collapse>
 );
 

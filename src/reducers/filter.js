@@ -1,4 +1,4 @@
-export default function (state = {}, action) {
+export default (state = {}, action) => {
   switch (action.type) {
     case 'SET_FILTER': {
       if (action.payload.filter) {
@@ -21,4 +21,4 @@ export default function (state = {}, action) {
       return state;
     }
   }
-}
+};

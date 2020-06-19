@@ -31,14 +31,15 @@ export default class FilterGroup extends React.Component {
 
   getFilterItems() {
     const { tags, groupName, handleUpdate } = this.props;
-    return Object.keys(tags).map(item => (
+    return Object.keys(tags).map((item) => (
       <FilterItem
         key={item}
         groupName={groupName}
         tag={item}
         tagValue={tags[item]}
         handleUpdate={handleUpdate}
-      />));
+      />
+    ));
   }
 
   toggleExpand(e) {

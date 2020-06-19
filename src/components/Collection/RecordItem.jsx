@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ListGroupItem, Grid, Col, Row, Image, Button, Glyphicon, Modal, OverlayTrigger } from 'react-bootstrap';
+import {
+  ListGroupItem, Grid, Col, Row, Image, Button, Glyphicon, Modal, OverlayTrigger,
+} from 'react-bootstrap';
 import Rating from 'react-rating';
 import { setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
 import noRecordImg from '../../assets/img/no_record_img.png';
@@ -19,15 +21,17 @@ const MinimizedView = ({
   publicUsername,
 }) => (
   <Row>
-    {record.wikiImg || image ?
-      <Col lg={2} md={4} sm={4} xs={12}>
-        <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
-      </Col>
-    :
-      <Col lg={2} md={4} sm={4} xs={12}>
-        <Image src={noRecordImg} rounded responsive />
-      </Col>
-    }
+    {record.wikiImg || image
+      ? (
+        <Col lg={2} md={4} sm={4} xs={12}>
+          <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
+        </Col>
+      )
+      : (
+        <Col lg={2} md={4} sm={4} xs={12}>
+          <Image src={noRecordImg} rounded responsive />
+        </Col>
+      )}
     <Col lg={10} md={8} sm={8} xs={12}>
       <Grid fluid>
         <CommonInformation
@@ -59,7 +63,7 @@ const MinimizedView = ({
             <Button
               className="pull-right"
               bsSize="small"
-              onClick={e => e.preventDefault()}
+              onClick={(e) => e.preventDefault()}
             >
               Show more
             </Button>
@@ -103,15 +107,17 @@ const ExpandedView = ({
   publicUsername,
 }) => (
   <Row>
-    {record.wikiImg || image ?
-      <Col lg={4} md={4} sm={4} xs={12}>
-        <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
-      </Col>
-      :
-      <Col lg={4} md={4} sm={4} xs={12}>
-        <Image src={noRecordImg} rounded responsive />
-      </Col>
-    }
+    {record.wikiImg || image
+      ? (
+        <Col lg={4} md={4} sm={4} xs={12}>
+          <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
+        </Col>
+      )
+      : (
+        <Col lg={4} md={4} sm={4} xs={12}>
+          <Image src={noRecordImg} rounded responsive />
+        </Col>
+      )}
     <Col lg={8} md={8} sm={8} xs={12}>
       <Grid fluid>
         <CommonInformation
@@ -138,23 +144,24 @@ const ExpandedView = ({
           </Col>
         </Row>
         <Row>
-          {record.wikiDesc &&
+          {record.wikiDesc
+            && (
             <Col lg={12} md={12} sm={12} xs={12}>
               <h5><b>Description:</b></h5>
               {record.wikiDesc}
-              {(record.wikiHref && <a href={record.wikiHref} target="blank"> Wikipedia</a>) ||
-                <a href="https://en.wikipedia.com" target="blank"> Wikipedia</a>
-              }
+              {(record.wikiHref && <a href={record.wikiHref} target="blank"> Wikipedia</a>)
+                || <a href="https://en.wikipedia.com" target="blank"> Wikipedia</a>}
             </Col>
-          }
+            )}
         </Row>
         <Row>
-          {record.notes &&
+          {record.notes
+            && (
             <Col lg={12} md={12} sm={12} xs={12}>
               <h5><b>Notes:</b></h5>
               {record.notes}
             </Col>
-          }
+            )}
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
@@ -162,7 +169,7 @@ const ExpandedView = ({
             <Button
               className="pull-right"
               bsSize="small"
-              onClick={e => e.preventDefault()}
+              onClick={(e) => e.preventDefault()}
             >
               Show less
             </Button>
@@ -212,13 +219,18 @@ const CommonInformation = ({
     <Row>
       <Col lg={10} md={9} sm={10} xs={9}>
         <h4>
-          {artistStrings[0]}<span className="yellow-bg">{artistStrings[1]}</span>{artistStrings[2]}
+          {artistStrings[0]}
+          <span className="yellow-bg">{artistStrings[1]}</span>
+          {artistStrings[2]}
           {artist && ' - '}
-          {titleStrings[0]}<span className="yellow-bg">{titleStrings[1]}</span>{titleStrings[2]}
+          {titleStrings[0]}
+          <span className="yellow-bg">{titleStrings[1]}</span>
+          {titleStrings[2]}
         </h4>
       </Col>
       <Col lg={2} md={3} sm={2} xs={3}>
-        {!publicUsername &&
+        {!publicUsername
+        && (
         <div>
           <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
             <span
@@ -226,7 +238,7 @@ const CommonInformation = ({
               tabIndex={0}
               className="standard-glyph pull-right md-glyph"
               onClick={handleShowModal}
-              onKeyUp={e => e.key.toLowerCase() === 'enter' && handleShowModal(e)}
+              onKeyUp={(e) => e.key.toLowerCase() === 'enter' && handleShowModal(e)}
             >
               <Glyphicon glyph="trash" />
             </span>
@@ -237,12 +249,13 @@ const CommonInformation = ({
               tabIndex={0}
               className="standard-glyph pull-right md-glyph"
               onClick={handleEdit}
-              onKeyUp={e => e.key.toLowerCase() === 'enter' && handleEdit(e)}
+              onKeyUp={(e) => e.key.toLowerCase() === 'enter' && handleEdit(e)}
             >
               <Glyphicon glyph="pencil" />
             </span>
           </OverlayTrigger>
-        </div>}
+        </div>
+        )}
       </Col>
     </Row>
   );
@@ -355,7 +368,8 @@ class RecordItem extends React.Component {
           </Modal.Footer>
         </Modal>
         <Grid onClick={this.toggleExpand} fluid>
-          {(this.state.expand && !this.state.isEditMode) &&
+          {(this.state.expand && !this.state.isEditMode)
+            && (
             <ExpandedView
               record={this.props.record}
               image={image}
@@ -363,8 +377,10 @@ class RecordItem extends React.Component {
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
               publicUsername={this.props.publicUsername}
-            />}
-          {(!this.state.expand && !this.state.isEditMode) &&
+            />
+            )}
+          {(!this.state.expand && !this.state.isEditMode)
+            && (
             <MinimizedView
               record={this.props.record}
               image={image}
@@ -372,15 +388,18 @@ class RecordItem extends React.Component {
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
               publicUsername={this.props.publicUsername}
-            />}
-          {this.state.isEditMode &&
+            />
+            )}
+          {this.state.isEditMode
+            && (
             <AddOrEditRecord
               record={this.props.record}
               handleShowModal={this.handleShowModal}
               handleReset={this.handleReset}
               editRecordInCollection={this.props.editRecordInCollection}
               edit
-            />}
+            />
+            )}
           {this.state.showWildCardError && <WildCardError />}
         </Grid>
       </ListGroupItem>
@@ -412,7 +431,7 @@ RecordItem.defaultProps = {
   publicUsername: null,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   search: state.search,
 });
 

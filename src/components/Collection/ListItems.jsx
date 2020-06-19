@@ -3,7 +3,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ListGroup, Panel, Grid, Row, Col } from 'react-bootstrap';
+import {
+  ListGroup, Panel, Grid, Row, Col,
+} from 'react-bootstrap';
 import axios from 'axios';
 import AddOrEditRecord from './AddOrEditRecord';
 import RecordItem from './RecordItem';
@@ -14,11 +16,9 @@ import { getRecordsBySearchAndFilter } from '../../selectors/collection';
 
 const EmptyCollection = ({ publicUsername, collectionHasEntries }) => (
   <div className="text-center lead">
-    {collectionHasEntries ?
-      'The search and/or filter doesn\'t match any records'
-      :
-      `${publicUsername ? 'The' : 'Your'} collection is empty.`
-    }
+    {collectionHasEntries
+      ? 'The search and/or filter doesn\'t match any records'
+      : `${publicUsername ? 'The' : 'Your'} collection is empty.`}
   </div>
 );
 
@@ -57,7 +57,7 @@ class ListItems extends React.Component {
     const type = Object.keys(this.state.sortMode)[0];
     const order = Object.values(this.state.sortMode)[0];
 
-    return sortArrayOfObjects(this.props.records, type, order).map(record => (
+    return sortArrayOfObjects(this.props.records, type, order).map((record) => (
       <RecordItem
         record={record}
         key={record._id}
@@ -65,7 +65,8 @@ class ListItems extends React.Component {
         loadCollection={this.loadCollection}
         editRecordInCollection={this.editRecordInCollection}
         publicUsername={this.props.publicUsername}
-      />));
+      />
+    ));
   }
 
   addRecordToCollection(record) {
@@ -143,18 +144,25 @@ class ListItems extends React.Component {
               {publicUsername ? (
                 <Panel.Body>
                   <h4>
-                    You are viewing <strong>{getOwnershipFormat(publicUsername)}</strong> collection.
+                    You are viewing
+                    {' '}
+                    <strong>{getOwnershipFormat(publicUsername)}</strong>
+                    {' '}
+                    collection.
                   </h4>
-                </Panel.Body>) : (
-                  <Panel.Body>
-                    <AddOrEditRecord
-                      addRecordToCollection={this.addRecordToCollection}
-                      loadCollection={this.loadCollection}
-                    />
-                  </Panel.Body>)}
+                </Panel.Body>
+              ) : (
+                <Panel.Body>
+                  <AddOrEditRecord
+                    addRecordToCollection={this.addRecordToCollection}
+                    loadCollection={this.loadCollection}
+                  />
+                </Panel.Body>
+              )}
               {recordItems.length !== 0 ? (
                 <div>
-                  {this.state.galleryView &&
+                  {this.state.galleryView
+                    && (
                     <Grid fluid>
                       <Row>
                         <Col lg={6} md={6} sm={6} xs={6}>
@@ -168,13 +176,16 @@ class ListItems extends React.Component {
                           </ListGroup>
                         </Col>
                       </Row>
-                    </Grid>}
-                  {!this.state.galleryView &&
+                    </Grid>
+                    )}
+                  {!this.state.galleryView
+                    && (
                     <ListGroup componentClass="ul">
                       { recordItems }
-                    </ListGroup>}
+                    </ListGroup>
+                    )}
                 </div>
-                ) : (<EmptyCollection publicUsername={publicUsername} collectionHasEntries={collectionHasEntries} />)}
+              ) : (<EmptyCollection publicUsername={publicUsername} collectionHasEntries={collectionHasEntries} />)}
             </Panel>
           </Col>
         </Row>
@@ -205,7 +216,7 @@ ListItems.defaultProps = {
   publicUsername: null,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   records: getRecordsBySearchAndFilter(state),
   collectionHasEntries: state.collection.records ? Object.keys(state.collection.records).length > 1 : false,
   authenticatedUser: state.authenticate.user,

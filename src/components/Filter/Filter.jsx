@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button, ListGroup, ListGroupItem, Glyphicon, Collapse } from 'react-bootstrap';
+import {
+  Button, ListGroup, ListGroupItem, Glyphicon, Collapse,
+} from 'react-bootstrap';
 import { getFilter } from '../../util';
 import { setFilter, setFilterItem, resetFilter } from '../../actions';
 import FilterGroup from './FilterGroup';
@@ -59,14 +61,15 @@ class Filter extends React.Component {
 
   getFilterGroups() {
     const { filter, hasReset } = this.state;
-    return Object.keys(filter).map(groupName => (
+    return Object.keys(filter).map((groupName) => (
       <FilterGroup
         key={groupName}
         groupName={groupName}
         tags={filter[groupName]}
         hasReset={hasReset}
         handleUpdate={this.handleUpdate}
-      />));
+      />
+    ));
   }
 
   updateWidth() {
@@ -108,7 +111,8 @@ class Filter extends React.Component {
 
     return (
       <ListGroup>
-        {width < 992 &&
+        {width < 992
+          && (
           <div>
             <ListGroupItem className="no-padding-bottom rm-outline" onClick={this.toggleExpand}>
               <strong>Filter:</strong>
@@ -125,9 +129,10 @@ class Filter extends React.Component {
                 <FilterGroups filterGroups={filterGroups} handleReset={this.handleReset} />
               </div>
             </Collapse>
-          </div>}
-        {width >= 992 &&
-          <FilterGroups filterGroups={filterGroups} handleReset={this.handleReset} />}
+          </div>
+          )}
+        {width >= 992
+          && <FilterGroups filterGroups={filterGroups} handleReset={this.handleReset} />}
       </ListGroup>
     );
   }

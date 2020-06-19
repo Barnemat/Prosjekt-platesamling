@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { Button, Col, Grid, Row, ListGroup, ListGroupItem } from 'react-bootstrap';
+import {
+  Button, Col, Grid, Row, ListGroup, ListGroupItem,
+} from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
 import WildCardError from '../components/CommonComponents/WildCardError';
@@ -41,14 +43,15 @@ class FindUser extends React.Component {
 
   getUserItems() {
     const { authenticatedUser } = this.props;
-    return this.state.users.map(user => (
+    return this.state.users.map((user) => (
       <UserItem
         key={user.username}
         username={user.username}
         public={user.public}
         usernamesEqual={authenticatedUser.username === user.username}
         handleClick={this.handleClick}
-      />));
+      />
+    ));
   }
 
   handleChange(e) {
@@ -113,22 +116,25 @@ class FindUser extends React.Component {
                       type="submit"
                       disabled={searchField.length === 0}
                     >
-                        Find users
+                      Find users
                     </Button>
                   </form>
                 </Col>
               </Row>
-              {(searchAtLastSubmit.length > 0 || userItems.length > 0) &&
+              {(searchAtLastSubmit.length > 0 || userItems.length > 0)
+                && (
                 <Row>
                   <Col lg={12} md={12} sm={12} xs={12}>
                     <ListGroup componentClass="ul">
                       {userItems.length > 0 ? userItems : (
                         <ListGroupItem>
                           <strong>{`The search "${searchAtLastSubmit}" does not match any users...`}</strong>
-                        </ListGroupItem>)}
+                        </ListGroupItem>
+                      )}
                     </ListGroup>
                   </Col>
-                </Row>}
+                </Row>
+                )}
             </Grid>
           </Col>
           <Col lg={2} md={2} />
@@ -162,7 +168,7 @@ FindUser.defaultProps = {
   },
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   authenticatedUser: state.authenticate.user,
 });
 

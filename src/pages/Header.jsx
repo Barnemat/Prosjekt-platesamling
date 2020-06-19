@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Navbar, Nav, NavItem, Col, Grid, Row, Image } from 'react-bootstrap';
+import {
+  Navbar, Nav, NavItem, Col, Grid, Row, Image,
+} from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { signOutAction } from '../actions';
 import logo from '../assets/img/logo-vanlig.png';
@@ -53,23 +55,21 @@ const Header = ({ authenticated, username, ...props }) => (
                   </NavItem>
                 </LinkContainer>
               </Nav>
-              )
-              :
-              (
+            )
+              : (
                 <Nav pullRight>
                   <LinkContainer to="/register">
                     <NavItem eventKey={4}>
-                    Register
+                      Register
                     </NavItem>
                   </LinkContainer>
                   <LinkContainer to="/signin">
                     <NavItem eventKey={5}>
-                    Sign in
+                      Sign in
                     </NavItem>
                   </LinkContainer>
                 </Nav>
-              )
-            }
+              )}
           </Navbar.Collapse>
         </Col>
         <Col lg={2} md={2} />
@@ -78,15 +78,13 @@ const Header = ({ authenticated, username, ...props }) => (
   </Navbar>
 );
 
-
 Header.propTypes = {
   authenticated: PropTypes.bool.isRequired,
   username: PropTypes.string.isRequired,
   signOutAction: PropTypes.func.isRequired,
 };
 
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   authenticated: state.authenticate.authenticated || false,
   username: state.authenticate.user ? state.authenticate.user.username : '',
 });

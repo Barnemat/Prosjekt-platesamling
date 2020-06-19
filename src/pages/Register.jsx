@@ -76,13 +76,13 @@ class Register extends React.Component {
     } = this.state;
 
     return (
-      username.length === 0 ||
-      email.length === 0 ||
-      password.length === 0 ||
-      retype.length === 0 ||
-      passwordValid === 'error' ||
-      passwordsEqual === 'error' ||
-      emailValid === 'error');
+      username.length === 0
+      || email.length === 0
+      || password.length === 0
+      || retype.length === 0
+      || passwordValid === 'error'
+      || passwordsEqual === 'error'
+      || emailValid === 'error');
   }
 
   getPasswordValid(password) {
@@ -123,7 +123,6 @@ class Register extends React.Component {
 
     this.setState({ showEmailNotValid, showPasswordNotValid, showPasswordsNotEqual });
   }
-
 
   handleChange(e) {
     e.preventDefault();
@@ -238,9 +237,8 @@ class Register extends React.Component {
             <Col lg={2} md={2} />
             <Col lg={8} md={8} sm={12} xs={12}>
               <form onSubmit={this.handleSubmit} onReset={this.handleReset}>
-                {wildCardError &&
-                  <WildCardError />
-                }
+                {wildCardError
+                  && <WildCardError />}
                 <DefaultFormGroup
                   id="formControlsUsername"
                   name="username"
@@ -253,11 +251,12 @@ class Register extends React.Component {
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
-                {!userUnique &&
+                {!userUnique
+                  && (
                   <div className="text-danger">
                     The username already is taken.
                   </div>
-                }
+                  )}
                 <DefaultFormGroup
                   id="formControlsEmail"
                   name="email"
@@ -270,16 +269,18 @@ class Register extends React.Component {
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
-                {showEmailNotValid &&
+                {showEmailNotValid
+                  && (
                   <div className="text-danger">
-                     The email does not contain an &apos;@&apos; or a &apos;.&apos;
+                    The email does not contain an &apos;@&apos; or a &apos;.&apos;
                   </div>
-                }
-                {!emailUnique &&
+                  )}
+                {!emailUnique
+                  && (
                   <div className="text-danger">
                     The email is registered by another user.
                   </div>
-                }
+                  )}
                 <DefaultFormGroup
                   id="formControlsPassword"
                   name="password"
@@ -291,11 +292,12 @@ class Register extends React.Component {
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
-                {showPasswordNotValid &&
+                {showPasswordNotValid
+                  && (
                   <div className="text-danger">
                     {this.notValidText}
                   </div>
-                }
+                  )}
                 <DefaultFormGroup
                   id="formControlsPassword2"
                   name="retype"
@@ -307,11 +309,12 @@ class Register extends React.Component {
                   onChange={this.handleChange}
                   onFocus={this.handleFocus}
                 />
-                {showPasswordsNotEqual &&
+                {showPasswordsNotEqual
+                  && (
                   <div className="text-danger">
                     The passwords does not match.
                   </div>
-                }
+                  )}
                 <Button
                   bsStyle="primary"
                   type="submit"
@@ -323,17 +326,17 @@ class Register extends React.Component {
                 <Button
                   type="reset"
                   disabled={
-                      username.length === 0 &&
-                      email.length === 0 &&
-                      password.length === 0 &&
-                      retype.length === 0}
+                      username.length === 0
+                      && email.length === 0
+                      && password.length === 0
+                      && retype.length === 0
+}
                   onFocus={this.handleFocus}
                 >
                   Reset Fields
                 </Button>
-                {wildCardError &&
-                  <WildCardError />
-                }
+                {wildCardError
+                  && <WildCardError />}
               </form>
             </Col>
             <Col lg={2} md={2} />
@@ -352,7 +355,7 @@ Register.defaultProps = {
   authenticated: false,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   authenticated: state.authenticate.authenticated,
 });
 

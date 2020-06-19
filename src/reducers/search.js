@@ -1,4 +1,4 @@
-export default function (state = {}, action) {
+export default (state = {}, action) => {
   switch (action.type) {
     case 'SET_SEARCH':
       return action.payload.search;
@@ -7,4 +7,4 @@ export default function (state = {}, action) {
     default:
       return state;
   }
-}
+};

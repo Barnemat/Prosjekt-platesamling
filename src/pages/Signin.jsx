@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Col, Grid, Row, Button, ControlLabel } from 'react-bootstrap';
+import {
+  Col, Grid, Row, Button, ControlLabel,
+} from 'react-bootstrap';
 import { Field, reduxForm } from 'redux-form';
 import { Redirect } from 'react-router-dom';
 import { signInAction } from '../actions';
@@ -14,20 +16,20 @@ class Signin extends React.Component {
       checked: false,
     };
 
-    this.submit = (values) => {
-      this.props.signInAction(Object.assign(values, { remember: this.state.checked }));
-    };
-
     this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick() {
-    this.setState({ checked: !this.state.checked });
+    this.setState((state) => ({
+      checked: !state.checked,
+    }));
   }
 
   render() {
+    const { checked } = this.state;
+
     const {
-      handleSubmit, pristine, reset, submitting, authenticated,
+      handleSubmit, pristine, reset, submitting, authenticated, errorMessage, ...props
     } = this.props;
 
     return authenticated ? (<Redirect to="/" />) : (
@@ -36,7 +38,10 @@ class Signin extends React.Component {
           <Row className="show-grid">
             <Col lg={2} md={2} sm={2} xs={1} />
             <Col lg={5} md={5} sm={6} xs={10}>
-              <form onSubmit={handleSubmit(this.submit)}>
+              <form onSubmit={handleSubmit((values) => {
+                props.signInAction(Object.assign(values, { remember: checked }));
+              })}
+              >
                 <Grid fluid>
                   <Row className="margin-bottom">
                     <Col lg={2} md={3} sm={3} xs={12} componentClass={ControlLabel}>Username</Col>
@@ -76,13 +81,13 @@ class Signin extends React.Component {
                         name="remember"
                         component="input"
                         type="checkbox"
-                        checked={this.state.checked}
+                        checked={checked}
                         onClick={this.handleClick}
                       />
                       <span
                         role="button"
                         tabIndex={0}
-                        onKeyUp={e => e.key.toLowerCase() === 'enter' && this.handleClick()}
+                        onKeyUp={(e) => e.key.toLowerCase() === 'enter' && this.handleClick()}
                         onClick={this.handleClick}
                       >
                         Remember me
@@ -119,7 +124,7 @@ class Signin extends React.Component {
                 xs={12}
               >
                 <p className="text-danger">
-                  {this.props.errorMessage}
+                  {errorMessage}
                 </p>
               </Col>
             </Col>
@@ -146,7 +151,7 @@ Signin.defaultProps = {
   authenticated: false,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   errorMessage: state.authenticate.error,
   authenticated: state.authenticate.authenticated,
 });

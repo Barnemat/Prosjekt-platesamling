@@ -53,10 +53,9 @@ export default class CurrentUserPage extends React.Component {
       showPasswordNotValid: false,
       showPasswordsNotEqual: false,
       wildCardError: false,
-      publicUser: this.props.authenticatedUser && this.props.authenticatedUser.public !== undefined ?
-        this.props.authenticatedUser.public
-        :
-        false,
+      publicUser: this.props.authenticatedUser && this.props.authenticatedUser.public !== undefined
+        ? this.props.authenticatedUser.public
+        : false,
       showPublicUserSubmitSuccess: false,
     };
 
@@ -94,9 +93,9 @@ export default class CurrentUserPage extends React.Component {
     } = this.state;
 
     return (
-      newEmail.length === 0 ||
-      confirmEmailPassword.length === 0 ||
-      emailValid === 'error');
+      newEmail.length === 0
+      || confirmEmailPassword.length === 0
+      || emailValid === 'error');
   }
 
   getPasswordBtnDisable() {
@@ -109,11 +108,11 @@ export default class CurrentUserPage extends React.Component {
     } = this.state;
 
     return (
-      newPassword.length === 0 ||
-      newPasswordRetype.length === 0 ||
-      confirmPasswordEdit.length === 0 ||
-      passwordValid === 'error' ||
-      passwordsEqual === 'error');
+      newPassword.length === 0
+      || newPasswordRetype.length === 0
+      || confirmPasswordEdit.length === 0
+      || passwordValid === 'error'
+      || passwordsEqual === 'error');
   }
 
   handleEmailSubmit(e) {
@@ -351,15 +350,18 @@ export default class CurrentUserPage extends React.Component {
     const { authenticatedUser } = this.props;
     return (
       <div>
-        <h3>Hi, {authenticatedUser.username}!</h3>
+        <h3>
+          Hi,
+          {authenticatedUser.username}
+          !
+        </h3>
         <p>
           Here you can change your password and email.
           You can also set your account to private or public.
           If your account is set to public, your username and collection will be visible to others.
         </p>
-        {wildCardError &&
-          <WildCardError />
-        }
+        {wildCardError
+          && <WildCardError />}
         <form onSubmit={this.handleEmailSubmit} onReset={this.handleEmailReset}>
           <DefaultFormGroup
             id="formControlsEmailPassword"
@@ -373,11 +375,12 @@ export default class CurrentUserPage extends React.Component {
             onFocus={this.handleFocus}
             autoComplete="new-password"
           />
-          {wrongPasswordEmail &&
+          {wrongPasswordEmail
+            && (
             <div className="text-danger">
               {this.wrongPassword}
             </div>
-          }
+            )}
           <DefaultFormGroup
             id="formControlsEmail"
             name="newEmail"
@@ -406,21 +409,24 @@ export default class CurrentUserPage extends React.Component {
           >
             Reset Fields
           </Button>
-          {showEmailSubmitSuccess &&
+          {showEmailSubmitSuccess
+            && (
             <div className="text-success">
               Your email address was successfully changed.
             </div>
-          }
-          {showEmailNotValid &&
+            )}
+          {showEmailNotValid
+            && (
             <div className="text-danger">
               The email does not contain an &apos;@&apos; or a &apos;.&apos;
             </div>
-          }
-          {showEmailPreviouslyUsed &&
+            )}
+          {showEmailPreviouslyUsed
+            && (
             <div className="text-danger">
               The email is registered by another user.
             </div>
-          }
+            )}
         </form>
         <form onSubmit={this.handlePasswordSubmit} onReset={this.handlePasswordReset}>
           <DefaultFormGroup
@@ -435,11 +441,12 @@ export default class CurrentUserPage extends React.Component {
             onFocus={this.handleFocus}
             autoComplete="new-password"
           />
-          {wrongPasswordPassword &&
+          {wrongPasswordPassword
+            && (
             <div className="text-danger">
               {this.wrongPassword}
             </div>
-          }
+            )}
           <DefaultFormGroup
             id="formControlsPassword"
             name="newPassword"
@@ -453,11 +460,12 @@ export default class CurrentUserPage extends React.Component {
             onFocus={this.handleFocus}
             autoComplete="new-password"
           />
-          {showPasswordNotValid &&
+          {showPasswordNotValid
+            && (
             <div className="text-danger">
               {this.notValidText}
             </div>
-          }
+            )}
           <DefaultFormGroup
             id="formControlsPasswordRetype"
             name="newPasswordRetype"
@@ -471,11 +479,12 @@ export default class CurrentUserPage extends React.Component {
             onFocus={this.handleFocus}
             autoComplete="new-password"
           />
-          {showPasswordsNotEqual &&
+          {showPasswordsNotEqual
+            && (
             <div className="text-danger">
               The passwords does not match.
             </div>
-          }
+            )}
           <Button
             bsStyle="primary"
             type="submit"
@@ -487,18 +496,20 @@ export default class CurrentUserPage extends React.Component {
           <Button
             type="reset"
             disabled={
-                confirmPasswordEdit.length === 0 &&
-                newPassword.length === 0 &&
-                newPasswordRetype.length === 0}
+                confirmPasswordEdit.length === 0
+                && newPassword.length === 0
+                && newPasswordRetype.length === 0
+}
             onFocus={this.handleFocus}
           >
             Reset Fields
           </Button>
-          {showPasswordSubmitSuccess &&
+          {showPasswordSubmitSuccess
+            && (
             <div className="text-success">
               Your password was successfully changed.
             </div>
-          }
+            )}
         </form>
         <form onSubmit={this.handlePublicUserSubmit}>
           <ControlLabel>Toggle privacy settings for user profile:</ControlLabel>
@@ -516,15 +527,15 @@ export default class CurrentUserPage extends React.Component {
           >
             Confirm public/private change
           </Button>
-          {showPublicUserSubmitSuccess &&
+          {showPublicUserSubmitSuccess
+            && (
             <div className="text-success">
               Your privacy change was a success.
             </div>
-          }
+            )}
         </form>
-        {wildCardError &&
-          <WildCardError />
-        }
+        {wildCardError
+          && <WildCardError />}
       </div>
     );
   }

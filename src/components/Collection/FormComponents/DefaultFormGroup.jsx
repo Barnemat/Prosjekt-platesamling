@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, FormControl, ControlLabel, HelpBlock } from 'react-bootstrap';
+import {
+  FormGroup, FormControl, ControlLabel, HelpBlock,
+} from 'react-bootstrap';
 
 const DefaultFormGroup = ({
   id,

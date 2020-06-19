@@ -3,7 +3,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ListGroup, Panel, Grid, Row, Col } from 'react-bootstrap';
+import {
+  ListGroup, Panel, Grid, Row, Col,
+} from 'react-bootstrap';
 import axios from 'axios';
 import { getWishlist, resetWishlist } from '../../actions';
 import { getWishlistBySearchAndFilter } from '../../selectors/wishlist';
@@ -13,11 +15,9 @@ import SearchField from '../CommonComponents/SearchField';
 
 const EmptyWishlist = ({ wishlistHasEntries }) => (
   <div className="text-center lead">
-    {wishlistHasEntries ?
-      'The search and/or filter doesn\'t match any records'
-      :
-      'Your wishlist is empty.'
-    }
+    {wishlistHasEntries
+      ? 'The search and/or filter doesn\'t match any records'
+      : 'Your wishlist is empty.'}
   </div>
 );
 
@@ -41,14 +41,15 @@ class ListWishlistItems extends React.Component {
   }
 
   getWishlistItems() {
-    return this.props.wishlist.map(record => (
+    return this.props.wishlist.map((record) => (
       <WishlistItem
         record={record}
         key={record._id}
         handleDelete={this.removeRecordFromWishlist}
         loadWishlist={this.loadWishlist}
         addRecordToCollection={this.addRecordToCollection}
-      />));
+      />
+    ));
   }
 
   addRecordToCollection(record) {
@@ -80,7 +81,7 @@ class ListWishlistItems extends React.Component {
     return (
       <Grid fluid>
         <Row>
-          <Col lg={12} md={12} sm={12} xs={12} className="margin-bottom" >
+          <Col lg={12} md={12} sm={12} xs={12} className="margin-bottom">
             <SearchField wishlist />
           </Col>
         </Row>
@@ -100,7 +101,7 @@ class ListWishlistItems extends React.Component {
                     { wishlistItems }
                   </ListGroup>
                 </div>
-                ) : (<EmptyWishlist wishlistHasEntries={wishlistHasEntries} />)}
+              ) : (<EmptyWishlist wishlistHasEntries={wishlistHasEntries} />)}
             </Panel>
           </Col>
         </Row>
@@ -130,7 +131,7 @@ ListWishlistItems.defaultProps = {
   },
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   wishlist: getWishlistBySearchAndFilter(state),
   wishlistHasEntries: state.wishlist ? Object.keys(state.wishlist).length > 1 : false,
   authenticatedUser: state.authenticate.user,
