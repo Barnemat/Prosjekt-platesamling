@@ -49,7 +49,7 @@ class ListItems extends React.Component {
     this.getRecordItems = this.getRecordItems.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.loadCollection(this.props.publicUsername);
   }
 

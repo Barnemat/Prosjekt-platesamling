@@ -21,7 +21,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(fileUpload());
 
-mongoose.connect(mongoDBConnection);
+const mongooseConfig = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
+};
+
+mongoose.connect(mongoDBConnection, mongooseConfig);
 
 mongoose.connection.on('connected', (res) => {
   console.log('Mongoose connected to MongoDB, succesfully.');
@@ -54,6 +61,7 @@ app.use(session({
     secure: false,
     maxAge: 1000 * 60 * 60 * 336, // Two weeks
     httpOnly: true,
+    sameSite: true
   },
 }));
 

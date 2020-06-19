@@ -31,7 +31,7 @@ class FindUser extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { searchField, users } = this.state;
 
     if (users.length === 0 && this.initialSearchField === searchField && searchField.length > 0) {
