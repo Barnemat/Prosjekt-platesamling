@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { Button, Col, Grid, Row, ListGroup, ListGroupItem } from 'react-bootstrap';
+import {
+  Button, Col, Grid, Row, ListGroup, ListGroupItem,
+} from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
 import WildCardError from '../components/CommonComponents/WildCardError';
@@ -15,7 +17,7 @@ class FindUser extends React.Component {
 
     this.state = {
       url: 'http://localhost:8080/api/allMatchingUsers',
-      searchField: this.props.location.search.substr(1),
+      searchField: props.location.search.substr(1),
       showWildCardError: false,
       users: [],
       gotoUserPage: false,
@@ -23,7 +25,7 @@ class FindUser extends React.Component {
       searchAtLastSubmit: '',
     };
 
-    this.initialSearchField = this.props.location.search.substr(1);
+    this.initialSearchField = props.location.search.substr(1);
 
     this.getUserItems = this.getUserItems.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -40,15 +42,17 @@ class FindUser extends React.Component {
   }
 
   getUserItems() {
+    const { users } = this.state;
     const { authenticatedUser } = this.props;
-    return this.state.users.map(user => (
+    return users.map((user) => (
       <UserItem
         key={user.username}
         username={user.username}
-        public={user.public}
+        isPublic={user.public}
         usernamesEqual={authenticatedUser.username === user.username}
         handleClick={this.handleClick}
-      />));
+      />
+    ));
   }
 
   handleChange(e) {
@@ -66,8 +70,8 @@ class FindUser extends React.Component {
   handleSubmit(e) {
     if (e) e.preventDefault();
     const { url, searchField } = this.state;
-    const { pathname } = this.props.location;
-    const { history } = this.props;
+    const { history, location } = this.props;
+    const { pathname } = location;
 
     setLoadingCursor(true);
     history.replace(`${pathname}?${searchField}`);
@@ -113,22 +117,25 @@ class FindUser extends React.Component {
                       type="submit"
                       disabled={searchField.length === 0}
                     >
-                        Find users
+                      Find users
                     </Button>
                   </form>
                 </Col>
               </Row>
-              {(searchAtLastSubmit.length > 0 || userItems.length > 0) &&
+              {(searchAtLastSubmit.length > 0 || userItems.length > 0)
+                && (
                 <Row>
                   <Col lg={12} md={12} sm={12} xs={12}>
                     <ListGroup componentClass="ul">
                       {userItems.length > 0 ? userItems : (
                         <ListGroupItem>
                           <strong>{`The search "${searchAtLastSubmit}" does not match any users...`}</strong>
-                        </ListGroupItem>)}
+                        </ListGroupItem>
+                      )}
                     </ListGroup>
                   </Col>
-                </Row>}
+                </Row>
+                )}
             </Grid>
           </Col>
           <Col lg={2} md={2} />
@@ -151,7 +158,9 @@ FindUser.propTypes = {
     email: PropTypes.string,
     public: PropTypes.bool,
   }),
-  history: PropTypes.shape({}).isRequired,
+  history: PropTypes.shape({
+    replace: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 FindUser.defaultProps = {
@@ -162,7 +171,7 @@ FindUser.defaultProps = {
   },
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   authenticatedUser: state.authenticate.user,
 });
 

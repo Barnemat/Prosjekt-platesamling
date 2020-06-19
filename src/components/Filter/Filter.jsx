@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button, ListGroup, ListGroupItem, Glyphicon, Collapse } from 'react-bootstrap';
+import {
+  Button, ListGroup, ListGroupItem, Glyphicon, Collapse,
+} from 'react-bootstrap';
 import { getFilter } from '../../util';
 import { setFilter, setFilterItem, resetFilter } from '../../actions';
 import FilterGroup from './FilterGroup';
@@ -44,11 +46,14 @@ class Filter extends React.Component {
       const filter = getFilter(nextProps.records, nextProps.wishlist);
       return { filter, records: nextProps.records };
     }
+
     return {};
   }
 
   componentDidMount() {
-    this.props.resetFilter();
+    const { ...props } = this.props;
+
+    props.resetFilter();
     this.updateWidth();
     window.addEventListener('resize', this.updateWidth);
   }
@@ -59,14 +64,15 @@ class Filter extends React.Component {
 
   getFilterGroups() {
     const { filter, hasReset } = this.state;
-    return Object.keys(filter).map(groupName => (
+    return Object.keys(filter).map((groupName) => (
       <FilterGroup
         key={groupName}
         groupName={groupName}
         tags={filter[groupName]}
         hasReset={hasReset}
         handleUpdate={this.handleUpdate}
-      />));
+      />
+    ));
   }
 
   updateWidth() {
@@ -76,19 +82,21 @@ class Filter extends React.Component {
   toggleExpand(e) {
     if (e) e.preventDefault();
 
-    this.setState({ expand: !this.state.expand });
+    this.setState((state) => ({
+      expand: !state.expand,
+    }));
   }
 
   handleUpdate(e, groupName, tag) {
-    let filter;
-    if (Object.keys(this.props.filter).length > 0) {
-      ({ filter } = this.props);
-    } else {
+    const { ...props } = this.props;
+    let { filter } = this.props;
+
+    if (Object.keys(filter).length === 0) {
       ({ filter } = this.state);
-      this.props.setFilter(filter);
+      props.setFilter(filter);
     }
 
-    this.props.setFilterItem(groupName, tag);
+    props.setFilterItem(groupName, tag);
     filter[groupName][tag] = !filter[groupName][tag];
     this.setState({ filter, hasReset: false });
   }
@@ -96,9 +104,9 @@ class Filter extends React.Component {
   handleReset(e) {
     e.preventDefault();
 
-    const { records, wishlist } = this.props;
+    const { records, wishlist, ...props } = this.props;
     const filter = getFilter(records, wishlist);
-    this.props.setFilter(filter);
+    props.setFilter(filter);
     this.setState({ filter: {}, records: [], hasReset: true });
   }
 
@@ -108,7 +116,8 @@ class Filter extends React.Component {
 
     return (
       <ListGroup>
-        {width < 992 &&
+        {width < 992
+          && (
           <div>
             <ListGroupItem className="no-padding-bottom rm-outline" onClick={this.toggleExpand}>
               <strong>Filter:</strong>
@@ -125,9 +134,10 @@ class Filter extends React.Component {
                 <FilterGroups filterGroups={filterGroups} handleReset={this.handleReset} />
               </div>
             </Collapse>
-          </div>}
-        {width >= 992 &&
-          <FilterGroups filterGroups={filterGroups} handleReset={this.handleReset} />}
+          </div>
+          )}
+        {width >= 992
+          && <FilterGroups filterGroups={filterGroups} handleReset={this.handleReset} />}
       </ListGroup>
     );
   }
@@ -135,7 +145,7 @@ class Filter extends React.Component {
 
 Filter.propTypes = {
   filter: PropTypes.shape({}).isRequired,
-  records: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  records: PropTypes.arrayOf(PropTypes.shape({})),
   setFilter: PropTypes.func.isRequired,
   setFilterItem: PropTypes.func.isRequired,
   resetFilter: PropTypes.func.isRequired,
@@ -143,8 +153,8 @@ Filter.propTypes = {
 };
 
 Filter.defaultProps = {
-  records: [],
   wishlist: false,
+  records: [],
 };
 
 const mapDispatchToProps = {

@@ -81,23 +81,25 @@ export default class EditRecord extends React.Component {
 
     return (
       <Row>
-        {(wikiImg && wikiReqImg.req) || image || (recordImg && !ignoreRecordImg) ?
-          <Col lg={4} md={4} sm={4} xs={12}>
-            {imageData ?
-              <Image src={imageData} rounded responsive />
-              :
-              <Image
-                src={recordImg && !ignoreRecordImg ? `data:image/jpeg;base64,${recordImg}` : wikiImg}
-                rounded
-                responsive
-              />
-            }
-          </Col>
-          :
-          <Col lg={4} md={4} sm={4} xs={12}>
-            <Image src={noRecordImg} rounded responsive />
-          </Col>
-        }
+        {(wikiImg && wikiReqImg.req) || image || (recordImg && !ignoreRecordImg)
+          ? (
+            <Col lg={4} md={4} sm={4} xs={12}>
+              {imageData
+                ? <Image src={imageData} rounded responsive />
+                : (
+                  <Image
+                    src={recordImg && !ignoreRecordImg ? `data:image/jpeg;base64,${recordImg}` : wikiImg}
+                    rounded
+                    responsive
+                  />
+                )}
+            </Col>
+          )
+          : (
+            <Col lg={4} md={4} sm={4} xs={12}>
+              <Image src={noRecordImg} rounded responsive />
+            </Col>
+          )}
         <Col lg={8} md={8} sm={8} xs={8}>
           <Grid fluid>
             <Row>
@@ -142,8 +144,8 @@ export default class EditRecord extends React.Component {
                     role="button"
                     tabIndex={0}
                     className="standard-glyph pull-right md-glyph"
-                    onClick={e => handleSubmit(e, this.editRecordSubmit)}
-                    onKeyUp={e => handleKeyUp(e, this.editRecordSubmit)}
+                    onClick={(e) => handleSubmit(e, this.editRecordSubmit)}
+                    onKeyUp={(e) => handleKeyUp(e, this.editRecordSubmit)}
                   >
                     <Glyphicon glyph="ok" />
                   </span>
@@ -164,12 +166,12 @@ export default class EditRecord extends React.Component {
               <Col lg={6} md={6} sm={6} xs={12}>
                 <h5><b>Rating:</b></h5>
                 {/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                <div onClick={e => e.stopPropagation()}>
+                <div onClick={(e) => e.stopPropagation()}>
                   <Rating
                     emptySymbol="glyphicon glyphicon-star-empty"
                     fullSymbol="glyphicon glyphicon-star"
                     initialRating={rating}
-                    onChange={rate => handleRatingChange(rate)}
+                    onChange={(rate) => handleRatingChange(rate)}
                   />
                 </div>
                 {/* eslint-enable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
@@ -200,11 +202,15 @@ export default class EditRecord extends React.Component {
                     inline
                   >
                     Add/edit image from Wikipedia
-                  </Checkbox> {' '}
-                  {(wikiImg || wikiDesc) &&
+                  </Checkbox>
+                  {' '}
+                  {' '}
+                  {(wikiImg || wikiDesc)
+                  && (
                   <Button onClick={handleResetWiki}>
                     Reset Wikipedia fields
-                  </Button>}
+                  </Button>
+                  )}
                 </FormGroup>
               </Col>
             </Row>
@@ -225,12 +231,10 @@ export default class EditRecord extends React.Component {
                   help="If you want to upload your own image. (Max: 2MB)"
                   onChange={handleFileUpload}
                 />
-                {invalidImg &&
-                  <p className="text-danger">The uploaded file is invalid.</p>
-                }
-                {(image || recordImg) &&
-                  <Button onClick={handleRemoveImg}>Remove file</Button>
-                }
+                {invalidImg
+                  && <p className="text-danger">The uploaded file is invalid.</p>}
+                {(image || recordImg)
+                  && <Button onClick={handleRemoveImg}>Remove file</Button>}
               </Col>
             </Row>
             <Row>
@@ -254,7 +258,11 @@ export default class EditRecord extends React.Component {
               </Col>
               <Col lg={5} md={5} sm={5} xs={12}>
                 {showWildCardError && <WildCardError />}
-                <Button className="pull-right" bsStyle="success" onClick={e => handleSubmit(e, this.editRecordSubmit)}>
+                <Button
+                  className="pull-right"
+                  bsStyle="success"
+                  onClick={(e) => handleSubmit(e, this.editRecordSubmit)}
+                >
                   Confirm Edit
                 </Button>
                 <Button className="pull-right" onClick={handleReset}>Cancel</Button>

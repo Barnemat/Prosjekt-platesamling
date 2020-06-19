@@ -1,18 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Col, Grid, Row, ListGroupItem } from 'react-bootstrap';
+import {
+  Button, Col, Grid, Row, ListGroupItem,
+} from 'react-bootstrap';
 
 const getBsStyle = (isPublic, usernamesEqual) => {
   if (!usernamesEqual && isPublic) {
     return 'success';
-  } else if (!usernamesEqual && !isPublic) {
+  } if (!usernamesEqual && !isPublic) {
     return 'danger';
   }
   return 'default';
 };
 
 const UserItem = ({
-  username, usernamesEqual, handleClick, ...props
+  username, usernamesEqual, handleClick, isPublic,
 }) => (
   <ListGroupItem className="darker-onhover">
     <Grid fluid>
@@ -21,35 +23,42 @@ const UserItem = ({
           <strong>{username}</strong>
         </Col>
         <Col lg={12} md={12} sm={12} xs={12}>
-          {!usernamesEqual &&
+          {!usernamesEqual
+          && (
           <div>
-                The user has a {props.public ? 'public' : 'private'} account.
+            The user has a
+            {' '}
+            {isPublic ? 'public' : 'private'}
+            {' '}
+            account.
           </div>
-            }
-          {usernamesEqual &&
+          )}
+          {usernamesEqual
+          && (
           <div>
-                You have a {props.public ? 'public' : 'private'} account.
+            You have a
+            {' '}
+            {isPublic ? 'public' : 'private'}
+            {' '}
+            account.
           </div>
-            }
+          )}
           <Button
             name="gotoUserPage"
             className="pull-right"
-            bsStyle={getBsStyle(props.public, usernamesEqual)}
+            bsStyle={getBsStyle(isPublic, usernamesEqual)}
             bsSize="small"
-            disabled={!props.public && !usernamesEqual}
+            disabled={!isPublic && !usernamesEqual}
             onClick={(e) => {
-                handleClick(e, username);
-              }}
+              handleClick(e, username);
+            }}
           >
-            {!usernamesEqual && !props.public &&
-                'Private'
-              }
-            {!usernamesEqual && props.public &&
-                'Go to the user\'s collection'
-              }
-            {usernamesEqual &&
-                'Go to your user page'
-              }
+            {!usernamesEqual && !isPublic
+                && 'Private'}
+            {!usernamesEqual && isPublic
+                && 'Go to the user\'s collection'}
+            {usernamesEqual
+                && 'Go to your user page'}
           </Button>
         </Col>
       </Row>
@@ -60,12 +69,12 @@ const UserItem = ({
 UserItem.propTypes = {
   username: PropTypes.string.isRequired,
   usernamesEqual: PropTypes.bool.isRequired,
-  public: PropTypes.bool,
+  isPublic: PropTypes.bool,
   handleClick: PropTypes.func.isRequired,
 };
 
 UserItem.defaultProps = {
-  public: false,
+  isPublic: false,
 };
 
 export default UserItem;

@@ -1,5 +1,7 @@
 import React from 'react';
-import { Col, Grid, Row, Image } from 'react-bootstrap';
+import {
+  Col, Grid, Row, Image,
+} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import image from '../assets/img/logo-vanlig.png';
 

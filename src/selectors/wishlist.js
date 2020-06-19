@@ -1,10 +1,10 @@
 import { createSelector } from 'reselect';
 
-export const getWishlist = state => state.wishlist;
+export const getWishlist = (state) => state.wishlist;
 
-export const getSearch = state => state.search;
+export const getSearch = (state) => state.search;
 
-export const getFilter = state => state.filter;
+export const getFilter = (state) => state.filter;
 
 export const getWishlistBySearch = createSelector(
   [getWishlist, getSearch],
@@ -48,19 +48,19 @@ export const getWishlistBySearchAndFilter = createSelector(
       const matches = {
         artist: false, format: false,
       };
-      if (matching.artist.length === 0 ||
-        (matching.artist.includes('no artist') && record.artist === '') ||
-        matching.artist.includes(record.artist.toLowerCase())) {
+      if (matching.artist.length === 0
+        || (matching.artist.includes('no artist') && record.artist === '')
+        || matching.artist.includes(record.artist.toLowerCase())) {
         matches.artist = true;
       }
 
-      if (matching.format.length === 0 ||
-        matching.format.includes(record.format.toLowerCase())) {
+      if (matching.format.length === 0
+        || matching.format.includes(record.format.toLowerCase())) {
         matches.format = true;
       }
 
-      return Object.keys(matching).reduce((acc, groupName) => acc && (matches[groupName]), true) ?
-        [...res, record] : res;
+      return Object.keys(matching).reduce((acc, groupName) => acc && (matches[groupName]), true)
+        ? [...res, record] : res;
     }, []);
   },
 );

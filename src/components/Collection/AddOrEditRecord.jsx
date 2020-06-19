@@ -2,7 +2,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor } from '../../util';
+import {
+  getBestImageURL, getValidFormatTypes, checkImgValid, setLoadingCursor,
+} from '../../util';
 import { sendDoubleWikiSearchRequest, sendWikiImageRequest, sendDescRequest } from '../../services/api';
 import AddRecord from './AddRecord';
 import EditRecord from './EditRecord';
@@ -12,7 +14,7 @@ export default class AddOrEditRecord extends React.Component {
     super(props);
 
     const {
-      record, edit, title, artist, format,
+      record, edit, title, artist, format, expand,
     } = this.props;
 
     this.state = {
@@ -36,7 +38,7 @@ export default class AddOrEditRecord extends React.Component {
       ignoreRecordImg: false,
       invalidImg: false,
       showWildCardError: false,
-      largeForm: this.props.expand,
+      largeForm: expand,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -78,7 +80,7 @@ export default class AddOrEditRecord extends React.Component {
     e.preventDefault();
     setLoadingCursor(true);
 
-    const { ignoreRecordImg, selectedCheckboxes } = this.state;
+    const { ignoreRecordImg, selectedCheckboxes, ...state } = this.state;
     const { record, edit } = this.props;
     const keys = ['title', 'artist', 'format', 'rating', 'wikiHref', 'wikiDesc', 'wikiImg', 'notes', 'image'];
     const formData = new FormData();
@@ -88,23 +90,23 @@ export default class AddOrEditRecord extends React.Component {
       if (key === 'image') {
         if (ignoreRecordImg) {
           formData.append(key, undefined);
-        } else if (this.state[key] !== undefined) {
-          formData.append(key, this.state[key]);
+        } else if (state[key] !== undefined) {
+          formData.append(key, state[key]);
         }
       } else if (key === 'wikiDesc') {
         if (selectedCheckboxes.includes('wikiDescCB')) {
-          formData.append(key, this.state[key]);
+          formData.append(key, state[key]);
         } else {
           formData.append(key, '');
         }
       } else if (key === 'wikiImg') {
         if (selectedCheckboxes.includes('wikiImgCB')) {
-          formData.append(key, this.state[key]);
+          formData.append(key, state[key]);
         } else {
           formData.append(key, '');
         }
       } else {
-        formData.append(key, this.state[key]);
+        formData.append(key, state[key]);
       }
     });
 
@@ -136,10 +138,10 @@ export default class AddOrEditRecord extends React.Component {
     }
 
     const {
-      title, artist, format, expand,
+      title, artist, format, expand, handleReset,
     } = this.props;
 
-    if (this.props.handleReset) this.props.handleReset(submitted);
+    if (handleReset) handleReset(submitted);
 
     this.setState({
       title: title || '',
@@ -166,9 +168,11 @@ export default class AddOrEditRecord extends React.Component {
   }
 
   handleSearchRequest() {
-    if (!this.state.wikiDesc) {
+    const { wikiDesc, title, wikiReqImg } = this.state;
+
+    if (!wikiDesc) {
       setLoadingCursor(true);
-      const searchRequest = sendDoubleWikiSearchRequest('en', this.state.title, 'album');
+      const searchRequest = sendDoubleWikiSearchRequest('en', title, 'album');
 
       searchRequest
         .then((res) => {
@@ -178,31 +182,31 @@ export default class AddOrEditRecord extends React.Component {
             sendDescRequest('en', res[1][0])
               .then((descRes) => {
                 const page = descRes.data.query.pages ? descRes.data.query.pages[0] : { extract: '' };
-                const desc = page['extract']
+                const desc = page.extract;
 
                 this.setState({
                   allowImgReq: true,
                   wikiDesc: desc,
                   wikiHref: href,
                   wikiReqImg: {
-                    req: this.state.wikiReqImg.req,
+                    req: wikiReqImg.req,
                     searchTerm: res[1] && res[1][0] !== '' ? res[1][0] : '',
                   },
                 });
-            })
-            .catch(() => {
-              this.setState({ showWildCardError: true });
-            })
-            .then(() => {
-              setLoadingCursor(false);
-            });
+              })
+              .catch(() => {
+                this.setState({ showWildCardError: true });
+              })
+              .then(() => {
+                setLoadingCursor(false);
+              });
           } else {
             this.setState({
               allowImgReq: true,
               wikiDesc: '',
               wikiHref: '',
               wikiReqImg: {
-                req: this.state.wikiReqImg.req,
+                req: wikiReqImg.req,
                 searchTerm: '',
               },
             });
@@ -218,8 +222,10 @@ export default class AddOrEditRecord extends React.Component {
   }
 
   handleImgRequest() {
-    const { searchTerm } = this.state.wikiReqImg;
-    if (searchTerm && !this.state.wikiImg) {
+    const { wikiReqImg, wikiImg } = this.state;
+    const { searchTerm } = wikiReqImg;
+
+    if (searchTerm && !wikiImg) {
       setLoadingCursor();
 
       sendWikiImageRequest(searchTerm)
@@ -237,26 +243,26 @@ export default class AddOrEditRecord extends React.Component {
 
   handleCheckbox(e) {
     const { name } = e.target;
-    const { selectedCheckboxes: checkedBoxes } = this.state;
+    const { selectedCheckboxes: checkedBoxes, wikiReqDesc, wikiReqImg } = this.state;
 
     if (checkedBoxes.indexOf(name) === -1) {
       checkedBoxes.push(name);
       this.setState({
         selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: name === 'wikiDescCB' || this.state.wikiReqDesc,
+        wikiReqDesc: name === 'wikiDescCB' || wikiReqDesc,
         wikiReqImg: {
-          req: name === 'wikiImgCB' || this.state.wikiReqImg.req,
-          searchTerm: this.state.wikiReqImg.searchTerm,
+          req: name === 'wikiImgCB' || wikiReqImg.req,
+          searchTerm: wikiReqImg.searchTerm,
         },
       });
     } else {
       checkedBoxes.splice(checkedBoxes.indexOf(name), 1);
       this.setState({
         selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: name === 'wikiDescCB' ? false : this.state.wikiReqDesc,
+        wikiReqDesc: name === 'wikiDescCB' ? false : wikiReqDesc,
         wikiReqImg: {
-          req: name === 'wikiImgCB' ? false : this.state.wikiReqImg.req,
-          searchTerm: this.state.wikiReqImg.searchTerm,
+          req: name === 'wikiImgCB' ? false : wikiReqImg.req,
+          searchTerm: wikiReqImg.searchTerm,
         },
       });
     }
@@ -301,10 +307,12 @@ export default class AddOrEditRecord extends React.Component {
   }
 
   handleKeyUp(e, submitFunction) {
+    const { handleShowModal } = this.props;
+
     if (e.key.toLowerCase() === 'enter') {
       switch (e.target.id) {
         case 'delete':
-          this.props.handleShowModal(e);
+          handleShowModal(e);
           break;
         case 'edit':
           this.handleSubmit(e, submitFunction);
@@ -316,7 +324,10 @@ export default class AddOrEditRecord extends React.Component {
 
   toggleLargeForm(e) {
     e.preventDefault();
-    this.setState({ largeForm: !this.state.largeForm });
+
+    this.setState((state) => ({
+      largeForm: !state.largeForm,
+    }));
   }
 
   render() {
@@ -332,6 +343,7 @@ export default class AddOrEditRecord extends React.Component {
     } = this.props;
     const recordImg = edit && record.image ? record.image.data : undefined;
 
+    /* eslint-disable react/jsx-props-no-spreading */
     return edit ? (
       <EditRecord
         record={record}
@@ -351,25 +363,27 @@ export default class AddOrEditRecord extends React.Component {
         handleRemoveImg={this.handleRemoveImg}
         setWildCardError={this.setWildCardError}
         {...this.state}
-      />) : (
-        <AddRecord
-          addRecordToCollection={addRecordToCollection}
-          loadCollection={loadCollection}
-          handleReset={this.handleReset}
-          handleSubmit={this.handleSubmit}
-          handleChange={this.handleChange}
-          handleResetWiki={this.handleResetWiki}
-          handleFileUpload={this.handleFileUpload}
-          handleRemoveImg={this.handleRemoveImg}
-          handleRatingChange={this.handleRatingChange}
-          handleCheckbox={this.handleCheckbox}
-          handleSearchRequest={this.handleSearchRequest}
-          handleImgRequest={this.handleImgRequest}
-          toggleLargeForm={this.toggleLargeForm}
-          setWildCardError={this.setWildCardError}
-          disableWishlistFields={disableWishlistFields}
-          {...this.state}
-        />);
+      />
+    ) : (
+      <AddRecord
+        addRecordToCollection={addRecordToCollection}
+        loadCollection={loadCollection}
+        handleReset={this.handleReset}
+        handleSubmit={this.handleSubmit}
+        handleChange={this.handleChange}
+        handleResetWiki={this.handleResetWiki}
+        handleFileUpload={this.handleFileUpload}
+        handleRemoveImg={this.handleRemoveImg}
+        handleRatingChange={this.handleRatingChange}
+        handleCheckbox={this.handleCheckbox}
+        handleSearchRequest={this.handleSearchRequest}
+        handleImgRequest={this.handleImgRequest}
+        toggleLargeForm={this.toggleLargeForm}
+        setWildCardError={this.setWildCardError}
+        disableWishlistFields={disableWishlistFields}
+        {...this.state}
+      />
+    );
   }
 }
 
@@ -385,6 +399,9 @@ AddOrEditRecord.propTypes = {
     wikiDesc: PropTypes.string,
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
+    image: PropTypes.shape({
+      data: PropTypes.string.isRequired,
+    }),
   }),
   handleShowModal: PropTypes.func,
   handleReset: PropTypes.func,

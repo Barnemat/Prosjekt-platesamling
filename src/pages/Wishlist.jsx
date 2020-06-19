@@ -25,16 +25,14 @@ class Wishlist extends React.Component {
         <Grid fluid>
           <Row className="show-grid">
             <Col lg={2} md={2}>
-              {authenticated &&
-                <Filter wishlist />}
+              {authenticated
+                && <Filter wishlist />}
             </Col>
             <Col lg={8} md={8} sm={12} xs={12}>
-              {authenticated &&
-                <ListWishlistItems url={url} recordUrl={recordUrl} />
-              }
-              {!authenticated &&
-                <SignInJumbotron />
-              }
+              {authenticated
+                && <ListWishlistItems url={url} recordUrl={recordUrl} />}
+              {!authenticated
+                && <SignInJumbotron />}
             </Col>
             <Col lg={2} md={2} />
           </Row>
@@ -48,7 +46,7 @@ Wishlist.propTypes = {
   authenticated: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   authenticated: state.authenticate.authenticated || false,
 });
 

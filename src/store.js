@@ -2,7 +2,9 @@
 
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { setSearch, authenticatedAction, resetCollection, resetWishlist } from './actions';
+import {
+  setSearch, authenticatedAction, resetCollection, resetWishlist,
+} from './actions';
 import reducer from './reducer';
 
 const initialState = {};
