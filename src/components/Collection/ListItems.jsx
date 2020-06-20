@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ListGroup, Panel, Grid, Row, Col,
+  ListGroup, Panel, Container, Row, Col,
 } from 'react-bootstrap';
 import axios from 'axios';
 import AddOrEditRecord from './AddOrEditRecord';
@@ -143,7 +143,7 @@ class ListItems extends React.Component {
     const secondHalf = recordItems.slice(Math.ceil(recordItems.length / 2));
 
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
             <SortModes
@@ -178,24 +178,24 @@ class ListItems extends React.Component {
                 <div>
                   {galleryView
                     && (
-                    <Grid fluid>
+                    <Container fluid>
                       <Row>
                         <Col lg={6} md={6} sm={6} xs={6}>
-                          <ListGroup componentClass="ul">
+                          <ListGroup as="ul">
                             { firstHalf }
                           </ListGroup>
                         </Col>
                         <Col lg={6} md={6} sm={6} xs={6}>
-                          <ListGroup componentClass="ul">
+                          <ListGroup as="ul">
                             { secondHalf }
                           </ListGroup>
                         </Col>
                       </Row>
-                    </Grid>
+                    </Container>
                     )}
                   {!galleryView
                     && (
-                    <ListGroup componentClass="ul">
+                    <ListGroup as="ul">
                       { recordItems }
                     </ListGroup>
                     )}
@@ -204,7 +204,7 @@ class ListItems extends React.Component {
             </Panel>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }

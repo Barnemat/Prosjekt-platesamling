@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Grid,
+  Container,
   Col,
   Row,
   Image,
@@ -169,7 +169,7 @@ export default class AddRecord extends React.Component {
             && <p className="text-danger">The uploaded file is invalid.</p>}
             {image
             && (
-            <Grid fluid>
+            <Container fluid>
               <Row>
                 <Col lg={6} md={7} sm={5} xs={8}>
                   <Well bsSize="small">
@@ -179,13 +179,13 @@ export default class AddRecord extends React.Component {
                   <Button bsSize="small" onClick={handleRemoveImg}>Remove file</Button>
                 </Col>
               </Row>
-            </Grid>
+            </Container>
             )}
             <FormGroup controlId="formControlsNotes">
               <ControlLabel>Add your own notes here:</ControlLabel>
               <FormControl
                 className="vresize"
-                componentClass="textarea"
+                as="textarea"
                 name="notes"
                 value={notes}
                 placeholder="Record markings, playback speed, record quality..."
@@ -198,7 +198,7 @@ export default class AddRecord extends React.Component {
               initialRating={rating}
               onChange={(rate) => handleRatingChange(rate)}
             />
-            <Button bsStyle="primary" type="submit" block>
+            <Button variant="primary" type="submit" block>
               Add record to collection
             </Button>
             <Button onClick={handleReset} block>
@@ -269,7 +269,7 @@ const TitleFormGroup = ({
   ...rest
 }) => (
   <FormGroup controlId="formControlsTitle">
-    <Grid fluid>
+    <Container fluid>
       <Row>
         <Col className="no-padding" lg={11} md={11} sm={11} xs={11}>
           {label && <ControlLabel>{label}</ControlLabel>}
@@ -291,7 +291,7 @@ const TitleFormGroup = ({
             )}
         </Col>
       </Row>
-    </Grid>
+    </Container>
     <InputGroup>
       <FormControl
         type="text"
@@ -349,7 +349,7 @@ const WikiInfo = ({
       ? (
         <div>
           <Well>
-            <Grid fluid>
+            <Container fluid>
               <Row>
                 <Col lg={4} md={5} sm={5}>
                   <Collapse in={wikiReqImg.req}>
@@ -369,7 +369,7 @@ const WikiInfo = ({
                   {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
                 </Col>
               </Row>
-            </Grid>
+            </Container>
           </Well>
         </div>
       )

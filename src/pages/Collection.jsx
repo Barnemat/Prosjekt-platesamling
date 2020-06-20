@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Col, Grid, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import ListItems from '../components/Collection/ListItems';
 import Filter from '../components/Filter/Filter';
 import SignInJumbotron from '../components/CommonComponents/SignInJumbotron';
@@ -21,7 +21,7 @@ class Collection extends React.Component {
 
     return (
       <div>
-        <Grid fluid>
+        <Container fluid>
           <Row className="show-grid">
             <Col lg={2} md={2}>
               {authenticated
@@ -35,7 +35,7 @@ class Collection extends React.Component {
             </Col>
             <Col lg={2} md={2} />
           </Row>
-        </Grid>
+        </Container>
       </div>
     );
   }

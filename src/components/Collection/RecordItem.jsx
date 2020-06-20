@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ListGroupItem, Grid, Col, Row, Image, Button, Glyphicon, Modal, OverlayTrigger,
+  ListGroupItem, Container, Col, Row, Image, Button, Glyphicon, Modal, OverlayTrigger,
 } from 'react-bootstrap';
 import Rating from 'react-rating';
 import { setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
@@ -33,7 +33,7 @@ const MinimizedView = ({
         </Col>
       )}
     <Col lg={10} md={8} sm={8} xs={12}>
-      <Grid fluid>
+      <Container fluid>
         <CommonInformation
           title={record.title}
           artist={record.artist}
@@ -69,7 +69,7 @@ const MinimizedView = ({
             </Button>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     </Col>
   </Row>
 );
@@ -119,7 +119,7 @@ const ExpandedView = ({
         </Col>
       )}
     <Col lg={8} md={8} sm={8} xs={12}>
-      <Grid fluid>
+      <Container fluid>
         <CommonInformation
           title={record.title}
           artist={record.artist}
@@ -175,7 +175,7 @@ const ExpandedView = ({
             </Button>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     </Col>
   </Row>
 );
@@ -384,10 +384,10 @@ class RecordItem extends React.Component {
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.handleHideModal}>Cancel</Button>
-            <Button bsStyle="danger" onClick={this.handleDelete}>Remove Record</Button>
+            <Button variant="danger" onClick={this.handleDelete}>Remove Record</Button>
           </Modal.Footer>
         </Modal>
-        <Grid onClick={this.toggleExpand} fluid>
+        <Container onClick={this.toggleExpand} fluid>
           {(expand && !isEditMode)
             && (
             <ExpandedView
@@ -421,7 +421,7 @@ class RecordItem extends React.Component {
             />
             )}
           {showWildCardError && <WildCardError />}
-        </Grid>
+        </Container>
       </ListGroupItem>
     );
   }

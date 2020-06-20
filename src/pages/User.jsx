@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import {
-  Grid,
+  Container,
   Col,
   Row,
 } from 'react-bootstrap';
@@ -94,7 +94,7 @@ class User extends React.Component {
     const { ...props } = this.props;
 
     return authenticatedUser.username === usernameFromPath ? (
-      <Grid fluid>
+      <Container fluid>
         <Row className="show-grid">
           <Col lg={2} md={2} sm={2} xs={1} />
           <Col lg={5} md={5} sm={6} xs={10}>
@@ -107,9 +107,9 @@ class User extends React.Component {
           </Col>
           <Col lg={5} md={5} sm={4} xs={1} />
         </Row>
-      </Grid>
+      </Container>
     ) : (
-      <Grid fluid>
+      <Container fluid>
         <Row className="show-grid">
           <Col lg={2} md={2}>
             {usernameFromPathExists && usernameFromPathPublic
@@ -134,7 +134,7 @@ class User extends React.Component {
           </Col>
           <Col lg={2} md={2} />
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }

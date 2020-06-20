@@ -15,7 +15,7 @@ const SelectFormGroup = ({
 }) => (
   <FormGroup controlId={id}>
     {label && <ControlLabel>{label}</ControlLabel>}
-    <FormControl componentClass="select" defaultValue={value} {...props}>
+    <FormControl as="select" defaultValue={value} {...props}>
       {options.map((item) => <option key={item} value={item}>{item}</option>)}
     </FormControl>
     {help && <HelpBlock>{help}</HelpBlock>}

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  Col, Grid, Row, Button, ControlLabel,
+  Col, Container, Row, Button, ControlLabel,
 } from 'react-bootstrap';
 import { Field, reduxForm } from 'redux-form';
 import { Redirect } from 'react-router-dom';
@@ -34,7 +34,7 @@ class Signin extends React.Component {
 
     return authenticated ? (<Redirect to="/" />) : (
       <div>
-        <Grid fluid>
+        <Container fluid>
           <Row className="show-grid">
             <Col lg={2} md={2} sm={2} xs={1} />
             <Col lg={5} md={5} sm={6} xs={10}>
@@ -42,9 +42,9 @@ class Signin extends React.Component {
                 props.signInAction(Object.assign(values, { remember: checked }));
               })}
               >
-                <Grid fluid>
+                <Container fluid>
                   <Row className="margin-bottom">
-                    <Col lg={2} md={3} sm={3} xs={12} componentClass={ControlLabel}>Username</Col>
+                    <Col lg={2} md={3} sm={3} xs={12} as={ControlLabel}>Username</Col>
                     <Col lg={10} md={9} sm={9} xs={12}>
                       <Field
                         className="form-control"
@@ -56,7 +56,7 @@ class Signin extends React.Component {
                     </Col>
                   </Row>
                   <Row className="margin-bottom">
-                    <Col lg={2} md={3} sm={3} xs={12} componentClass={ControlLabel}>Password</Col>
+                    <Col lg={2} md={3} sm={3} xs={12} as={ControlLabel}>Password</Col>
                     <Col lg={10} md={9} sm={9} xs={12}>
                       <Field
                         className="form-control"
@@ -104,7 +104,7 @@ class Signin extends React.Component {
                       sm={9}
                       xs={12}
                     >
-                      <Button bsStyle="primary" type="submit" disabled={pristine || submitting}>
+                      <Button variant="primary" type="submit" disabled={pristine || submitting}>
                         Sign in
                       </Button>
                       <Button disabled={pristine || submitting} onClick={reset}>
@@ -112,7 +112,7 @@ class Signin extends React.Component {
                       </Button>
                     </Col>
                   </Row>
-                </Grid>
+                </Container>
               </form>
               <Col
                 lgOffset={2}
@@ -130,7 +130,7 @@ class Signin extends React.Component {
             </Col>
             <Col lg={5} md={5} sm={4} xs={1} />
           </Row>
-        </Grid>
+        </Container>
       </div>
     );
   }

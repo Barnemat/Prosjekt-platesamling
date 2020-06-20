@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Col, Grid, Row, Glyphicon, OverlayTrigger, Button, ButtonGroup,
+  Col, Container, Row, Glyphicon, OverlayTrigger, Button, ButtonGroup,
 } from 'react-bootstrap';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
 import tooltip from '../CommonComponents/Tooltip';
@@ -39,7 +39,7 @@ export default class SortModes extends React.Component {
     const { galleryView, handleGalleryView } = this.props;
 
     return (
-      <Grid className="no-padding" fluid>
+      <Container className="no-padding" fluid>
         <Row>
           <Col lg={3} md={3} sm={3} xs={3}>
             <SelectFormGroup
@@ -75,7 +75,7 @@ export default class SortModes extends React.Component {
             </ButtonGroup>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }

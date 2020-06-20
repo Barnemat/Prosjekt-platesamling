@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ListGroup, Panel, Grid, Row, Col,
+  ListGroup, Panel, Container, Row, Col,
 } from 'react-bootstrap';
 import axios from 'axios';
 import { getWishlist, resetWishlist } from '../../actions';
@@ -86,7 +86,7 @@ class ListWishlistItems extends React.Component {
     const { wishlistHasEntries, authenticatedUser } = this.props;
 
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12} className="margin-bottom">
             <SearchField wishlist />
@@ -104,7 +104,7 @@ class ListWishlistItems extends React.Component {
               </Panel.Body>
               {wishlistItems.length !== 0 ? (
                 <div>
-                  <ListGroup componentClass="ul">
+                  <ListGroup as="ul">
                     { wishlistItems }
                   </ListGroup>
                 </div>
@@ -112,7 +112,7 @@ class ListWishlistItems extends React.Component {
             </Panel>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }

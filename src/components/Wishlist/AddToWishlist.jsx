@@ -120,7 +120,7 @@ export default class AddToWishlist extends React.Component {
               onChange={this.handleChange}
               options={getValidFormatTypes()}
             />
-            <Button bsStyle="primary" type="submit" block>
+            <Button variant="primary" type="submit" block>
               Add record to wishlist
             </Button>
           </form>

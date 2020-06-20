@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ListGroupItem, Grid, Col, Row, Button, Glyphicon, OverlayTrigger, Collapse, Well,
+  ListGroupItem, Container, Col, Row, Button, Glyphicon, OverlayTrigger, Collapse, Well,
 } from 'react-bootstrap';
 import { setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
 import tooltip from '../CommonComponents/Tooltip';
@@ -69,7 +69,7 @@ class WishlistItem extends React.Component {
 
     return (
       <ListGroupItem className="darker-onhover">
-        <Grid fluid>
+        <Container fluid>
           <Row className="margin-bottom">
             <Col lg={11} md={11} sm={11} xs={11}>
               <span className="h4">
@@ -108,7 +108,7 @@ class WishlistItem extends React.Component {
             && (
             <Row className="margin-bottom">
               <Col lg={12} md={12} sm={12} xs={12}>
-                <Button bsStyle="success" onClick={this.handleAdd}>
+                <Button variant="success" onClick={this.handleAdd}>
                   Add record to collection
                 </Button>
               </Col>
@@ -135,7 +135,7 @@ class WishlistItem extends React.Component {
           <Row>
             {showWildCardError && <WildCardError />}
           </Row>
-        </Grid>
+        </Container>
       </ListGroupItem>
     );
   }

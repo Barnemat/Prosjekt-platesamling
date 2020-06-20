@@ -400,7 +400,7 @@ export default class CurrentUserPage extends React.Component {
             autoComplete="new-email"
           />
           <Button
-            bsStyle="primary"
+            variant="primary"
             type="submit"
             disabled={this.getEmailBtnDisable()}
             onFocus={this.handleFocus}
@@ -491,7 +491,7 @@ export default class CurrentUserPage extends React.Component {
             </div>
             )}
           <Button
-            bsStyle="primary"
+            variant="primary"
             type="submit"
             disabled={this.getPasswordBtnDisable()}
             onFocus={this.handleFocus}
@@ -526,7 +526,7 @@ export default class CurrentUserPage extends React.Component {
             Check this box to make your user profile public
           </Checkbox>
           <Button
-            bsStyle="primary"
+            variant="primary"
             type="submit"
             onFocus={this.handleFocus}
           >

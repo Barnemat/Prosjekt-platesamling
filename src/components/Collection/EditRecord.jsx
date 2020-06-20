@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Grid,
+  Container,
   Col,
   Row,
   Image,
@@ -101,7 +101,7 @@ export default class EditRecord extends React.Component {
             </Col>
           )}
         <Col lg={8} md={8} sm={8} xs={8}>
-          <Grid fluid>
+          <Container fluid>
             <Row>
               <Col lg={5} md={5} sm={5} xs={12}>
                 <DefaultFormGroup
@@ -243,7 +243,7 @@ export default class EditRecord extends React.Component {
                 <FormGroup controlId="formControlsNotes">
                   <FormControl
                     className="vresize"
-                    componentClass="textarea"
+                    as="textarea"
                     name="notes"
                     value={notes}
                     placeholder="Record markings, playback speed, record quality..."
@@ -260,7 +260,7 @@ export default class EditRecord extends React.Component {
                 {showWildCardError && <WildCardError />}
                 <Button
                   className="pull-right"
-                  bsStyle="success"
+                  variant="success"
                   onClick={(e) => handleSubmit(e, this.editRecordSubmit)}
                 >
                   Confirm Edit
@@ -268,7 +268,7 @@ export default class EditRecord extends React.Component {
                 <Button className="pull-right" onClick={handleReset}>Cancel</Button>
               </Col>
             </Row>
-          </Grid>
+          </Container>
         </Col>
       </Row>
     );

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Col, Grid, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import SignInJumbotron from '../components/CommonComponents/SignInJumbotron';
 import ListWishlistItems from '../components/Wishlist/ListWishlistItems';
 import Filter from '../components/Filter/Filter';
@@ -22,7 +22,7 @@ class Wishlist extends React.Component {
 
     return (
       <div>
-        <Grid fluid>
+        <Container fluid>
           <Row className="show-grid">
             <Col lg={2} md={2}>
               {authenticated
@@ -36,7 +36,7 @@ class Wishlist extends React.Component {
             </Col>
             <Col lg={2} md={2} />
           </Row>
-        </Grid>
+        </Container>
       </div>
     );
   }
