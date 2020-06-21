@@ -10,7 +10,7 @@ import { signOutAction } from '../actions';
 import logo from '../assets/img/logo-vanlig.png';
 
 const Header = ({ authenticated, username, ...rest }) => (
-  <Navbar variant="dark" bg="dark" expand="md" collapseOnSelect className="justify-content-between py-0 my-0">
+  <Navbar variant="dark" bg="dark" expand="md" collapseOnSelect className="justify-content-between py-0 mt-0 mb-3">
     <Container fluid="md">
       <Navbar.Brand className="navbar-left" href="/">
         <Image

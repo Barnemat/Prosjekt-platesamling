@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ListGroup, Panel, Container, Row, Col,
+  ListGroup, Card, Container, Row, Col,
 } from 'react-bootstrap';
 import axios from 'axios';
 import { getWishlist, resetWishlist } from '../../actions';
@@ -94,14 +94,14 @@ class ListWishlistItems extends React.Component {
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
-            <Panel>
-              <Panel.Body>
+            <Card>
+              <Card.Body>
                 <AddToWishlist
                   addRecordToWishlist={this.addRecordToWishlist}
                   loadWishlist={this.loadWishlist}
                   authenticatedUsername={authenticatedUser.username}
                 />
-              </Panel.Body>
+              </Card.Body>
               {wishlistItems.length !== 0 ? (
                 <div>
                   <ListGroup as="ul">
@@ -109,7 +109,7 @@ class ListWishlistItems extends React.Component {
                   </ListGroup>
                 </div>
               ) : (<EmptyWishlist wishlistHasEntries={wishlistHasEntries} />)}
-            </Panel>
+            </Card>
           </Col>
         </Row>
       </Container>

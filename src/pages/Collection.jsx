@@ -27,12 +27,12 @@ class Collection extends React.Component {
               {authenticated
                 && <Filter />}
             </Col>
-            {/* <Col lg={8} md={8} sm={12} xs={12}>
+            <Col lg={8} md={8} sm={12} xs={12}>
               {authenticated
                 && <ListItems url={url} />}
               {!authenticated
                 && <SignInJumbotron />}
-            </Col> */}
+            </Col>
             <Col lg={2} md={2} />
           </Row>
         </Container>

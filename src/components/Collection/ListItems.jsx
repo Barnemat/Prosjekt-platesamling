@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ListGroup, Panel, Container, Row, Col,
+  ListGroup, Card, Container, Row, Col,
 } from 'react-bootstrap';
 import axios from 'axios';
 import AddOrEditRecord from './AddOrEditRecord';
@@ -155,9 +155,9 @@ class ListItems extends React.Component {
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
-            <Panel>
+            <Card>
               {publicUsername ? (
-                <Panel.Body>
+                <Card.Body>
                   <h4>
                     You are viewing
                     {' '}
@@ -165,14 +165,14 @@ class ListItems extends React.Component {
                     {' '}
                     collection.
                   </h4>
-                </Panel.Body>
+                </Card.Body>
               ) : (
-                <Panel.Body>
+                <Card.Body>
                   <AddOrEditRecord
                     addRecordToCollection={this.addRecordToCollection}
                     loadCollection={this.loadCollection}
                   />
-                </Panel.Body>
+                </Card.Body>
               )}
               {recordItems.length !== 0 ? (
                 <div>
@@ -201,7 +201,7 @@ class ListItems extends React.Component {
                     )}
                 </div>
               ) : (<EmptyCollection publicUsername={publicUsername} collectionHasEntries={collectionHasEntries} />)}
-            </Panel>
+            </Card>
           </Col>
         </Row>
       </Container>

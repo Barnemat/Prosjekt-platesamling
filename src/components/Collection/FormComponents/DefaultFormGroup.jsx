@@ -11,11 +11,18 @@ const DefaultFormGroup = ({
   help,
   validationState,
   feedback,
+  as,
+  classProps,
   ...props
 }) => (
-  <FormGroup controlId={id}>
+  <FormGroup as={as || 'div'} className={classProps} controlId={id}>
     {label && <FormLabel>{label}</FormLabel>}
-    <FormControl {...props} isValid={validationState === 'success'} isInvalid={validationState === 'error'} />
+    <FormControl
+      className="w-100"
+      isValid={validationState === 'success'}
+      isInvalid={validationState === 'error'}
+      {...props}
+    />
     {feedback && <FormControl.Feedback />}
     {help && <HelpBlock>{help}</HelpBlock>}
   </FormGroup>
@@ -32,6 +39,8 @@ DefaultFormGroup.propTypes = {
   onChange: PropTypes.func,
   validationState: PropTypes.string,
   feedback: PropTypes.bool,
+  as: PropTypes.string,
+  classProps: PropTypes.string,
 };
 
 /* defaultProps does not work properly

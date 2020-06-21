@@ -242,26 +242,26 @@ export default class AddOrEditRecord extends React.Component {
   }
 
   handleCheckbox(e) {
-    const { name } = e.target;
+    const { id } = e.target;
     const { selectedCheckboxes: checkedBoxes, wikiReqDesc, wikiReqImg } = this.state;
 
-    if (checkedBoxes.indexOf(name) === -1) {
-      checkedBoxes.push(name);
+    if (checkedBoxes.indexOf(id) === -1) {
+      checkedBoxes.push(id);
       this.setState({
         selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: name === 'wikiDescCB' || wikiReqDesc,
+        wikiReqDesc: id === 'wikiDescCB' || wikiReqDesc,
         wikiReqImg: {
-          req: name === 'wikiImgCB' || wikiReqImg.req,
+          req: id === 'wikiImgCB' || wikiReqImg.req,
           searchTerm: wikiReqImg.searchTerm,
         },
       });
     } else {
-      checkedBoxes.splice(checkedBoxes.indexOf(name), 1);
+      checkedBoxes.splice(checkedBoxes.indexOf(id), 1);
       this.setState({
         selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: name === 'wikiDescCB' ? false : wikiReqDesc,
+        wikiReqDesc: id === 'wikiDescCB' ? false : wikiReqDesc,
         wikiReqImg: {
-          req: name === 'wikiImgCB' ? false : wikiReqImg.req,
+          req: id === 'wikiImgCB' ? false : wikiReqImg.req,
           searchTerm: wikiReqImg.searchTerm,
         },
       });
