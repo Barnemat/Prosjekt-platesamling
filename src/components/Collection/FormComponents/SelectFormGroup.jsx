@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  FormGroup, ControlLabel, FormControl, HelpBlock,
+  FormGroup, FormLabel, FormControl, HelpBlock,
 } from 'react-bootstrap';
 
 const SelectFormGroup = ({
@@ -14,7 +14,7 @@ const SelectFormGroup = ({
   ...props
 }) => (
   <FormGroup controlId={id}>
-    {label && <ControlLabel>{label}</ControlLabel>}
+    {label && <FormLabel>{label}</FormLabel>}
     <FormControl as="select" defaultValue={value} {...props}>
       {options.map((item) => <option key={item} value={item}>{item}</option>)}
     </FormControl>

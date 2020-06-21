@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   FormGroup,
-  ControlLabel,
+  FormLabel,
   Collapse,
   ListGroupItem,
-  Glyphicon,
 } from 'react-bootstrap';
+import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import FilterItem from './FilterItem';
 import { capitalize } from '../../util';
 
@@ -22,8 +22,8 @@ export default class FilterGroup extends React.Component {
     this.toggleExpand = this.toggleExpand.bind(this);
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (prevState.expand && nextProps.hasReset) {
+  static getDerivedStateFromProps(nextProps) {
+    if (!nextProps.expand) {
       return { expand: false };
     }
 
@@ -58,13 +58,13 @@ export default class FilterGroup extends React.Component {
     return (
       <ListGroupItem className="darker-onhover no-padding-bottom rm-outline" onClick={this.toggleExpand}>
         <FormGroup>
-          <ControlLabel>{`${capitalize(groupName === 'date' ? `${groupName} added` : groupName)}:`}</ControlLabel>
+          <FormLabel>{`${capitalize(groupName === 'date' ? `${groupName} added` : groupName)}:`}</FormLabel>
           <span
             role="button"
             tabIndex={0}
             className="standard-glyph pull-right md-glyph"
           >
-            <Glyphicon glyph={expand ? 'chevron-down' : 'chevron-right'} />
+            {expand ? <FaAngleDown /> : <FaAngleRight />}
           </span>
           <Collapse in={expand}>
             <div>
@@ -81,5 +81,5 @@ FilterGroup.propTypes = {
   groupName: PropTypes.string.isRequired,
   tags: PropTypes.shape({}).isRequired,
   handleUpdate: PropTypes.func.isRequired,
-  hasReset: PropTypes.bool.isRequired,
+  expand: PropTypes.bool.isRequired,
 };

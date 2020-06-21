@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  Button, ListGroup, ListGroupItem, Glyphicon, Collapse,
+  Button, ListGroup, ListGroupItem, Collapse,
 } from 'react-bootstrap';
+import { FaAngleDown, FaAngleRight } from 'react-icons/fa';
 import { getFilter } from '../../util';
 import { setFilter, setFilterItem, resetFilter } from '../../actions';
 import FilterGroup from './FilterGroup';
@@ -13,7 +14,14 @@ import { getWishlist } from '../../selectors/wishlist';
 const FilterGroups = ({ filterGroups, handleReset }) => (
   <div>
     { filterGroups }
-    <Button className="rm-focus-outline" onClick={handleReset} block>Clear filter</Button>
+    <Button
+      variant="outline-dark"
+      className="rm-focus-outline"
+      onClick={handleReset}
+      block
+    >
+      Clear filter
+    </Button>
   </div>
 );
 
@@ -29,10 +37,11 @@ class Filter extends React.Component {
     this.state = {
       filter: {},
       records: [],
-      hasReset: false,
       width: 0,
       expand: false,
     };
+
+    this.breakWidth = 992;
 
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleReset = this.handleReset.bind(this);
@@ -63,28 +72,36 @@ class Filter extends React.Component {
   }
 
   getFilterGroups() {
-    const { filter, hasReset } = this.state;
+    const { filter, expand } = this.state;
     return Object.keys(filter).map((groupName) => (
       <FilterGroup
         key={groupName}
         groupName={groupName}
         tags={filter[groupName]}
-        hasReset={hasReset}
+        expand={expand}
         handleUpdate={this.handleUpdate}
       />
     ));
   }
 
   updateWidth() {
-    this.setState({ width: window.innerWidth });
+    this.setState({ width: window.innerWidth, expand: window.innerWidth >= this.breakWidth });
   }
 
-  toggleExpand(e) {
+  toggleExpand(e, outer) {
     if (e) e.preventDefault();
 
-    this.setState((state) => ({
-      expand: !state.expand,
-    }));
+    const { width } = this.state;
+
+    if (outer) {
+      if (width >= this.breakWidth) {
+        this.setState({ expand: true });
+      }
+    } else {
+      this.setState((state) => ({
+        expand: !state.expand,
+      }));
+    }
   }
 
   handleUpdate(e, groupName, tag) {
@@ -98,16 +115,21 @@ class Filter extends React.Component {
 
     props.setFilterItem(groupName, tag);
     filter[groupName][tag] = !filter[groupName][tag];
-    this.setState({ filter, hasReset: false });
+    this.setState({ filter });
   }
 
   handleReset(e) {
     e.preventDefault();
+    e.stopPropagation();
 
-    const { records, wishlist, ...props } = this.props;
-    const filter = getFilter(records, wishlist);
-    props.setFilter(filter);
-    this.setState({ filter: {}, records: [], hasReset: true });
+    const { ...props } = this.props;
+
+    props.resetFilter();
+    this.setState({
+      filter: {},
+      records: [],
+      expand: false,
+    });
   }
 
   render() {
@@ -115,8 +137,8 @@ class Filter extends React.Component {
     const { width, expand } = this.state;
 
     return (
-      <ListGroup>
-        {width < 992
+      <ListGroup onClick={(e) => this.toggleExpand(e, true)}>
+        {width < this.breakWidth
           && (
           <div>
             <ListGroupItem className="no-padding-bottom rm-outline" onClick={this.toggleExpand}>
@@ -126,7 +148,7 @@ class Filter extends React.Component {
                 tabIndex={0}
                 className="standard-glyph pull-right md-glyph"
               >
-                <Glyphicon glyph={expand ? 'chevron-down' : 'chevron-right'} />
+                {expand ? <FaAngleDown /> : <FaAngleRight />}
               </span>
             </ListGroupItem>
             <Collapse in={expand}>
@@ -136,7 +158,7 @@ class Filter extends React.Component {
             </Collapse>
           </div>
           )}
-        {width >= 992
+        {width >= this.breakWidth
           && <FilterGroups filterGroups={filterGroups} handleReset={this.handleReset} />}
       </ListGroup>
     );

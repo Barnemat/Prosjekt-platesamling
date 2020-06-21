@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox } from 'react-bootstrap';
+import { FormCheck } from 'react-bootstrap';
 import { capitalize } from '../../util';
 import ExtendTag from './ExtendTag';
 
@@ -41,12 +41,22 @@ export default class FilterItem extends React.Component {
     const tag = this.getTagName();
 
     return (
-      <Checkbox
-        checked={tagValue}
-        onChange={(e) => handleUpdate(e, groupName, props.tag)}
-      >
-        {tag.length > 30 ? <ExtendTag tag={tag} /> : tag}
-      </Checkbox>
+      <FormCheck>
+        <FormCheck.Input
+          type="checkbox"
+          checked={tagValue}
+          onChange={(e) => handleUpdate(e, groupName, props.tag)}
+          onClick={(e) => e.stopPropagation()}
+        />
+        <FormCheck.Label
+          onClick={(e) => {
+            e.stopPropagation();
+            handleUpdate(e, groupName, props.tag);
+          }}
+        >
+          {tag.length > 30 ? <ExtendTag tag={tag} /> : tag}
+        </FormCheck.Label>
+      </FormCheck>
     );
   }
 }

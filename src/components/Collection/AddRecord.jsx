@@ -12,7 +12,7 @@ import {
   FormControl,
   Checkbox,
   Collapse,
-  ControlLabel,
+  FormLabel,
   InputGroup,
   Well,
 } from 'react-bootstrap';
@@ -182,7 +182,7 @@ export default class AddRecord extends React.Component {
             </Container>
             )}
             <FormGroup controlId="formControlsNotes">
-              <ControlLabel>Add your own notes here:</ControlLabel>
+              <FormLabel>Add your own notes here:</FormLabel>
               <FormControl
                 className="vresize"
                 as="textarea"
@@ -272,7 +272,7 @@ const TitleFormGroup = ({
     <Container fluid>
       <Row>
         <Col className="no-padding" lg={11} md={11} sm={11} xs={11}>
-          {label && <ControlLabel>{label}</ControlLabel>}
+          {label && <FormLabel>{label}</FormLabel>}
         </Col>
         <Col className="no-padding text-right" lg={1} md={1} sm={1} xs={1}>
           {(largeForm || value)

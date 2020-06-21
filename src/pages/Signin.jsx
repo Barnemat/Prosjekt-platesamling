@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  Col, Container, Row, Button, ControlLabel,
+  Col, Container, Row, Button, FormLabel,
 } from 'react-bootstrap';
 import { Field, reduxForm } from 'redux-form';
 import { Redirect } from 'react-router-dom';
@@ -44,7 +44,7 @@ class Signin extends React.Component {
               >
                 <Container fluid>
                   <Row className="margin-bottom pt-4">
-                    <Col lg={2} md={3} sm={3} xs={12} as={ControlLabel}>Username</Col>
+                    <Col lg={2} md={3} sm={3} xs={12} as={FormLabel}>Username</Col>
                     <Col lg={10} md={9} sm={9} xs={12}>
                       <Field
                         className="form-control"
@@ -56,7 +56,7 @@ class Signin extends React.Component {
                     </Col>
                   </Row>
                   <Row className="margin-bottom">
-                    <Col lg={2} md={3} sm={3} xs={12} as={ControlLabel}>Password</Col>
+                    <Col lg={2} md={3} sm={3} xs={12} as={FormLabel}>Password</Col>
                     <Col lg={10} md={9} sm={9} xs={12}>
                       <Field
                         className="form-control"

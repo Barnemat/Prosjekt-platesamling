@@ -4,7 +4,7 @@ import axios from 'axios';
 import PasswordValidator from 'password-validator';
 import {
   Button,
-  ControlLabel,
+  FormLabel,
   Checkbox,
 } from 'react-bootstrap';
 import DefaultFormGroup from '../Collection/FormComponents/DefaultFormGroup';
@@ -517,7 +517,7 @@ export default class CurrentUserPage extends React.Component {
             )}
         </form>
         <form onSubmit={this.handlePublicUserSubmit}>
-          <ControlLabel>Toggle privacy settings for user profile:</ControlLabel>
+          <FormLabel>Toggle privacy settings for user profile:</FormLabel>
           <Checkbox
             name="publicUserCheckbox"
             checked={publicUser}
