@@ -243,7 +243,7 @@ class Register extends React.Component {
           <Row className="show-grid">
             <Col lg={2} md={2} />
             <Col lg={8} md={8} sm={12} xs={12}>
-              <form onSubmit={this.handleSubmit} onReset={this.handleReset}>
+              <form className="pt-3" onSubmit={this.handleSubmit} onReset={this.handleReset}>
                 {wildCardError
                   && <WildCardError />}
                 <DefaultFormGroup
@@ -323,6 +323,7 @@ class Register extends React.Component {
                   </div>
                   )}
                 <Button
+                  className="mr-1"
                   variant="primary"
                   type="submit"
                   disabled={this.getDisable()}

@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  FormGroup, FormControl, ControlLabel, HelpBlock,
+  FormGroup, FormControl, FormLabel, HelpBlock,
 } from 'react-bootstrap';
 
 const DefaultFormGroup = ({
@@ -13,9 +13,9 @@ const DefaultFormGroup = ({
   feedback,
   ...props
 }) => (
-  <FormGroup controlId={id} validationState={validationState}>
-    {label && <ControlLabel>{label}</ControlLabel>}
-    <FormControl {...props} />
+  <FormGroup controlId={id}>
+    {label && <FormLabel>{label}</FormLabel>}
+    <FormControl {...props} isValid={validationState === 'success'} isInvalid={validationState === 'error'} />
     {feedback && <FormControl.Feedback />}
     {help && <HelpBlock>{help}</HelpBlock>}
   </FormGroup>

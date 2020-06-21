@@ -43,7 +43,7 @@ class Signin extends React.Component {
               })}
               >
                 <Container fluid>
-                  <Row className="margin-bottom">
+                  <Row className="margin-bottom pt-4">
                     <Col lg={2} md={3} sm={3} xs={12} as={ControlLabel}>Username</Col>
                     <Col lg={10} md={9} sm={9} xs={12}>
                       <Field
@@ -69,12 +69,9 @@ class Signin extends React.Component {
                   </Row>
                   <Row className="margin-bottom">
                     <Col
-                      lgOffset={2}
-                      mdOffset={3}
-                      smOffset={3}
-                      lg={10}
-                      md={9}
-                      sm={9}
+                      lg={{ span: 10, offset: 2 }}
+                      md={{ span: 9, offset: 3 }}
+                      sm={{ span: 9, offset: 3 }}
                       xs={12}
                     >
                       <Field
@@ -83,6 +80,7 @@ class Signin extends React.Component {
                         type="checkbox"
                         checked={checked}
                         onClick={this.handleClick}
+                        className="mr-1"
                       />
                       <span
                         role="button"
@@ -96,15 +94,12 @@ class Signin extends React.Component {
                   </Row>
                   <Row>
                     <Col
-                      lgOffset={2}
-                      mdOffset={3}
-                      smOffset={3}
-                      lg={10}
-                      md={9}
-                      sm={9}
+                      lg={{ span: 10, offset: 2 }}
+                      md={{ span: 9, offset: 3 }}
+                      sm={{ span: 9, offset: 3 }}
                       xs={12}
                     >
-                      <Button variant="primary" type="submit" disabled={pristine || submitting}>
+                      <Button className="mr-1" variant="primary" type="submit" disabled={pristine || submitting}>
                         Sign in
                       </Button>
                       <Button disabled={pristine || submitting} onClick={reset}>
@@ -115,12 +110,9 @@ class Signin extends React.Component {
                 </Container>
               </form>
               <Col
-                lgOffset={2}
-                mdOffset={3}
-                smOffset={3}
-                lg={10}
-                md={9}
-                sm={9}
+                lg={{ span: 10, offset: 2 }}
+                md={{ span: 9, offset: 3 }}
+                sm={{ span: 9, offset: 3 }}
                 xs={12}
               >
                 <p className="text-danger">
