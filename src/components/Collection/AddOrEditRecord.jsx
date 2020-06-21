@@ -400,7 +400,7 @@ AddOrEditRecord.propTypes = {
     wikiImg: PropTypes.string,
     notes: PropTypes.string,
     image: PropTypes.shape({
-      data: PropTypes.string.isRequired,
+      data: PropTypes.string,
     }),
   }),
   handleShowModal: PropTypes.func,
