@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ListGroupItem, Grid, Col, Row, Image, Button, Glyphicon, Modal, OverlayTrigger,
+  ListGroupItem, Container, Col, Row, Image, Button, Modal, OverlayTrigger,
 } from 'react-bootstrap';
+import { FaTrashAlt, FaPen } from 'react-icons/fa';
+import { TiStarOutline, TiStarFullOutline } from 'react-icons/ti';
 import Rating from 'react-rating';
 import { setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
 import noRecordImg from '../../assets/img/no_record_img.png';
@@ -24,16 +26,16 @@ const MinimizedView = ({
     {record.wikiImg || image
       ? (
         <Col lg={2} md={4} sm={4} xs={12}>
-          <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
+          <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded fluid />
         </Col>
       )
       : (
         <Col lg={2} md={4} sm={4} xs={12}>
-          <Image src={noRecordImg} rounded responsive />
+          <Image src={noRecordImg} rounded fluid />
         </Col>
       )}
     <Col lg={10} md={8} sm={8} xs={12}>
-      <Grid fluid>
+      <Container fluid>
         <CommonInformation
           title={record.title}
           artist={record.artist}
@@ -50,26 +52,28 @@ const MinimizedView = ({
           <Col lg={6} md={6} sm={6} xs={6}>
             <h6>Rating:</h6>
             <Rating
-              emptySymbol="glyphicon glyphicon-star-empty"
-              fullSymbol="glyphicon glyphicon-star"
+              emptySymbol={<TiStarOutline />}
+              fullSymbol={<TiStarFullOutline />}
               initialRating={record.rating}
               readonly
             />
           </Col>
         </Row>
         <Row>
-          <Col lg={12} md={12} sm={12} xs={12}>
+          <Col lg={8} md={8} sm={8} xs={8}>
             <DateAdded date={record.date} small />
+          </Col>
+          <Col className="text-right" lg={4} md={4} sm={4} xs={4}>
             <Button
-              className="pull-right"
-              bsSize="small"
+              variant="outline-dark"
+              size="sm"
               onClick={(e) => e.preventDefault()}
             >
               Show more
             </Button>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     </Col>
   </Row>
 );
@@ -110,16 +114,16 @@ const ExpandedView = ({
     {record.wikiImg || image
       ? (
         <Col lg={4} md={4} sm={4} xs={12}>
-          <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded responsive />
+          <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded fluid />
         </Col>
       )
       : (
         <Col lg={4} md={4} sm={4} xs={12}>
-          <Image src={noRecordImg} rounded responsive />
+          <Image src={noRecordImg} rounded fluid />
         </Col>
       )}
     <Col lg={8} md={8} sm={8} xs={12}>
-      <Grid fluid>
+      <Container fluid>
         <CommonInformation
           title={record.title}
           artist={record.artist}
@@ -136,8 +140,8 @@ const ExpandedView = ({
           <Col lg={6} md={6} sm={6} xs={6}>
             <h5><b>Rating:</b></h5>
             <Rating
-              emptySymbol="glyphicon glyphicon-star-empty"
-              fullSymbol="glyphicon glyphicon-star"
+              emptySymbol={<TiStarOutline />}
+              fullSymbol={<TiStarFullOutline />}
               initialRating={record.rating}
               readonly
             />
@@ -164,18 +168,20 @@ const ExpandedView = ({
             )}
         </Row>
         <Row>
-          <Col lg={12} md={12} sm={12} xs={12}>
+          <Col lg={8} md={8} sm={8} xs={8}>
             <DateAdded date={record.date} />
+          </Col>
+          <Col className="text-right" lg={4} md={4} sm={4} xs={4}>
             <Button
-              className="pull-right"
-              bsSize="small"
+              variant="outline-dark"
+              size="sm"
               onClick={(e) => e.preventDefault()}
             >
               Show less
             </Button>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     </Col>
   </Row>
 );
@@ -228,31 +234,31 @@ const CommonInformation = ({
           {titleStrings[2]}
         </h4>
       </Col>
-      <Col lg={2} md={3} sm={2} xs={3}>
+      <Col className="text-right" lg={2} md={3} sm={2} xs={3}>
         {!publicUsername
         && (
         <div>
           <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
-            <span
-              role="button"
+            <Button
+              variant="light"
               tabIndex={0}
-              className="standard-glyph pull-right md-glyph"
+              className="standard-glyph md-glyph"
               onClick={handleShowModal}
               onKeyUp={(e) => e.key.toLowerCase() === 'enter' && handleShowModal(e)}
             >
-              <Glyphicon glyph="trash" />
-            </span>
+              <FaTrashAlt />
+            </Button>
           </OverlayTrigger>
           <OverlayTrigger placement="left" overlay={tooltip('Edit record')}>
-            <span
-              role="button"
+            <Button
+              variant="light"
               tabIndex={0}
-              className="standard-glyph pull-right md-glyph"
+              className="standard-glyph md-glyph"
               onClick={handleEdit}
               onKeyUp={(e) => e.key.toLowerCase() === 'enter' && handleEdit(e)}
             >
-              <Glyphicon glyph="pencil" />
-            </span>
+              <FaPen />
+            </Button>
           </OverlayTrigger>
         </div>
         )}
@@ -294,7 +300,7 @@ class RecordItem extends React.Component {
     this.handleReset = this.handleReset.bind(this);
   }
 
-  toggleExpand(e) {
+  toggleExpand() {
     const { isEditMode } = this.state;
     const { record } = this.props;
     const {
@@ -303,9 +309,7 @@ class RecordItem extends React.Component {
       wikiImg,
     } = record;
 
-    const isGlyph = e.target.className.split(' ').includes('glyphicon');
-
-    if ((notes || wikiDesc || wikiImg) && (!isGlyph || isEditMode)) {
+    if ((notes || wikiDesc || wikiImg) || isEditMode) {
       this.setState((state) => ({
         expand: !state.expand,
         showWildCardError: false,
@@ -314,7 +318,7 @@ class RecordItem extends React.Component {
   }
 
   handleEdit(e) {
-    e.preventDefault();
+    e.stopPropagation();
 
     this.setState((state) => ({
       isEditMode: !state.isEditMode,
@@ -342,12 +346,12 @@ class RecordItem extends React.Component {
   }
 
   handleShowModal(e) {
-    e.preventDefault();
+    if (e) e.stopPropagation();
     this.setState({ showModal: true });
   }
 
   handleHideModal(e) {
-    e.preventDefault();
+    if (e) e.preventDefault();
     this.setState({ showModal: false });
   }
 
@@ -384,10 +388,10 @@ class RecordItem extends React.Component {
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={this.handleHideModal}>Cancel</Button>
-            <Button bsStyle="danger" onClick={this.handleDelete}>Remove Record</Button>
+            <Button variant="danger" onClick={this.handleDelete}>Remove Record</Button>
           </Modal.Footer>
         </Modal>
-        <Grid onClick={this.toggleExpand} fluid>
+        <Container onClick={this.toggleExpand} fluid>
           {(expand && !isEditMode)
             && (
             <ExpandedView
@@ -421,7 +425,7 @@ class RecordItem extends React.Component {
             />
             )}
           {showWildCardError && <WildCardError />}
-        </Grid>
+        </Container>
       </ListGroupItem>
     );
   }

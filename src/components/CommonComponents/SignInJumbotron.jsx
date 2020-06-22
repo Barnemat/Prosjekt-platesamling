@@ -49,7 +49,7 @@ export default class SignInJumbotron extends React.Component {
         </p>
         <p>
           <Button
-            bsStyle="primary"
+            variant="primary"
             name="signinButton"
             onClick={this.handleClick}
           >
@@ -57,7 +57,7 @@ export default class SignInJumbotron extends React.Component {
           </Button>
           {' '}
           <Button
-            bsStyle="primary"
+            variant="primary"
             name="registerButton"
             onClick={this.handleClick}
           >

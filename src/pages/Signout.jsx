@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Col, Grid, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { signOutAction } from '../actions';
 
 const Signout = ({ authenticated }) => {
@@ -10,7 +10,7 @@ const Signout = ({ authenticated }) => {
 
   return (
     <div>
-      <Grid fluid>
+      <Container fluid>
         <Row className="show-grid">
           <Col lg={2} md={2} />
           <Col lg={8} md={8} sm={12} xs={12}>
@@ -27,7 +27,7 @@ const Signout = ({ authenticated }) => {
           </Col>
           <Col lg={2} md={2} />
         </Row>
-      </Grid>
+      </Container>
     </div>
   );
 };

@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  FormGroup, FormControl, ControlLabel, HelpBlock,
+  FormGroup, FormControl, FormLabel, Form,
 } from 'react-bootstrap';
 
 const DefaultFormGroup = ({
@@ -11,13 +11,20 @@ const DefaultFormGroup = ({
   help,
   validationState,
   feedback,
+  as,
+  classProps,
   ...props
 }) => (
-  <FormGroup controlId={id} validationState={validationState}>
-    {label && <ControlLabel>{label}</ControlLabel>}
-    <FormControl {...props} />
+  <FormGroup as={as || 'div'} className={classProps} controlId={id}>
+    {label && <FormLabel>{label}</FormLabel>}
+    <FormControl
+      className="w-100"
+      isValid={validationState === 'success'}
+      isInvalid={validationState === 'error'}
+      {...props}
+    />
     {feedback && <FormControl.Feedback />}
-    {help && <HelpBlock>{help}</HelpBlock>}
+    {help && <Form.Text muted>{help}</Form.Text>}
   </FormGroup>
 );
 
@@ -32,6 +39,8 @@ DefaultFormGroup.propTypes = {
   onChange: PropTypes.func,
   validationState: PropTypes.string,
   feedback: PropTypes.bool,
+  as: PropTypes.string,
+  classProps: PropTypes.string,
 };
 
 /* defaultProps does not work properly

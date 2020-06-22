@@ -4,7 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ListGroup, Panel, Grid, Row, Col,
+  ListGroup, Card, Container, Row, Col,
 } from 'react-bootstrap';
 import axios from 'axios';
 import AddOrEditRecord from './AddOrEditRecord';
@@ -143,7 +143,7 @@ class ListItems extends React.Component {
     const secondHalf = recordItems.slice(Math.ceil(recordItems.length / 2));
 
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
             <SortModes
@@ -155,9 +155,9 @@ class ListItems extends React.Component {
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
-            <Panel>
+            <Card>
               {publicUsername ? (
-                <Panel.Body>
+                <Card.Body>
                   <h4>
                     You are viewing
                     {' '}
@@ -165,46 +165,46 @@ class ListItems extends React.Component {
                     {' '}
                     collection.
                   </h4>
-                </Panel.Body>
+                </Card.Body>
               ) : (
-                <Panel.Body>
+                <Card.Body>
                   <AddOrEditRecord
                     addRecordToCollection={this.addRecordToCollection}
                     loadCollection={this.loadCollection}
                   />
-                </Panel.Body>
+                </Card.Body>
               )}
               {recordItems.length !== 0 ? (
                 <div>
                   {galleryView
                     && (
-                    <Grid fluid>
+                    <Container fluid>
                       <Row>
                         <Col lg={6} md={6} sm={6} xs={6}>
-                          <ListGroup componentClass="ul">
+                          <ListGroup as="ul">
                             { firstHalf }
                           </ListGroup>
                         </Col>
                         <Col lg={6} md={6} sm={6} xs={6}>
-                          <ListGroup componentClass="ul">
+                          <ListGroup as="ul">
                             { secondHalf }
                           </ListGroup>
                         </Col>
                       </Row>
-                    </Grid>
+                    </Container>
                     )}
                   {!galleryView
                     && (
-                    <ListGroup componentClass="ul">
+                    <ListGroup as="ul">
                       { recordItems }
                     </ListGroup>
                     )}
                 </div>
               ) : (<EmptyCollection publicUsername={publicUsername} collectionHasEntries={collectionHasEntries} />)}
-            </Panel>
+            </Card>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }

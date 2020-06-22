@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-  Col, Grid, Row, Image,
+  Col, Container, Row, Image,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import image from '../assets/img/logo-vanlig.png';
 
 const PageNotFound = () => (
-  <Grid fluid>
+  <Container fluid>
     <Row className="show-grid">
       <Col lg={2} md={2} />
       <Col lg={8} md={8} sm={12} xs={12}>
@@ -23,7 +23,7 @@ const PageNotFound = () => (
       </Col>
       <Col lg={2} md={2} />
     </Row>
-  </Grid>
+  </Container>
 );
 
 export default PageNotFound;

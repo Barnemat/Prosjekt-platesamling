@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Glyphicon, Form } from 'react-bootstrap';
+import {
+  Form, Button, Col, Container, Row,
+} from 'react-bootstrap';
+import { FaUndo } from 'react-icons/fa';
 import DefaultFormGroup from '../Collection/FormComponents/DefaultFormGroup';
 import { setSearch, resetSearch } from '../../actions';
 
@@ -29,29 +32,42 @@ class SearchField extends React.Component {
   render() {
     const { search, wishlist } = this.props;
 
+    const size = search ? 11 : 12;
+
     return (
-      <Form inline>
-        <DefaultFormGroup
-          id="formControlsSearch"
-          name="search"
-          type="text"
-          value={search}
-          placeholder={`Search in ${wishlist ? 'wishlist...' : 'collection...'}`}
-          onChange={this.handleSearch}
-        />
-        {search
-          && (
-          <span
-            role="button"
-            tabIndex={0}
-            className="standard-glyph lg-glyph"
-            onClick={this.clearSearch}
-            onKeyUp={(e) => e.key.toLowerCase() === 'enter' && this.clearSearch(e)}
-          >
-            <Glyphicon glyph="remove" />
-          </span>
-          )}
-      </Form>
+      <Container fluid>
+        <Row>
+          <Col className="p-0" lg={size} md={size} sm={size} xs={size}>
+            <Form inline>
+              <DefaultFormGroup
+                className="w-100"
+                classProps="w-100"
+                id="formControlsSearch"
+                name="search"
+                type="text"
+                value={search}
+                placeholder={`Search in ${wishlist ? 'wishlist...' : 'collection...'}`}
+                onChange={this.handleSearch}
+              />
+            </Form>
+          </Col>
+
+          {search
+        && (
+          <Col className="p-0" lg={1} md={1} sm={1} xs={1}>
+            <Button
+              variant="light"
+              tabIndex={0}
+              className="lg-glyph pt-0"
+              onClick={this.clearSearch}
+              onKeyUp={(e) => e.key.toLowerCase() === 'enter' && this.clearSearch(e)}
+            >
+              <FaUndo />
+            </Button>
+          </Col>
+        )}
+        </Row>
+      </Container>
     );
   }
 }

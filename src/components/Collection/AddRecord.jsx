@@ -1,21 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Grid,
+  Container,
   Col,
   Row,
   Image,
   Button,
-  Glyphicon,
   OverlayTrigger,
   FormGroup,
   FormControl,
-  Checkbox,
+  FormCheck,
   Collapse,
-  ControlLabel,
+  FormLabel,
+  Form,
   InputGroup,
-  Well,
+  Card,
 } from 'react-bootstrap';
+import { FaTrashAlt, FaPlus, FaMinus } from 'react-icons/fa';
+import { TiStarOutline, TiStarFullOutline } from 'react-icons/ti';
 import Rating from 'react-rating';
 import tooltip from '../CommonComponents/Tooltip';
 import { setLoadingCursor, getValidFormatTypes } from '../../util';
@@ -118,34 +120,61 @@ export default class AddRecord extends React.Component {
               disabled={disableWishlistFields}
             />
             <FormGroup>
-              <Checkbox
-                name="wikiDescCB"
-                onChange={(e) => {
-                  handleCheckbox(e);
-                  handleSearchRequest();
-                }}
-                checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
+              <FormCheck
+                id="wikiDescCB"
                 inline
               >
-                Add description from Wikipedia
-              </Checkbox>
-              <Checkbox
-                name="wikiImgCB"
-                onChange={(e) => {
-                  handleCheckbox(e);
-                  handleImgRequest();
-                }}
-                disabled={!allowImgReq}
-                checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
+                <FormCheck.Input
+                  type="checkbox"
+                  onChange={(e) => {
+                    handleCheckbox(e);
+                    handleSearchRequest();
+                  }}
+                  checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
+                />
+                <FormCheck.Label
+                  onClick={(e) => {
+                    handleCheckbox(e);
+                    handleSearchRequest();
+                  }}
+                >
+                  Add description from Wikipedia
+                </FormCheck.Label>
+              </FormCheck>
+              <FormCheck
+                id="wikiImgCB"
                 inline
               >
-                Add image from Wikipedia
-              </Checkbox>
+                <FormCheck.Input
+                  type="checkbox"
+                  onChange={(e) => {
+                    handleCheckbox(e);
+                    handleImgRequest();
+                  }}
+                  disabled={!allowImgReq}
+                  checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
+                />
+                <FormCheck.Label
+                  onClick={(e) => {
+                    if (!allowImgReq) {
+                      return;
+                    }
+
+                    handleCheckbox(e);
+                    handleImgRequest();
+                  }}
+                >
+                  Add image from Wikipedia
+                </FormCheck.Label>
+              </FormCheck>
               {' '}
               {' '}
               {(wikiImg || wikiDesc)
               && (
-              <Button onClick={handleResetWiki}>
+              <Button
+                variant="outline-dark"
+                onClick={handleResetWiki}
+              >
                 Reset Wikipedia fields
               </Button>
               )}
@@ -157,35 +186,45 @@ export default class AddRecord extends React.Component {
               wikiImg={wikiImg}
               wikiHref={wikiHref}
             />
-            <DefaultFormGroup
-              id="formControlsImage"
-              name="image"
-              type="file"
-              label="Upload an image of the record:"
-              help="If you want to upload your own image. (Max: 2MB)"
-              onChange={handleFileUpload}
-            />
+            <FormGroup>
+              <Form.File
+                id="formControlsImage"
+                name="image"
+                type="file"
+                label="Upload an image of the record:"
+                help="If you want to upload your own image. (Max: 2MB)"
+                onChange={handleFileUpload}
+                custom
+              />
+            </FormGroup>
             {invalidImg
             && <p className="text-danger">The uploaded file is invalid.</p>}
             {image
             && (
-            <Grid fluid>
+            <Container fluid>
               <Row>
                 <Col lg={6} md={7} sm={5} xs={8}>
-                  <Well bsSize="small">
+                  <Card body>
                     {imageData
-                    && <Image src={imageData} responsive />}
-                  </Well>
-                  <Button bsSize="small" onClick={handleRemoveImg}>Remove file</Button>
+                    && <Image src={imageData} fluid />}
+                  </Card>
+                  <Button
+                    className="mt-1"
+                    variant="outline-dark"
+                    size="sm"
+                    onClick={handleRemoveImg}
+                  >
+                    Remove file
+                  </Button>
                 </Col>
               </Row>
-            </Grid>
+            </Container>
             )}
             <FormGroup controlId="formControlsNotes">
-              <ControlLabel>Add your own notes here:</ControlLabel>
+              <FormLabel>Add your own notes here:</FormLabel>
               <FormControl
                 className="vresize"
-                componentClass="textarea"
+                as="textarea"
                 name="notes"
                 value={notes}
                 placeholder="Record markings, playback speed, record quality..."
@@ -193,15 +232,23 @@ export default class AddRecord extends React.Component {
               />
             </FormGroup>
             <Rating
-              emptySymbol="glyphicon glyphicon-star-empty"
-              fullSymbol="glyphicon glyphicon-star"
+              emptySymbol={<TiStarOutline />}
+              fullSymbol={<TiStarFullOutline />}
               initialRating={rating}
               onChange={(rate) => handleRatingChange(rate)}
             />
-            <Button bsStyle="primary" type="submit" block>
+            <Button
+              variant="primary"
+              type="submit"
+              block
+            >
               Add record to collection
             </Button>
-            <Button onClick={handleReset} block>
+            <Button
+              variant="outline-dark"
+              onClick={handleReset}
+              block
+            >
               Discard submition
             </Button>
           </div>
@@ -269,10 +316,10 @@ const TitleFormGroup = ({
   ...rest
 }) => (
   <FormGroup controlId="formControlsTitle">
-    <Grid fluid>
+    <Container fluid>
       <Row>
         <Col className="no-padding" lg={11} md={11} sm={11} xs={11}>
-          {label && <ControlLabel>{label}</ControlLabel>}
+          {label && <FormLabel>{label}</FormLabel>}
         </Col>
         <Col className="no-padding text-right" lg={1} md={1} sm={1} xs={1}>
           {(largeForm || value)
@@ -285,13 +332,13 @@ const TitleFormGroup = ({
                 onClick={handleReset}
                 onKeyUp={handleReset}
               >
-                <Glyphicon glyph="trash" />
+                <FaTrashAlt />
               </span>
             </OverlayTrigger>
             )}
         </Col>
       </Row>
-    </Grid>
+    </Container>
     <InputGroup>
       <FormControl
         type="text"
@@ -301,21 +348,29 @@ const TitleFormGroup = ({
         onChange={handleChange}
         disabled={disabled}
       />
-      <InputGroup.Button>
-        { rest.tooltip
-          ? (
-            <OverlayTrigger placement="right" overlay={tooltip(rest.tooltip)}>
-              <Button onClick={toggleLargeForm} disabled={disabled}>
-                <Glyphicon glyph={glyph} />
-              </Button>
-            </OverlayTrigger>
-          )
-          : (
-            <Button onClick={toggleLargeForm} disabled={disabled}>
-              <Glyphicon glyph={glyph} />
+      {rest.tooltip
+        ? (
+          <OverlayTrigger placement="right" overlay={tooltip(rest.tooltip)}>
+            <Button
+              variant="outline-dark"
+              onClick={toggleLargeForm}
+              disabled={disabled}
+            >
+              {glyph === 'plus' && <FaPlus />}
+              {glyph === 'minus' && <FaMinus />}
             </Button>
-          )}
-      </InputGroup.Button>
+          </OverlayTrigger>
+        )
+        : (
+          <Button
+            variant="outline-dark"
+            onClick={toggleLargeForm}
+            disabled={disabled}
+          >
+            {glyph === 'plus' && <FaPlus />}
+            {glyph === 'minus' && <FaMinus />}
+          </Button>
+        )}
     </InputGroup>
   </FormGroup>
 );
@@ -347,50 +402,46 @@ const WikiInfo = ({
   <Collapse in={wikiReqDesc || wikiReqImg.req}>
     {wikiReqDesc && wikiReqImg.req
       ? (
-        <div>
-          <Well>
-            <Grid fluid>
-              <Row>
-                <Col lg={4} md={5} sm={5}>
-                  <Collapse in={wikiReqImg.req}>
-                    <div>
-                      {wikiImg
-                        ? <Image src={wikiImg} rounded responsive />
-                        : 'No image was found.'}
-                    </div>
-                  </Collapse>
-                </Col>
-                <Col lg={8} md={7} sm={7}>
-                  <Collapse in={wikiReqDesc}>
-                    <div>
-                      {wikiDesc || 'No information was found.'}
-                    </div>
-                  </Collapse>
-                  {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
-                </Col>
-              </Row>
-            </Grid>
-          </Well>
-        </div>
+        <Card className="mb-3" body>
+          <Container fluid>
+            <Row>
+              <Col lg={4} md={5} sm={5}>
+                <Collapse in={wikiReqImg.req}>
+                  <div>
+                    {wikiImg
+                      ? <Image src={wikiImg} rounded fluid />
+                      : 'No image was found.'}
+                  </div>
+                </Collapse>
+              </Col>
+              <Col lg={8} md={7} sm={7}>
+                <Collapse in={wikiReqDesc}>
+                  <div>
+                    {wikiDesc || 'No information was found.'}
+                  </div>
+                </Collapse>
+                {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
+              </Col>
+            </Row>
+          </Container>
+        </Card>
       )
       : (
-        <div>
-          <Well>
-            <Collapse in={wikiReqImg.req}>
-              <div>
-                {wikiImg
-                  ? <Image src={wikiImg} rounded responsive />
-                  : 'No image was found.'}
-              </div>
-            </Collapse>
-            <Collapse in={wikiReqDesc}>
-              <div>
-                {wikiDesc || 'No information was found.'}
-              </div>
-            </Collapse>
-            {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
-          </Well>
-        </div>
+        <Card className="mb-3" body>
+          <Collapse in={wikiReqImg.req}>
+            <div>
+              {wikiImg
+                ? <Image src={wikiImg} rounded fluid />
+                : 'No image was found.'}
+            </div>
+          </Collapse>
+          <Collapse in={wikiReqDesc}>
+            <div>
+              {wikiDesc || 'No information was found.'}
+            </div>
+          </Collapse>
+          {wikiHref && <a href={wikiHref} target="blank">Wikipedia</a>}
+        </Card>
       )}
   </Collapse>
 );

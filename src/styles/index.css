@@ -79,3 +79,11 @@ body.waiting * {
 .underline-onhover:hover {
   text-decoration: underline;
 }
+
+.nav-item > .nav-link {
+  padding: 15px 0px 15px 0px;
+}
+
+.nav-item.active {
+  background-color: #292E33;
+}

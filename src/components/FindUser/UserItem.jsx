@@ -1,23 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Button, Col, Grid, Row, ListGroupItem,
+  Button, Col, Container, Row, ListGroupItem,
 } from 'react-bootstrap';
 
-const getBsStyle = (isPublic, usernamesEqual) => {
+const getvariant = (isPublic, usernamesEqual) => {
   if (!usernamesEqual && isPublic) {
     return 'success';
   } if (!usernamesEqual && !isPublic) {
     return 'danger';
   }
-  return 'default';
+  return 'outline-dark';
 };
 
 const UserItem = ({
   username, usernamesEqual, handleClick, isPublic,
 }) => (
   <ListGroupItem className="darker-onhover">
-    <Grid fluid>
+    <Container fluid>
       <Row>
         <Col lg={2} md={4} sm={4} xs={12}>
           <strong>{username}</strong>
@@ -46,8 +46,8 @@ const UserItem = ({
           <Button
             name="gotoUserPage"
             className="pull-right"
-            bsStyle={getBsStyle(isPublic, usernamesEqual)}
-            bsSize="small"
+            variant={getvariant(isPublic, usernamesEqual)}
+            size="sm"
             disabled={!isPublic && !usernamesEqual}
             onClick={(e) => {
               handleClick(e, username);
@@ -62,7 +62,7 @@ const UserItem = ({
           </Button>
         </Col>
       </Row>
-    </Grid>
+    </Container>
   </ListGroupItem>
 );
 

@@ -3,17 +3,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Grid,
+  Container,
   Col,
   Row,
   Image,
   Button,
-  Glyphicon,
   OverlayTrigger,
   FormGroup,
   FormControl,
-  Checkbox,
+  FormCheck,
+  Form,
 } from 'react-bootstrap';
+import { FaTrashAlt, FaCheck } from 'react-icons/fa';
+import { TiStarOutline, TiStarFullOutline } from 'react-icons/ti';
 import Rating from 'react-rating';
 import tooltip from '../CommonComponents/Tooltip';
 import { checkTimePassed, getValidFormatTypes, setLoadingCursor } from '../../util';
@@ -85,23 +87,23 @@ export default class EditRecord extends React.Component {
           ? (
             <Col lg={4} md={4} sm={4} xs={12}>
               {imageData
-                ? <Image src={imageData} rounded responsive />
+                ? <Image src={imageData} rounded fluid />
                 : (
                   <Image
                     src={recordImg && !ignoreRecordImg ? `data:image/jpeg;base64,${recordImg}` : wikiImg}
                     rounded
-                    responsive
+                    fluid
                   />
                 )}
             </Col>
           )
           : (
             <Col lg={4} md={4} sm={4} xs={12}>
-              <Image src={noRecordImg} rounded responsive />
+              <Image src={noRecordImg} rounded fluid />
             </Col>
           )}
         <Col lg={8} md={8} sm={8} xs={8}>
-          <Grid fluid>
+          <Container fluid>
             <Row>
               <Col lg={5} md={5} sm={5} xs={12}>
                 <DefaultFormGroup
@@ -127,28 +129,28 @@ export default class EditRecord extends React.Component {
               </Col>
               <Col lg={2} md={3} sm={2} xs={3}>
                 <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
-                  <span
+                  <Button
                     id="delete"
-                    role="button"
+                    variant="light"
                     tabIndex={0}
-                    className="standard-glyph pull-right md-glyph"
+                    className="standard-glyph md-glyph"
                     onClick={handleShowModal}
                     onKeyUp={handleKeyUp}
                   >
-                    <Glyphicon glyph="trash" />
-                  </span>
+                    <FaTrashAlt />
+                  </Button>
                 </OverlayTrigger>
                 <OverlayTrigger placement="left" overlay={tooltip('Confirm edit')}>
-                  <span
+                  <Button
+                    variant="light"
                     id="edit"
-                    role="button"
                     tabIndex={0}
-                    className="standard-glyph pull-right md-glyph"
+                    className="standard-glyph md-glyph"
                     onClick={(e) => handleSubmit(e, this.editRecordSubmit)}
                     onKeyUp={(e) => handleKeyUp(e, this.editRecordSubmit)}
                   >
-                    <Glyphicon glyph="ok" />
-                  </span>
+                    <FaCheck />
+                  </Button>
                 </OverlayTrigger>
               </Col>
             </Row>
@@ -168,8 +170,8 @@ export default class EditRecord extends React.Component {
                 {/* eslint-disable jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
                 <div onClick={(e) => e.stopPropagation()}>
                   <Rating
-                    emptySymbol="glyphicon glyphicon-star-empty"
-                    fullSymbol="glyphicon glyphicon-star"
+                    emptySymbol={<TiStarOutline />}
+                    fullSymbol={<TiStarFullOutline />}
                     initialRating={rating}
                     onChange={(rate) => handleRatingChange(rate)}
                   />
@@ -180,29 +182,57 @@ export default class EditRecord extends React.Component {
             <Row>
               <Col lg={12} md={12} sm={12} xs={12}>
                 <FormGroup>
-                  <Checkbox
-                    name="wikiDescCB"
-                    onChange={(e) => {
-                      handleCheckbox(e);
-                      handleSearchRequest();
-                    }}
-                    checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
+                  <FormCheck
+                    id="wikiDescCB"
                     inline
                   >
-                    Add/edit description from Wikipedia
-                  </Checkbox>
-                  <Checkbox
-                    name="wikiImgCB"
-                    onChange={(e) => {
-                      handleCheckbox(e);
-                      handleImgRequest();
-                    }}
-                    disabled={!allowImgReq}
-                    checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
+                    <FormCheck.Input
+                      type="checkbox"
+                      id="wikiDescCB"
+                      onChange={(e) => {
+                        handleCheckbox(e);
+                        handleSearchRequest();
+                      }}
+                      checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
+                    />
+                    <FormCheck.Label
+                      id="wikiDescCB"
+                      onClick={(e) => {
+                        handleCheckbox(e);
+                        handleSearchRequest();
+                      }}
+                    >
+                      Add description from Wikipedia
+                    </FormCheck.Label>
+                  </FormCheck>
+                  <FormCheck
+                    id="wikiImgCB"
                     inline
                   >
-                    Add/edit image from Wikipedia
-                  </Checkbox>
+                    <FormCheck.Input
+                      id="wikiImgCB"
+                      type="checkbox"
+                      onChange={(e) => {
+                        handleCheckbox(e);
+                        handleImgRequest();
+                      }}
+                      disabled={!allowImgReq}
+                      checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
+                    />
+                    <FormCheck.Label
+                      id="wikiImgCB"
+                      onClick={(e) => {
+                        if (!allowImgReq) {
+                          return;
+                        }
+
+                        handleCheckbox(e);
+                        handleImgRequest();
+                      }}
+                    >
+                      Add image from Wikipedia
+                    </FormCheck.Label>
+                  </FormCheck>
                   {' '}
                   {' '}
                   {(wikiImg || wikiDesc)
@@ -223,14 +253,17 @@ export default class EditRecord extends React.Component {
             </Row>
             <Row>
               <Col lg={12} md={12} sm={12} xs={12}>
-                <DefaultFormGroup
-                  id="formControlsImage"
-                  name="image"
-                  type="file"
-                  label="Upload an image of the record:"
-                  help="If you want to upload your own image. (Max: 2MB)"
-                  onChange={handleFileUpload}
-                />
+                <FormGroup>
+                  <Form.File
+                    id="formControlsImage"
+                    name="image"
+                    type="file"
+                    label="Upload an image of the record:"
+                    help="If you want to upload your own image. (Max: 2MB)"
+                    onChange={handleFileUpload}
+                    custom
+                  />
+                </FormGroup>
                 {invalidImg
                   && <p className="text-danger">The uploaded file is invalid.</p>}
                 {(image || recordImg)
@@ -243,7 +276,7 @@ export default class EditRecord extends React.Component {
                 <FormGroup controlId="formControlsNotes">
                   <FormControl
                     className="vresize"
-                    componentClass="textarea"
+                    as="textarea"
                     name="notes"
                     value={notes}
                     placeholder="Record markings, playback speed, record quality..."
@@ -256,19 +289,24 @@ export default class EditRecord extends React.Component {
               <Col lg={7} md={7} sm={7} xs={12}>
                 <h6>{checkTimePassed(record.date)}</h6>
               </Col>
-              <Col lg={5} md={5} sm={5} xs={12}>
+              <Col className="text-right" lg={5} md={5} sm={5} xs={12}>
                 {showWildCardError && <WildCardError />}
                 <Button
-                  className="pull-right"
-                  bsStyle="success"
+                  variant="success"
                   onClick={(e) => handleSubmit(e, this.editRecordSubmit)}
+                  block
                 >
                   Confirm Edit
                 </Button>
-                <Button className="pull-right" onClick={handleReset}>Cancel</Button>
+                <Button
+                  onClick={handleReset}
+                  block
+                >
+                  Cancel
+                </Button>
               </Col>
             </Row>
-          </Grid>
+          </Container>
         </Col>
       </Row>
     );

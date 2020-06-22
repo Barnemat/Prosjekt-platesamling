@@ -254,7 +254,7 @@ router.route('/signin')
           };
 
           req.session.regenerate((sessionErr) => {
-            if (err) if (err) return next(err);
+            if (sessionErr) return next(sessionErr);
             req.session.auth = true;
             req.session.remember = req.body.remember;
             req.session.user = userObject;
@@ -366,7 +366,7 @@ router.route('/user')
         const userObject  = {
           username: user.username,
           email: req.body.email || user.email,
-          public: user.public,
+          public: typeof req.body.public === 'boolean' && req.body.public,
         };
 
         const { remember } = req.session;
@@ -390,6 +390,7 @@ router.route('/user')
                     if (remember) {
                       req.session.user = userObject;
                       req.session.auth = true;
+                      req.session.remember = true;
                     }
                   });
 
@@ -416,7 +417,7 @@ router.route('/user')
           const userObject  = {
             username: user.username,
             email: req.body.email || user.email,
-            public: user.public,
+            public: typeof req.body.public === 'boolean' && req.body.public,
           };
 
           req.session.regenerate((sessErr) => {
@@ -425,6 +426,7 @@ router.route('/user')
             if (remember) {
               req.session.user = userObject;
               req.session.auth = true;
+              req.session.remember = true;
             }
           });
 
@@ -475,6 +477,7 @@ router.route('/authenticated')
   .get((req, res, next) => {
     if (req.session.auth && req.session.remember) {
       const { auth, remember, user } = req.session;
+
       req.session.regenerate((err) => {
         if (err) return next(err);
 

@@ -6,7 +6,7 @@ import { Redirect } from 'react-router-dom';
 import PasswordValidator from 'password-validator';
 import {
   Button,
-  Grid,
+  Container,
   Col,
   Row,
 } from 'react-bootstrap';
@@ -239,11 +239,11 @@ class Register extends React.Component {
 
     return authenticated || registered ? (<Redirect to="/" />) : (
       <div>
-        <Grid fluid>
+        <Container fluid>
           <Row className="show-grid">
             <Col lg={2} md={2} />
             <Col lg={8} md={8} sm={12} xs={12}>
-              <form onSubmit={this.handleSubmit} onReset={this.handleReset}>
+              <form className="pt-3" onSubmit={this.handleSubmit} onReset={this.handleReset}>
                 {wildCardError
                   && <WildCardError />}
                 <DefaultFormGroup
@@ -323,7 +323,8 @@ class Register extends React.Component {
                   </div>
                   )}
                 <Button
-                  bsStyle="primary"
+                  className="mr-1"
+                  variant="primary"
                   type="submit"
                   disabled={this.getDisable()}
                   onFocus={this.handleFocus}
@@ -348,7 +349,7 @@ class Register extends React.Component {
             </Col>
             <Col lg={2} md={2} />
           </Row>
-        </Grid>
+        </Container>
       </div>
     );
   }

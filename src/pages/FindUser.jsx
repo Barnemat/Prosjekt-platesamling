@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import {
-  Button, Col, Grid, Row, ListGroup, ListGroupItem,
+  Button, Col, Container, Row, ListGroup, ListGroupItem,
 } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import DefaultFormGroup from '../components/Collection/FormComponents/DefaultFormGroup';
@@ -94,13 +94,13 @@ class FindUser extends React.Component {
     const userItems = searchField.length > 0 ? this.getUserItems() : [];
 
     return gotoUserPage ? (<Redirect to={`/user/${currentUsername}`} push />) : (
-      <Grid fluid>
+      <Container fluid>
         <Row className="show-grid">
           <Col lg={2} md={2} />
           <Col lg={8} md={8} sm={12} xs={12}>
-            <Grid fluid>
+            <Container fluid>
               <Row>
-                <Col lg={12} md={12} sm={12} xs={12} className="margin-bottom">
+                <Col lg={12} md={12} sm={12} xs={12} className="mb-3">
                   {showWildCardError && <WildCardError />}
                   <form onSubmit={this.handleSubmit}>
                     <DefaultFormGroup
@@ -113,7 +113,7 @@ class FindUser extends React.Component {
                       onChange={this.handleChange}
                     />
                     <Button
-                      bsStyle="primary"
+                      variant="primary"
                       type="submit"
                       disabled={searchField.length === 0}
                     >
@@ -126,7 +126,7 @@ class FindUser extends React.Component {
                 && (
                 <Row>
                   <Col lg={12} md={12} sm={12} xs={12}>
-                    <ListGroup componentClass="ul">
+                    <ListGroup as="ul">
                       {userItems.length > 0 ? userItems : (
                         <ListGroupItem>
                           <strong>{`The search "${searchAtLastSubmit}" does not match any users...`}</strong>
@@ -136,11 +136,11 @@ class FindUser extends React.Component {
                   </Col>
                 </Row>
                 )}
-            </Grid>
+            </Container>
           </Col>
           <Col lg={2} md={2} />
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }

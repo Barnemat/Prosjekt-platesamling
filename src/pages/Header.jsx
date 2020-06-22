@@ -1,80 +1,86 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import {
-  Navbar, Nav, NavItem, Col, Grid, Row, Image,
+  Navbar, Nav, Container, Image,
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { signOutAction } from '../actions';
 import logo from '../assets/img/logo-vanlig.png';
 
 const Header = ({ authenticated, username, ...rest }) => (
-  <Navbar inverse fluid collapseOnSelect>
-    <Grid fluid>
-      <Row>
-        <Col lg={2} md={2} />
-        <Col lg={8} md={8}>
-          <Navbar.Header>
-            <Link className="navbar-left" to="/">
-              <Image
-                className="nav-img margin-right"
-                src={logo}
-              />
-            </Link>
-            <Navbar.Toggle />
-          </Navbar.Header>
-          <Navbar.Collapse>
-            <Nav>
-              <LinkContainer to="/" exact>
-                <NavItem eventKey={1}>
-                  Collection
-                </NavItem>
+  <Navbar variant="dark" bg="dark" expand="md" collapseOnSelect className="justify-content-between py-0 mt-0 mb-3">
+    <Container fluid="md">
+      <Navbar.Brand className="navbar-left" href="/">
+        <Image
+          className="nav-img mr-2"
+          src={logo}
+        />
+      </Navbar.Brand>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" />
+      <Navbar.Collapse id="basic-navbar-nav" className="m-0 p-0">
+        <Nav className="mr-auto">
+          <LinkContainer to="/" exact>
+            <Nav.Item as="li">
+              <Nav.Link as="div">
+                Collection
+              </Nav.Link>
+            </Nav.Item>
+          </LinkContainer>
+          <LinkContainer to="/wishlist">
+            <Nav.Item as="li">
+              <Nav.Link as="div">
+                Wishlist
+              </Nav.Link>
+            </Nav.Item>
+          </LinkContainer>
+          <LinkContainer to="/find">
+            <Nav.Item as="li">
+              <Nav.Link as="div">
+                Find users
+              </Nav.Link>
+            </Nav.Item>
+          </LinkContainer>
+        </Nav>
+        {authenticated ? (
+          <Nav className="justify-content-end">
+            <LinkContainer to={`/user/${username}`}>
+              <Nav.Item as="li">
+                <Nav.Link as="div">
+                  { username }
+                </Nav.Link>
+              </Nav.Item>
+            </LinkContainer>
+            <LinkContainer to="/signout">
+              <Nav.Item as="li" onClick={rest.signOutAction}>
+                <Nav.Link as="div">
+                  Sign out
+                </Nav.Link>
+              </Nav.Item>
+            </LinkContainer>
+          </Nav>
+        )
+          : (
+            <Nav className="justify-content-end">
+              <LinkContainer to="/register">
+                <Nav.Item as="li">
+                  <Nav.Link as="div">
+                    Register
+                  </Nav.Link>
+                </Nav.Item>
               </LinkContainer>
-              <LinkContainer to="/wishlist">
-                <NavItem eventKey={2}>
-                  Wishlist
-                </NavItem>
-              </LinkContainer>
-              <LinkContainer to="/find">
-                <NavItem eventKey={3}>
-                  Find users
-                </NavItem>
+              <LinkContainer to="/signin">
+                <Nav.Item as="li">
+                  <Nav.Link as="div">
+                    Sign in
+                  </Nav.Link>
+                </Nav.Item>
               </LinkContainer>
             </Nav>
-            {authenticated ? (
-              <Nav pullRight>
-                <LinkContainer to={`/user/${username}`}>
-                  <NavItem eventKey={4}>
-                    { username }
-                  </NavItem>
-                </LinkContainer>
-                <LinkContainer to="/signout">
-                  <NavItem eventKey={5} onClick={rest.signOutAction}>
-                    Sign out
-                  </NavItem>
-                </LinkContainer>
-              </Nav>
-            )
-              : (
-                <Nav pullRight>
-                  <LinkContainer to="/register">
-                    <NavItem eventKey={4}>
-                      Register
-                    </NavItem>
-                  </LinkContainer>
-                  <LinkContainer to="/signin">
-                    <NavItem eventKey={5}>
-                      Sign in
-                    </NavItem>
-                  </LinkContainer>
-                </Nav>
-              )}
-          </Navbar.Collapse>
-        </Col>
-        <Col lg={2} md={2} />
-      </Row>
-    </Grid>
+          )}
+      </Navbar.Collapse>
+    </Container>
   </Navbar>
 );
 
