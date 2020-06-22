@@ -8,7 +8,7 @@ import {
   Row,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { signInAction } from '../actions';
+import { signInAction, authenticatedAction } from '../actions';
 import WildCardError from '../components/CommonComponents/WildCardError';
 import CurrentUserPage from '../components/User/CurrentUserPage';
 import PublicUserPage from '../components/User/PublicUserPage';
@@ -103,6 +103,7 @@ class User extends React.Component {
               passwordValidUrl={passwordValidUrl}
               authenticatedUser={authenticatedUser}
               signInAction={props.signInAction}
+              authenticatedAction={props.authenticatedAction}
             />
           </Col>
           <Col lg={5} md={5} sm={4} xs={1} />
@@ -171,6 +172,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   signInAction,
+  authenticatedAction,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(User);

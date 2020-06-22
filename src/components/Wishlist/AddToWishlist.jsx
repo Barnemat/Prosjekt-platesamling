@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
-  Glyphicon,
   Collapse,
 } from 'react-bootstrap';
+import { FaPlus, FaMinus } from 'react-icons/fa';
 import { setLoadingCursor, getValidFormatTypes } from '../../util';
 import DefaultFormGroup from '../Collection/FormComponents/DefaultFormGroup';
 import SelectFormGroup from '../Collection/FormComponents/SelectFormGroup';
@@ -89,8 +89,13 @@ export default class AddToWishlist extends React.Component {
 
     return (
       <div>
-        <Button className="margin-bottom" onClick={this.toggleShow} block>
-          <Glyphicon glyph={show ? 'minus' : 'plus'} />
+        <Button
+          className="margin-bottom"
+          variant="outline-dark"
+          onClick={this.toggleShow}
+          block
+        >
+          {show ? <FaMinus /> : <FaPlus />}
         </Button>
         <Collapse in={show}>
           <form onSubmit={this.handleSubmit}>

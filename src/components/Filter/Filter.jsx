@@ -140,7 +140,7 @@ class Filter extends React.Component {
       <ListGroup onClick={(e) => this.toggleExpand(e, true)}>
         {width < this.breakWidth
           && (
-          <div>
+          <div className="mb-3">
             <ListGroupItem className="no-padding-bottom rm-outline" onClick={this.toggleExpand}>
               <strong>Filter:</strong>
               <span

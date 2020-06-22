@@ -2,8 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  ListGroupItem, Container, Col, Row, Button, Glyphicon, OverlayTrigger, Collapse, Well,
+  ListGroupItem, Container, Col, Row, Button, OverlayTrigger, Collapse, Card,
 } from 'react-bootstrap';
+import { FaTrashAlt } from 'react-icons/fa';
 import { setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
 import tooltip from '../CommonComponents/Tooltip';
 import WildCardError from '../CommonComponents/WildCardError';
@@ -90,15 +91,15 @@ class WishlistItem extends React.Component {
               <Col lg={1} md={1} sm={1} xs={1}>
                 <div>
                   <OverlayTrigger placement="right" overlay={tooltip('Remove record from wishlist')}>
-                    <span
-                      role="button"
+                    <Button
+                      variant="outline-dark"
                       tabIndex={0}
-                      className="standard-glyph pull-right md-glyph"
+                      className="md-glyph"
                       onClick={this.handleDelete}
                       onKeyUp={(e) => e.key.toLowerCase() === 'enter' && this.handleDelete(e)}
                     >
-                      <Glyphicon glyph="trash" />
-                    </span>
+                      <FaTrashAlt />
+                    </Button>
                   </OverlayTrigger>
                 </div>
               </Col>
@@ -117,7 +118,7 @@ class WishlistItem extends React.Component {
           <Collapse in={isAddMode}>
             <Row>
               <Col lg={12} md={12} sm={12} xs={12}>
-                <Well>
+                <Card body>
                   <AddOrEditRecord
                     title={record.title}
                     artist={record.artist}
@@ -128,7 +129,7 @@ class WishlistItem extends React.Component {
                     expand
                     disableWishlistFields
                   />
-                </Well>
+                </Card>
               </Col>
             </Row>
           </Collapse>

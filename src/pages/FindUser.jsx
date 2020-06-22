@@ -100,7 +100,7 @@ class FindUser extends React.Component {
           <Col lg={8} md={8} sm={12} xs={12}>
             <Container fluid>
               <Row>
-                <Col lg={12} md={12} sm={12} xs={12} className="margin-bottom">
+                <Col lg={12} md={12} sm={12} xs={12} className="mb-3">
                   {showWildCardError && <WildCardError />}
                   <form onSubmit={this.handleSubmit}>
                     <DefaultFormGroup

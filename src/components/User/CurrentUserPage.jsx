@@ -4,8 +4,7 @@ import axios from 'axios';
 import PasswordValidator from 'password-validator';
 import {
   Button,
-  FormLabel,
-  Checkbox,
+  FormCheck,
 } from 'react-bootstrap';
 import DefaultFormGroup from '../Collection/FormComponents/DefaultFormGroup';
 import { setLoadingCursor } from '../../util';
@@ -122,7 +121,7 @@ export default class CurrentUserPage extends React.Component {
     e.preventDefault();
     const { newEmail, confirmEmailPassword, emailValid } = this.state;
     const {
-      url, passwordValidUrl, authenticatedUser, ...props
+      url, passwordValidUrl, authenticatedUser, signInAction,
     } = this.props;
 
     if (emailValid) {
@@ -135,7 +134,7 @@ export default class CurrentUserPage extends React.Component {
                 if (innerRes.data.success) {
                   axios.put(url, { username: authenticatedUser.username, email: newEmail })
                     .then(() => {
-                      props.signInAction({
+                      signInAction({
                         username: authenticatedUser.username,
                         password: confirmEmailPassword,
                       });
@@ -205,11 +204,12 @@ export default class CurrentUserPage extends React.Component {
   handlePublicUserSubmit(e) {
     e.preventDefault();
     const { publicUser } = this.state;
-    const { authenticatedUser, url } = this.props;
+    const { authenticatedUser, url, authenticatedAction } = this.props;
 
     setLoadingCursor(true);
     axios.put(url, { username: authenticatedUser.username, public: publicUser })
       .then(() => {
+        authenticatedAction();
         this.setState({ showPublicUserSubmitSuccess: true });
       })
       .catch(() => {
@@ -271,8 +271,8 @@ export default class CurrentUserPage extends React.Component {
   }
 
   handleChange(e) {
-    if (e.target.name !== 'publicUserCheckbox') e.preventDefault();
-    const { name, value } = e.target;
+    if (e.target.id !== 'publicUserSwitch') e.preventDefault();
+    const { id, name, value } = e.target;
     const { newPassword } = this.state;
     let {
       passwordValid, publicUser, emailValid, showEmailPreviouslyUsed, passwordsEqual,
@@ -280,7 +280,7 @@ export default class CurrentUserPage extends React.Component {
 
     if (name === 'newPassword') {
       passwordValid = this.getPasswordValid(value);
-    } else if (name === 'publicUserCheckbox') {
+    } else if (id === 'publicUserSwitch') {
       publicUser = !publicUser;
     } else if (name === 'newEmail') {
       emailValid = this.getEmailValid(value);
@@ -400,6 +400,7 @@ export default class CurrentUserPage extends React.Component {
             autoComplete="new-email"
           />
           <Button
+            className="mr-1"
             variant="primary"
             type="submit"
             disabled={this.getEmailBtnDisable()}
@@ -433,7 +434,11 @@ export default class CurrentUserPage extends React.Component {
             </div>
             )}
         </form>
-        <form onSubmit={this.handlePasswordSubmit} onReset={this.handlePasswordReset}>
+        <form
+          className="mt-3"
+          onSubmit={this.handlePasswordSubmit}
+          onReset={this.handlePasswordReset}
+        >
           <DefaultFormGroup
             id="formControlsPasswordConfirm"
             name="confirmPasswordEdit"
@@ -491,6 +496,7 @@ export default class CurrentUserPage extends React.Component {
             </div>
             )}
           <Button
+            className="mr-1"
             variant="primary"
             type="submit"
             disabled={this.getPasswordBtnDisable()}
@@ -517,14 +523,15 @@ export default class CurrentUserPage extends React.Component {
             )}
         </form>
         <form onSubmit={this.handlePublicUserSubmit}>
-          <FormLabel>Toggle privacy settings for user profile:</FormLabel>
-          <Checkbox
-            name="publicUserCheckbox"
-            checked={publicUser}
+          <FormCheck
+            className="my-3"
+            custom
+            id="publicUserSwitch"
+            type="switch"
+            label="Toggle privacy settings between private/public"
             onChange={this.handleChange}
-          >
-            Check this box to make your user profile public
-          </Checkbox>
+            checked={publicUser}
+          />
           <Button
             variant="primary"
             type="submit"
@@ -555,4 +562,5 @@ CurrentUserPage.propTypes = {
     public: PropTypes.bool.isRequired,
   }).isRequired,
   signInAction: PropTypes.func.isRequired,
+  authenticatedAction: PropTypes.func.isRequired,
 };

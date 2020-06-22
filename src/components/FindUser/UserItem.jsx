@@ -10,7 +10,7 @@ const getvariant = (isPublic, usernamesEqual) => {
   } if (!usernamesEqual && !isPublic) {
     return 'danger';
   }
-  return 'default';
+  return 'outline-dark';
 };
 
 const UserItem = ({
@@ -47,7 +47,7 @@ const UserItem = ({
             name="gotoUserPage"
             className="pull-right"
             variant={getvariant(isPublic, usernamesEqual)}
-            bsSize="small"
+            size="sm"
             disabled={!isPublic && !usernamesEqual}
             onClick={(e) => {
               handleClick(e, username);

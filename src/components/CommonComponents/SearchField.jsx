@@ -32,10 +32,12 @@ class SearchField extends React.Component {
   render() {
     const { search, wishlist } = this.props;
 
+    const size = search ? 11 : 12;
+
     return (
       <Container fluid>
         <Row>
-          <Col className="p-0" lg={10} md={10} sm={10} xs={10}>
+          <Col className="p-0" lg={size} md={size} sm={size} xs={size}>
             <Form inline>
               <DefaultFormGroup
                 className="w-100"
@@ -52,11 +54,11 @@ class SearchField extends React.Component {
 
           {search
         && (
-          <Col className="p-0" lg={2} md={2} sm={2} xs={2}>
+          <Col className="p-0" lg={1} md={1} sm={1} xs={1}>
             <Button
               variant="light"
               tabIndex={0}
-              className="lg-glyph"
+              className="lg-glyph pt-0"
               onClick={this.clearSearch}
               onKeyUp={(e) => e.key.toLowerCase() === 'enter' && this.clearSearch(e)}
             >

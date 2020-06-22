@@ -14,7 +14,7 @@ import WishlistItem from './WishlistItem';
 import SearchField from '../CommonComponents/SearchField';
 
 const EmptyWishlist = ({ wishlistHasEntries }) => (
-  <div className="text-center lead">
+  <div className="text-center lead pb-3">
     {wishlistHasEntries
       ? 'The search and/or filter doesn\'t match any records'
       : 'Your wishlist is empty.'}

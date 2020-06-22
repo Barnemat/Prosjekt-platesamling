@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  FormGroup, FormControl, FormLabel, HelpBlock,
+  FormGroup, FormControl, FormLabel, Form,
 } from 'react-bootstrap';
 
 const DefaultFormGroup = ({
@@ -24,7 +24,7 @@ const DefaultFormGroup = ({
       {...props}
     />
     {feedback && <FormControl.Feedback />}
-    {help && <HelpBlock>{help}</HelpBlock>}
+    {help && <Form.Text muted>{help}</Form.Text>}
   </FormGroup>
 );
 
