@@ -4,8 +4,7 @@ import axios from 'axios';
 import PasswordValidator from 'password-validator';
 import {
   Button,
-  ControlLabel,
-  Checkbox,
+  FormCheck,
 } from 'react-bootstrap';
 import DefaultFormGroup from '../Collection/FormComponents/DefaultFormGroup';
 import { setLoadingCursor } from '../../util';
@@ -53,10 +52,9 @@ export default class CurrentUserPage extends React.Component {
       showPasswordNotValid: false,
       showPasswordsNotEqual: false,
       wildCardError: false,
-      publicUser: this.props.authenticatedUser && this.props.authenticatedUser.public !== undefined ?
-        this.props.authenticatedUser.public
-        :
-        false,
+      publicUser: props.authenticatedUser && props.authenticatedUser.public !== undefined
+        ? props.authenticatedUser.public
+        : false,
       showPublicUserSubmitSuccess: false,
     };
 
@@ -74,13 +72,16 @@ export default class CurrentUserPage extends React.Component {
   }
 
   getPasswordValid(password = '') {
-    if (this.state.newPassword.length === 0 && password.length === 0) return null;
-    const validation = this.passwordValidator.validate(password || this.state.newPassword) ? 'success' : 'error';
+    const { newPassword } = this.state;
+
+    if (newPassword.length === 0 && password.length === 0) return null;
+    const validation = this.passwordValidator.validate(password || newPassword) ? 'success' : 'error';
     return validation;
   }
 
   getEmailValid(email = '') {
-    const currentEmail = email || this.state.newEmail;
+    const { newEmail } = this.state;
+    const currentEmail = email || newEmail;
 
     if (currentEmail.length === 0) return null;
     return currentEmail.includes('@', 1) && currentEmail.includes('.', 2) ? 'success' : 'error';
@@ -94,9 +95,9 @@ export default class CurrentUserPage extends React.Component {
     } = this.state;
 
     return (
-      newEmail.length === 0 ||
-      confirmEmailPassword.length === 0 ||
-      emailValid === 'error');
+      newEmail.length === 0
+      || confirmEmailPassword.length === 0
+      || emailValid === 'error');
   }
 
   getPasswordBtnDisable() {
@@ -109,17 +110,19 @@ export default class CurrentUserPage extends React.Component {
     } = this.state;
 
     return (
-      newPassword.length === 0 ||
-      newPasswordRetype.length === 0 ||
-      confirmPasswordEdit.length === 0 ||
-      passwordValid === 'error' ||
-      passwordsEqual === 'error');
+      newPassword.length === 0
+      || newPasswordRetype.length === 0
+      || confirmPasswordEdit.length === 0
+      || passwordValid === 'error'
+      || passwordsEqual === 'error');
   }
 
   handleEmailSubmit(e) {
     e.preventDefault();
     const { newEmail, confirmEmailPassword, emailValid } = this.state;
-    const { url, passwordValidUrl, authenticatedUser } = this.props;
+    const {
+      url, passwordValidUrl, authenticatedUser, signInAction,
+    } = this.props;
 
     if (emailValid) {
       setLoadingCursor(true);
@@ -131,7 +134,7 @@ export default class CurrentUserPage extends React.Component {
                 if (innerRes.data.success) {
                   axios.put(url, { username: authenticatedUser.username, email: newEmail })
                     .then(() => {
-                      this.props.signInAction({
+                      signInAction({
                         username: authenticatedUser.username,
                         password: confirmEmailPassword,
                       });
@@ -201,11 +204,12 @@ export default class CurrentUserPage extends React.Component {
   handlePublicUserSubmit(e) {
     e.preventDefault();
     const { publicUser } = this.state;
-    const { authenticatedUser, url } = this.props;
+    const { authenticatedUser, url, authenticatedAction } = this.props;
 
     setLoadingCursor(true);
     axios.put(url, { username: authenticatedUser.username, public: publicUser })
       .then(() => {
+        authenticatedAction();
         this.setState({ showPublicUserSubmitSuccess: true });
       })
       .catch(() => {
@@ -267,8 +271,8 @@ export default class CurrentUserPage extends React.Component {
   }
 
   handleChange(e) {
-    if (e.target.name !== 'publicUserCheckbox') e.preventDefault();
-    const { name, value } = e.target;
+    if (e.target.id !== 'publicUserSwitch') e.preventDefault();
+    const { id, name, value } = e.target;
     const { newPassword } = this.state;
     let {
       passwordValid, publicUser, emailValid, showEmailPreviouslyUsed, passwordsEqual,
@@ -276,7 +280,7 @@ export default class CurrentUserPage extends React.Component {
 
     if (name === 'newPassword') {
       passwordValid = this.getPasswordValid(value);
-    } else if (name === 'publicUserCheckbox') {
+    } else if (id === 'publicUserSwitch') {
       publicUser = !publicUser;
     } else if (name === 'newEmail') {
       emailValid = this.getEmailValid(value);
@@ -351,15 +355,18 @@ export default class CurrentUserPage extends React.Component {
     const { authenticatedUser } = this.props;
     return (
       <div>
-        <h3>Hi, {authenticatedUser.username}!</h3>
+        <h3>
+          Hi,
+          {authenticatedUser.username}
+          !
+        </h3>
         <p>
           Here you can change your password and email.
           You can also set your account to private or public.
           If your account is set to public, your username and collection will be visible to others.
         </p>
-        {wildCardError &&
-          <WildCardError />
-        }
+        {wildCardError
+          && <WildCardError />}
         <form onSubmit={this.handleEmailSubmit} onReset={this.handleEmailReset}>
           <DefaultFormGroup
             id="formControlsEmailPassword"
@@ -373,11 +380,12 @@ export default class CurrentUserPage extends React.Component {
             onFocus={this.handleFocus}
             autoComplete="new-password"
           />
-          {wrongPasswordEmail &&
+          {wrongPasswordEmail
+            && (
             <div className="text-danger">
               {this.wrongPassword}
             </div>
-          }
+            )}
           <DefaultFormGroup
             id="formControlsEmail"
             name="newEmail"
@@ -392,7 +400,8 @@ export default class CurrentUserPage extends React.Component {
             autoComplete="new-email"
           />
           <Button
-            bsStyle="primary"
+            className="mr-1"
+            variant="primary"
             type="submit"
             disabled={this.getEmailBtnDisable()}
             onFocus={this.handleFocus}
@@ -406,23 +415,30 @@ export default class CurrentUserPage extends React.Component {
           >
             Reset Fields
           </Button>
-          {showEmailSubmitSuccess &&
+          {showEmailSubmitSuccess
+            && (
             <div className="text-success">
               Your email address was successfully changed.
             </div>
-          }
-          {showEmailNotValid &&
+            )}
+          {showEmailNotValid
+            && (
             <div className="text-danger">
               The email does not contain an &apos;@&apos; or a &apos;.&apos;
             </div>
-          }
-          {showEmailPreviouslyUsed &&
+            )}
+          {showEmailPreviouslyUsed
+            && (
             <div className="text-danger">
               The email is registered by another user.
             </div>
-          }
+            )}
         </form>
-        <form onSubmit={this.handlePasswordSubmit} onReset={this.handlePasswordReset}>
+        <form
+          className="mt-3"
+          onSubmit={this.handlePasswordSubmit}
+          onReset={this.handlePasswordReset}
+        >
           <DefaultFormGroup
             id="formControlsPasswordConfirm"
             name="confirmPasswordEdit"
@@ -435,11 +451,12 @@ export default class CurrentUserPage extends React.Component {
             onFocus={this.handleFocus}
             autoComplete="new-password"
           />
-          {wrongPasswordPassword &&
+          {wrongPasswordPassword
+            && (
             <div className="text-danger">
               {this.wrongPassword}
             </div>
-          }
+            )}
           <DefaultFormGroup
             id="formControlsPassword"
             name="newPassword"
@@ -453,11 +470,12 @@ export default class CurrentUserPage extends React.Component {
             onFocus={this.handleFocus}
             autoComplete="new-password"
           />
-          {showPasswordNotValid &&
+          {showPasswordNotValid
+            && (
             <div className="text-danger">
               {this.notValidText}
             </div>
-          }
+            )}
           <DefaultFormGroup
             id="formControlsPasswordRetype"
             name="newPasswordRetype"
@@ -471,13 +489,15 @@ export default class CurrentUserPage extends React.Component {
             onFocus={this.handleFocus}
             autoComplete="new-password"
           />
-          {showPasswordsNotEqual &&
+          {showPasswordsNotEqual
+            && (
             <div className="text-danger">
               The passwords does not match.
             </div>
-          }
+            )}
           <Button
-            bsStyle="primary"
+            className="mr-1"
+            variant="primary"
             type="submit"
             disabled={this.getPasswordBtnDisable()}
             onFocus={this.handleFocus}
@@ -487,44 +507,47 @@ export default class CurrentUserPage extends React.Component {
           <Button
             type="reset"
             disabled={
-                confirmPasswordEdit.length === 0 &&
-                newPassword.length === 0 &&
-                newPasswordRetype.length === 0}
+                confirmPasswordEdit.length === 0
+                && newPassword.length === 0
+                && newPasswordRetype.length === 0
+}
             onFocus={this.handleFocus}
           >
             Reset Fields
           </Button>
-          {showPasswordSubmitSuccess &&
+          {showPasswordSubmitSuccess
+            && (
             <div className="text-success">
               Your password was successfully changed.
             </div>
-          }
+            )}
         </form>
         <form onSubmit={this.handlePublicUserSubmit}>
-          <ControlLabel>Toggle privacy settings for user profile:</ControlLabel>
-          <Checkbox
-            name="publicUserCheckbox"
-            checked={publicUser}
+          <FormCheck
+            className="my-3"
+            custom
+            id="publicUserSwitch"
+            type="switch"
+            label="Toggle privacy settings between private/public"
             onChange={this.handleChange}
-          >
-            Check this box to make your user profile public
-          </Checkbox>
+            checked={publicUser}
+          />
           <Button
-            bsStyle="primary"
+            variant="primary"
             type="submit"
             onFocus={this.handleFocus}
           >
             Confirm public/private change
           </Button>
-          {showPublicUserSubmitSuccess &&
+          {showPublicUserSubmitSuccess
+            && (
             <div className="text-success">
               Your privacy change was a success.
             </div>
-          }
+            )}
         </form>
-        {wildCardError &&
-          <WildCardError />
-        }
+        {wildCardError
+          && <WildCardError />}
       </div>
     );
   }
@@ -539,4 +562,5 @@ CurrentUserPage.propTypes = {
     public: PropTypes.bool.isRequired,
   }).isRequired,
   signInAction: PropTypes.func.isRequired,
+  authenticatedAction: PropTypes.func.isRequired,
 };

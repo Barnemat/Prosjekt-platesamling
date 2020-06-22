@@ -1,4 +1,4 @@
-export default function (state = {}, action) {
+export default (state = {}, action) => {
   switch (action.type) {
     case 'AUTHENTICATED':
       return { ...state, authenticated: true, user: action.payload };
@@ -11,4 +11,4 @@ export default function (state = {}, action) {
     default:
       return state;
   }
-}
+};

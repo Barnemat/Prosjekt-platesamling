@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ListGroupItem, Grid, Col, Row, Button, Glyphicon, OverlayTrigger, Collapse, Well } from 'react-bootstrap';
+import {
+  ListGroupItem, Container, Col, Row, Button, OverlayTrigger, Collapse, Card,
+} from 'react-bootstrap';
+import { FaTrashAlt } from 'react-icons/fa';
 import { setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
 import tooltip from '../CommonComponents/Tooltip';
 import WildCardError from '../CommonComponents/WildCardError';
@@ -23,16 +26,20 @@ class WishlistItem extends React.Component {
 
   handleAdd(e) {
     e.preventDefault();
-    this.setState({ isAddMode: !this.state.isAddMode, showWildCardError: false });
+    this.setState((state) => ({
+      isAddMode: !state.isAddMode, showWildCardError: false,
+    }));
   }
 
   handleDelete(e) {
     if (e) e.preventDefault();
     setLoadingCursor(true);
 
-    this.props.handleDelete(this.props.record)
+    const { record, loadWishlist, ...props } = this.props;
+
+    props.handleDelete(record)
       .then(() => {
-        this.props.loadWishlist();
+        loadWishlist();
       })
       .catch(() => {
         this.setState({ showWildCardError: true });
@@ -63,48 +70,57 @@ class WishlistItem extends React.Component {
 
     return (
       <ListGroupItem className="darker-onhover">
-        <Grid fluid>
+        <Container fluid>
           <Row className="margin-bottom">
             <Col lg={11} md={11} sm={11} xs={11}>
               <span className="h4">
-                {artistStrings[0]}<span className="yellow-bg">{artistStrings[1]}</span>{artistStrings[2]}
+                {artistStrings[0]}
+                <span className="yellow-bg">{artistStrings[1]}</span>
+                {artistStrings[2]}
                 {record.artist && ' - '}
-                {titleStrings[0]}<span className="yellow-bg">{titleStrings[1]}</span>{titleStrings[2]}
+                {titleStrings[0]}
+                <span className="yellow-bg">{titleStrings[1]}</span>
+                {titleStrings[2]}
               </span>
               <span className="h5">
                 {record.format && ` (${record.format})`}
               </span>
             </Col>
-            {!isAddMode &&
+            {!isAddMode
+              && (
               <Col lg={1} md={1} sm={1} xs={1}>
                 <div>
                   <OverlayTrigger placement="right" overlay={tooltip('Remove record from wishlist')}>
-                    <span
-                      role="button"
+                    <Button
+                      variant="outline-dark"
                       tabIndex={0}
-                      className="standard-glyph pull-right md-glyph"
+                      className="md-glyph"
                       onClick={this.handleDelete}
-                      onKeyUp={e => e.key.toLowerCase() === 'enter' && this.handleDelete(e)}
+                      onKeyUp={(e) => e.key.toLowerCase() === 'enter' && this.handleDelete(e)}
                     >
-                      <Glyphicon glyph="trash" />
-                    </span>
+                      <FaTrashAlt />
+                    </Button>
                   </OverlayTrigger>
                 </div>
-              </Col>}
+              </Col>
+              )}
           </Row>
-          {!isAddMode &&
+          {!isAddMode
+            && (
             <Row className="margin-bottom">
               <Col lg={12} md={12} sm={12} xs={12}>
-                <Button bsStyle="success" onClick={this.handleAdd}>
+                <Button variant="success" onClick={this.handleAdd}>
                   Add record to collection
                 </Button>
               </Col>
-            </Row>}
+            </Row>
+            )}
           <Collapse in={isAddMode}>
             <Row>
               <Col lg={12} md={12} sm={12} xs={12}>
-                <Well>
+                <Card body>
                   <AddOrEditRecord
+                    newRecord={{}}
                     title={record.title}
                     artist={record.artist}
                     format={record.format}
@@ -114,14 +130,14 @@ class WishlistItem extends React.Component {
                     expand
                     disableWishlistFields
                   />
-                </Well>
+                </Card>
               </Col>
             </Row>
           </Collapse>
           <Row>
             {showWildCardError && <WildCardError />}
           </Row>
-        </Grid>
+        </Container>
       </ListGroupItem>
     );
   }
@@ -139,7 +155,7 @@ WishlistItem.propTypes = {
   addRecordToCollection: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   search: state.search,
 });
 

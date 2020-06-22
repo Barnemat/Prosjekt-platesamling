@@ -2,7 +2,9 @@
 
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { setSearch, authenticatedAction, resetCollection, resetWishlist, resetSuggestions } from './actions';
+import {
+  setSearch, authenticatedAction, resetCollection, resetWishlist, resetSuggestions,
+} from './actions';
 import reducer from './reducer';
 
 const initialState = {};
@@ -21,6 +23,7 @@ const store = tmpStore;
 
 const initialSearch = '';
 
+/*
 store.dispatch({
   type: 'AUTHENTICATED',
   payload: {
@@ -29,7 +32,9 @@ store.dispatch({
     public: true,
   },
 });
-// store.dispatch(authenticatedAction());
+*/
+
+store.dispatch(authenticatedAction());
 store.dispatch(resetCollection());
 store.dispatch(resetWishlist());
 store.dispatch(setSearch(initialSearch));

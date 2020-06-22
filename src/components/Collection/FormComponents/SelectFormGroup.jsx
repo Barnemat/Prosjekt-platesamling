@@ -1,6 +1,9 @@
+/* eslint-disable react/require-default-props, react/jsx-props-no-spreading */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap';
+import {
+  FormGroup, FormLabel, FormControl, Form,
+} from 'react-bootstrap';
 
 const SelectFormGroup = ({
   id,
@@ -11,11 +14,11 @@ const SelectFormGroup = ({
   ...props
 }) => (
   <FormGroup controlId={id}>
-    {label && <ControlLabel>{label}</ControlLabel>}
-    <FormControl componentClass="select" defaultValue={value} {...props}>
-      {options.map(item => <option key={item} value={item}>{item}</option>)}
+    {label && <FormLabel>{label}</FormLabel>}
+    <FormControl as="select" defaultValue={value} {...props}>
+      {options.map((item) => <option key={item} value={item}>{item}</option>)}
     </FormControl>
-    {help && <HelpBlock>{help}</HelpBlock>}
+    {help && <Form.Text muted>{help}</Form.Text>}
   </FormGroup>
 );
 
@@ -29,7 +32,6 @@ SelectFormGroup.propTypes = {
   onChange: PropTypes.func,
 };
 
-/* eslint react/require-default-props:[0] */
 /* defaultProps does not work properly
 SelectFormGroup.defaultProps = {
   label: '',

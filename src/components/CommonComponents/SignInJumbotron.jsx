@@ -28,7 +28,7 @@ export default class SignInJumbotron extends React.Component {
 
     if (signinButton) {
       return (<Redirect to="/signin" push />);
-    } else if (registerButton) {
+    } if (registerButton) {
       return (<Redirect to="/register" push />);
     }
 
@@ -36,12 +36,20 @@ export default class SignInJumbotron extends React.Component {
       <Jumbotron>
         <h1>You have not signed in!</h1>
         <p>
-          To view a collection on this page, you need to {<Link href="#" to="/signin">sign in</Link>} first.
-          If you don&apos;t have a user yet, you can {<Link href="#" to="/register">register here.</Link>}
+          To view a collection on this page, you need to
+          {' '}
+          {/* eslint-disable jsx-a11y/anchor-is-valid */}
+          {<Link href="#" to="/signin">sign in</Link>}
+          {' '}
+          first.
+          If you don&apos;t have a user yet, you can
+          {' '}
+          {<Link href="#" to="/register">register here.</Link>}
+          {/* eslint-enable jsx-a11y/anchor-is-valid */}
         </p>
         <p>
           <Button
-            bsStyle="primary"
+            variant="primary"
             name="signinButton"
             onClick={this.handleClick}
           >
@@ -49,7 +57,7 @@ export default class SignInJumbotron extends React.Component {
           </Button>
           {' '}
           <Button
-            bsStyle="primary"
+            variant="primary"
             name="registerButton"
             onClick={this.handleClick}
           >

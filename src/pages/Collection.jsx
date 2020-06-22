@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Col, Grid, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import ListItems from '../components/Collection/ListItems';
 import Filter from '../components/Filter/Filter';
 import SignInJumbotron from '../components/CommonComponents/SignInJumbotron';
@@ -17,7 +17,7 @@ class Collection extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const {
       authenticatedUser, getWishlist, resetWishlist,
     } = this.props;
@@ -29,7 +29,9 @@ class Collection extends React.Component {
   }
 
   componentDidUpdate() {
-    const { records, suggestions, wishlist, setSuggestions } = this.props;
+    const {
+      records, suggestions, wishlist, setSuggestions,
+    } = this.props;
     if (records.length > 0 && wishlist && suggestions.length === 0) {
       setSuggestions(records, wishlist);
     }
@@ -43,30 +45,30 @@ class Collection extends React.Component {
 
     return (
       <div>
-        <Grid fluid>
+        <Container fluid>
           <Row className="show-grid">
             <Col lg={2} md={2} sm={12} xs={12}>
-              {authenticated &&
-                <Filter />}
+              {authenticated
+                && <Filter />}
             </Col>
             <Col lg={8} md={8} sm={12} xs={12}>
-              {authenticated &&
-                <ListItems url={url} />
-              }
-              {!authenticated &&
-                <SignInJumbotron />
-              }
+              {authenticated
+                && <ListItems url={url} />}
+              {!authenticated
+                && <SignInJumbotron />}
             </Col>
             <Col className="no-padding-left" lg={2} md={3} sm={12} xs={12}>
-              {authenticated &&
+              {authenticated
+                && (
                 <Suggestions
                   suggestions={suggestions}
                   records={records}
                   wishlist={wishlist}
-                />}
+                />
+                )}
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </div>
     );
   }
@@ -93,9 +95,9 @@ const mapDispatchToProps = {
   resetWishlist,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   authenticated: state.authenticate.authenticated || false,
-  authenticatedUser: state.authenticate.user,
+  authenticatedUser: state.authenticate.user || { username: '', email: '', public: false },
   records: state.collection.records || [],
   wishlist: state.wishlist,
   suggestions: state.suggestions.suggestions,

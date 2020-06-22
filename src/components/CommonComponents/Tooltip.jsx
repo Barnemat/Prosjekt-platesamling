@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip } from 'react-bootstrap';
 
-const tooltip = text => (
+const tooltip = (text) => (
   <Tooltip id="tooltip">
     {text}
   </Tooltip>

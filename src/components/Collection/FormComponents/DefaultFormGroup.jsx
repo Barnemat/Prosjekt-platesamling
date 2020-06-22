@@ -1,6 +1,9 @@
+/* eslint-disable react/require-default-props, react/jsx-props-no-spreading */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, FormControl, ControlLabel, HelpBlock } from 'react-bootstrap';
+import {
+  FormGroup, FormControl, FormLabel, Form,
+} from 'react-bootstrap';
 
 const DefaultFormGroup = ({
   id,
@@ -8,13 +11,20 @@ const DefaultFormGroup = ({
   help,
   validationState,
   feedback,
+  as,
+  classProps,
   ...props
 }) => (
-  <FormGroup controlId={id} validationState={validationState}>
-    {label && <ControlLabel>{label}</ControlLabel>}
-    <FormControl {...props} />
+  <FormGroup as={as || 'div'} className={classProps} controlId={id}>
+    {label && <FormLabel>{label}</FormLabel>}
+    <FormControl
+      className="w-100"
+      isValid={validationState === 'success'}
+      isInvalid={validationState === 'error'}
+      {...props}
+    />
     {feedback && <FormControl.Feedback />}
-    {help && <HelpBlock>{help}</HelpBlock>}
+    {help && <Form.Text muted>{help}</Form.Text>}
   </FormGroup>
 );
 
@@ -29,9 +39,10 @@ DefaultFormGroup.propTypes = {
   onChange: PropTypes.func,
   validationState: PropTypes.string,
   feedback: PropTypes.bool,
+  as: PropTypes.string,
+  classProps: PropTypes.string,
 };
 
-/* eslint react/require-default-props:[0] */
 /* defaultProps does not work properly
 DefaultFormGroup.defaultProps = {
   label: '',

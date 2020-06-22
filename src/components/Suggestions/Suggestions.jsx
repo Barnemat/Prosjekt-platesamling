@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ListGroup } from 'react-bootstrap';
-//import { setSuggestions } from '../../actions';
+import axios from 'axios';
+import { addRecordToWishlist, setNewCollectionElement } from '../../actions';
 import SuggestionItem from './SuggestionItem';
-import { generateRandIndex } from '../../util';
+import { generateRandIndex, setLoadingCursor } from '../../util';
 
 class Suggestions extends React.Component {
   constructor(props) {
@@ -12,34 +13,94 @@ class Suggestions extends React.Component {
 
     this.state = {
       shouldUpdateOnUnmount: false,
+      suggestionItems: [],
     };
 
     this.getSuggestionItems = this.getSuggestionItems.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleAddToCollection = this.handleAddToCollection.bind(this);
+    this.handleAddToWishlist = this.handleAddToWishlist.bind(this);
   }
 
-  getSuggestionItems(numSuggestions) {
-    const { suggestions } = this.props;
-    const suggestionItems = suggestions.map((item) => {
-      for (let key in item) {
-        return (<SuggestionItem
-          key={`${key}-${item[key]}`}
-          artist={key}
-          title={item[key]}
-        />);
-    }});
+  componentDidUpdate(prevProps, prevState) {
+    const { suggestions } = this.props;
 
-    let randomIndexes = [];
+    if (suggestions.length > 0 && prevState.suggestionItems.length == 0) {
+      this.setState({ suggestionItems: this.getSuggestionItems(5, suggestions) });
+    }
+  }
+
+  getSuggestionItems(numSuggestions, suggestions) {
+    if (suggestions.length === 0) return;
+
+    const randomIndexes = [];
     for (let i = 0; i < numSuggestions + 1; i++) {
-      randomIndexes.push(generateRandIndex(suggestionItems.length, randomIndexes));
+      randomIndexes.push(generateRandIndex(suggestions.length, randomIndexes));
     }
 
-    return randomIndexes.map(index => suggestionItems[index]);
+    const suggestionItems = [];
+    let i = 0;
+    for (const index in randomIndexes) {
+      const suggestion = suggestions[index];
+      const artist = Object.keys(suggestion)[0];
+      const title = suggestion[artist];
+
+      suggestionItems.push(
+        <SuggestionItem
+          key={i}
+          artist={artist}
+          title={title}
+          addToWishlist={this.handleAddToWishlist}
+          addToCollection={this.handleAddToCollection}
+          handleDelete={this.handleDelete}
+        />,
+      );
+
+      i += 1;
+    }
+
+    return suggestionItems;
   }
 
   handleUpdate(e) {
     if (e) e.preventDefault();
     // TODO
+  }
+
+  handleDelete(e, title, artist) {
+    const { suggestionItems } = this.state;
+
+    for (let i = 0; i < suggestionItems.length; i += 1) {
+      if (suggestionItems[i].props.title == title && suggestionItems[i].props.artist == artist) {
+        suggestionItems[i] = (<span key={suggestionItems[i].key} />);
+      }
+    }
+
+    this.setState({ suggestionItems });
+  }
+
+  handleAddToCollection(e, title, artist) {
+    const { ...props } = this.props;
+
+    props.setNewCollectionElement(title, artist);
+    this.handleDelete(e, title, artist);
+  }
+
+  handleAddToWishlist(e, title, artist) {
+    const { authenticatedUsername } = this.props;
+
+    setLoadingCursor(true);
+
+    axios.post('http://localhost:8080/api/wishlist', {
+      title, artist, username: authenticatedUsername,
+    })
+      .then(() => {
+        this.handleDelete(e, title, artist);
+      })
+      .then(() => {
+        setLoadingCursor(false);
+      });
   }
 
   componentWillUnmount() {
@@ -51,10 +112,10 @@ class Suggestions extends React.Component {
   }
 
   render() {
-    const suggestionItems = this.getSuggestionItems(5);
+    const { suggestionItems } = this.state;
 
     return (
-      <ListGroup componentClass="ul">
+      <ListGroup as="ul">
         { suggestionItems }
       </ListGroup>
     );
@@ -69,10 +130,12 @@ Suggestions.propTypes = {
 
 Suggestions.defaultProps = {};
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  setNewCollectionElement,
+};
 
 const mapStateToProps = (state) => ({
-  //records: state.collection.records,
+  authenticatedUsername: state.authenticate.user.username,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Suggestions);

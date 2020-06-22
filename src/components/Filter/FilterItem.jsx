@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Checkbox } from 'react-bootstrap';
+import { FormCheck } from 'react-bootstrap';
 import { capitalize } from '../../util';
 import ExtendTag from './ExtendTag';
 
@@ -18,9 +18,9 @@ export default class FilterItem extends React.Component {
       const split = tag.split(' ');
       const formattedString = split.reduce((res, word) => `${res} ${capitalize(word)}`, '');
       return formattedString;
-    } else if (groupName === 'date') {
+    } if (groupName === 'date') {
       return `Last ${tag}`;
-    } else if (groupName === 'format') {
+    } if (groupName === 'format') {
       switch (tag) {
         case 'other': return 'Other';
         default: return tag.toUpperCase();
@@ -35,15 +35,29 @@ export default class FilterItem extends React.Component {
   }
 
   render() {
+    const {
+      tagValue, handleUpdate, groupName, ...props
+    } = this.props;
     const tag = this.getTagName();
 
     return (
-      <Checkbox
-        checked={this.props.tagValue}
-        onChange={e => this.props.handleUpdate(e, this.props.groupName, this.props.tag)}
-      >
-        {tag.length > 30 ? <ExtendTag tag={tag} /> : tag}
-      </Checkbox>);
+      <FormCheck>
+        <FormCheck.Input
+          type="checkbox"
+          checked={tagValue}
+          onChange={(e) => handleUpdate(e, groupName, props.tag)}
+          onClick={(e) => e.stopPropagation()}
+        />
+        <FormCheck.Label
+          onClick={(e) => {
+            e.stopPropagation();
+            handleUpdate(e, groupName, props.tag);
+          }}
+        >
+          {tag.length > 30 ? <ExtendTag tag={tag} /> : tag}
+        </FormCheck.Label>
+      </FormCheck>
+    );
   }
 }
 

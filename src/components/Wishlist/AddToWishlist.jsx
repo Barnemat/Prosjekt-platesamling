@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Button,
-  Glyphicon,
   Collapse,
 } from 'react-bootstrap';
+import { FaPlus, FaMinus } from 'react-icons/fa';
 import { setLoadingCursor, getValidFormatTypes } from '../../util';
 import DefaultFormGroup from '../Collection/FormComponents/DefaultFormGroup';
 import SelectFormGroup from '../Collection/FormComponents/SelectFormGroup';
@@ -40,12 +40,15 @@ export default class AddToWishlist extends React.Component {
       title, artist, format,
     } = this.state;
 
+    const { addRecordToWishlist, loadWishlist, authenticatedUsername } = this.props;
+
     setLoadingCursor(true);
-    this.props.addRecordToWishlist({
-      title, artist, format, username: this.props.authenticatedUsername,
+
+    addRecordToWishlist({
+      title, artist, format, username: authenticatedUsername,
     })
       .then(() => {
-        this.props.loadWishlist();
+        loadWishlist();
         this.handleReset();
       })
       .catch(() => {
@@ -67,7 +70,9 @@ export default class AddToWishlist extends React.Component {
 
   toggleShow(e) {
     e.preventDefault();
-    if (!this.state.show) {
+    const { show } = this.state;
+
+    if (!show) {
       this.setState({ show: true });
     } else {
       this.handleReset();
@@ -84,8 +89,13 @@ export default class AddToWishlist extends React.Component {
 
     return (
       <div>
-        <Button className="margin-bottom" onClick={this.toggleShow} block>
-          <Glyphicon glyph={show ? 'minus' : 'plus'} />
+        <Button
+          className="margin-bottom"
+          variant="outline-dark"
+          onClick={this.toggleShow}
+          block
+        >
+          {show ? <FaMinus /> : <FaPlus />}
         </Button>
         <Collapse in={show}>
           <form onSubmit={this.handleSubmit}>
@@ -115,7 +125,7 @@ export default class AddToWishlist extends React.Component {
               onChange={this.handleChange}
               options={getValidFormatTypes()}
             />
-            <Button bsStyle="primary" type="submit" block>
+            <Button variant="primary" type="submit" block>
               Add record to wishlist
             </Button>
           </form>

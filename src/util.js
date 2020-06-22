@@ -14,7 +14,7 @@ export const getSortModes = () => ({
   artistAsc: 'Artist (Z-A)',
 });
 
-const getFileEnding = file => file.split('.').pop().toLowerCase();
+const getFileEnding = (file) => file.split('.').pop().toLowerCase();
 
 /*
 * Returns the image URL from a wikipedia page that has the title closest to the search query and has a valid filetype
@@ -25,7 +25,7 @@ const getFileEnding = file => file.split('.').pop().toLowerCase();
 export const getBestImageURL = (album, response) => {
   let files = response.query.pages[0].images;
 
-  files = files.filter(file => getValidImgTypes().includes(getFileEnding(file.title)));
+  files = files.filter((file) => getValidImgTypes().includes(getFileEnding(file.title)));
   if (files.length === 0) return false;
 
   for (let i = 0; i < files.length; i += 1) {
@@ -47,8 +47,8 @@ export const getBestImageURL = (album, response) => {
 * @returns {Array} || {Boolean}
 */
 export const getBestSearchResult = (res1, res2) => {
-  let res1String = res1[2] ? res1[2][0] : '';
-  let res2String = res2[2] ? res2[2][0] : '';
+  let res1String = res1[3] ? res1[3][0] : '';
+  let res2String = res2[3] ? res2[3][0] : '';
 
   if (!res1String) res1String = '';
   if (!res2String) res2String = '';
@@ -64,6 +64,13 @@ export const getBestSearchResult = (res1, res2) => {
 
   if (bestMatch === res1String) return res1;
   if (bestMatch === res2String) return res2;
+
+  if (res2String.length > 0) {
+    return res2;
+  } if (res1String.length > 0) {
+    return res1;
+  }
+
   return false;
 };
 
@@ -120,7 +127,7 @@ export const checkTimePassed = (date) => {
       return `${frontmatter} 1 week ago`;
     }
     return `${frontmatter} ${weekDistance} weeks ago`;
-  } else if (yearDistance === 1) {
+  } if (yearDistance === 1) {
     return `${frontmatter} 1 year ago`;
   }
   return `${frontmatter} ${yearDistance} years ago`;
@@ -165,7 +172,7 @@ export const sortArrayOfObjects = (array, type, order) => (
         return elementA >= elementB ? 1 : -1;
       }
       return elementA < elementB ? 1 : -1;
-    } else if (typeof elementA === 'number') {
+    } if (typeof elementA === 'number') {
       return order === 1 ? (elementA - elementB) : (elementB - elementA);
     }
     return 0;
@@ -201,10 +208,9 @@ export const getSplittedStringsForSearchFormatting = (t, s) => {
 */
 export const getOwnershipFormat = (name) => {
   if (typeof name !== 'string') return -1;
-  return name.endsWith('s') ?
-    `${name}'`
-    :
-    `${name.substring(0, name.length)}'s`;
+  return name.endsWith('s')
+    ? `${name}'`
+    : `${name.substring(0, name.length)}'s`;
 };
 
 export const getFilter = (records, isWishlist) => {
@@ -249,9 +255,9 @@ export const getFilter = (records, isWishlist) => {
   };
 };
 
-export const capitalize = string => `${string[0].toUpperCase()}${string.substr(1)}`;
+export const capitalize = (string) => `${string[0].toUpperCase()}${string.substr(1)}`;
 
-export const generateRandIndex = (max, usedIndexes) => {
+export const generateRandIndex = (max, usedIndexes) => { // TODO FIX
   if (max <= 0) return 0;
   const index = Math.round(Math.random() * max);
   return usedIndexes.includes(index) ? generateRandIndex(max, usedIndexes) : index;

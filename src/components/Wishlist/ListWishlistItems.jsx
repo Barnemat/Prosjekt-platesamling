@@ -3,7 +3,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ListGroup, Panel, Grid, Row, Col } from 'react-bootstrap';
+import {
+  ListGroup, Card, Container, Row, Col,
+} from 'react-bootstrap';
 import axios from 'axios';
 import { getWishlist, resetWishlist } from '../../actions';
 import { getWishlistBySearchAndFilter } from '../../selectors/wishlist';
@@ -12,12 +14,10 @@ import WishlistItem from './WishlistItem';
 import SearchField from '../CommonComponents/SearchField';
 
 const EmptyWishlist = ({ wishlistHasEntries }) => (
-  <div className="text-center lead">
-    {wishlistHasEntries ?
-      'The search and/or filter doesn\'t match any records'
-      :
-      'Your wishlist is empty.'
-    }
+  <div className="text-center lead pb-3">
+    {wishlistHasEntries
+      ? 'The search and/or filter doesn\'t match any records'
+      : 'Your wishlist is empty.'}
   </div>
 );
 
@@ -36,40 +36,48 @@ class ListWishlistItems extends React.Component {
     this.getWishlistItems = this.getWishlistItems.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.loadWishlist();
   }
 
   getWishlistItems() {
-    return this.props.wishlist.map(record => (
+    const { wishlist } = this.props;
+    return wishlist.map((record) => (
       <WishlistItem
         record={record}
         key={record._id}
         handleDelete={this.removeRecordFromWishlist}
         loadWishlist={this.loadWishlist}
         addRecordToCollection={this.addRecordToCollection}
-      />));
+      />
+    ));
   }
 
   addRecordToCollection(record) {
-    record.append('username', this.props.authenticatedUser.username);
-    return axios.post(this.props.recordUrl, record);
+    const { authenticatedUser, recordUrl } = this.props;
+
+    record.append('username', authenticatedUser.username);
+    return axios.post(recordUrl, record);
   }
 
   addRecordToWishlist(record) {
-    return axios.post(this.props.url, record);
+    const { url } = this.props;
+
+    return axios.post(url, record);
   }
 
   removeRecordFromWishlist(record) {
-    return axios.delete(`${this.props.url}?_id=${record._id}`);
+    const { url } = this.props;
+
+    return axios.delete(`${url}?_id=${record._id}`);
   }
 
   loadWishlist() {
-    const { authenticatedUser } = this.props;
+    const { authenticatedUser, ...props } = this.props;
     if (authenticatedUser && authenticatedUser.username) {
-      this.props.getWishlist(authenticatedUser.username);
+      props.getWishlist(authenticatedUser.username);
     } else {
-      this.props.resetWishlist();
+      props.resetWishlist();
     }
   }
 
@@ -78,33 +86,33 @@ class ListWishlistItems extends React.Component {
     const { wishlistHasEntries, authenticatedUser } = this.props;
 
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
-          <Col lg={12} md={12} sm={12} xs={12} className="margin-bottom" >
+          <Col lg={12} md={12} sm={12} xs={12} className="margin-bottom">
             <SearchField wishlist />
           </Col>
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
-            <Panel>
-              <Panel.Body>
+            <Card>
+              <Card.Body>
                 <AddToWishlist
                   addRecordToWishlist={this.addRecordToWishlist}
                   loadWishlist={this.loadWishlist}
                   authenticatedUsername={authenticatedUser.username}
                 />
-              </Panel.Body>
+              </Card.Body>
               {wishlistItems.length !== 0 ? (
                 <div>
-                  <ListGroup componentClass="ul">
+                  <ListGroup as="ul">
                     { wishlistItems }
                   </ListGroup>
                 </div>
-                ) : (<EmptyWishlist wishlistHasEntries={wishlistHasEntries} />)}
-            </Panel>
+              ) : (<EmptyWishlist wishlistHasEntries={wishlistHasEntries} />)}
+            </Card>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }
@@ -130,7 +138,7 @@ ListWishlistItems.defaultProps = {
   },
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   wishlist: getWishlistBySearchAndFilter(state),
   wishlistHasEntries: state.wishlist ? Object.keys(state.wishlist).length > 1 : false,
   authenticatedUser: state.authenticate.user,

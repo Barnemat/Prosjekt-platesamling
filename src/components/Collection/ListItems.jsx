@@ -3,22 +3,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { ListGroup, Panel, Grid, Row, Col } from 'react-bootstrap';
+import {
+  ListGroup, Card, Container, Row, Col,
+} from 'react-bootstrap';
 import axios from 'axios';
 import AddOrEditRecord from './AddOrEditRecord';
 import RecordItem from './RecordItem';
 import SortModes from './SortModes';
 import { sortArrayOfObjects, getOwnershipFormat } from '../../util';
-import { getCollection, resetCollection } from '../../actions';
+import { getCollection, resetCollection, resetNewCollectionElement } from '../../actions';
 import { getRecordsBySearchAndFilter } from '../../selectors/collection';
 
 const EmptyCollection = ({ publicUsername, collectionHasEntries }) => (
   <div className="text-center lead">
-    {collectionHasEntries ?
-      'The search and/or filter doesn\'t match any records'
-      :
-      `${publicUsername ? 'The' : 'Your'} collection is empty.`
-    }
+    {collectionHasEntries
+      ? 'The search and/or filter doesn\'t match any records'
+      : `${publicUsername ? 'The' : 'Your'} collection is empty.`}
   </div>
 );
 
@@ -49,43 +49,59 @@ class ListItems extends React.Component {
     this.getRecordItems = this.getRecordItems.bind(this);
   }
 
-  componentWillMount() {
-    this.loadCollection(this.props.publicUsername);
+  componentDidMount() {
+    const { publicUsername } = this.props;
+    this.loadCollection(publicUsername);
+  }
+
+  componentWillUnmount() {
+    const { ...props } = this.props;
+
+    props.resetNewCollectionElement();
   }
 
   getRecordItems() {
-    const type = Object.keys(this.state.sortMode)[0];
-    const order = Object.values(this.state.sortMode)[0];
+    const { sortMode } = this.state;
+    const { records, publicUsername } = this.props;
 
-    return sortArrayOfObjects(this.props.records, type, order).map(record => (
+    const type = Object.keys(sortMode)[0];
+    const order = Object.values(sortMode)[0];
+
+    return sortArrayOfObjects(records, type, order).map((record) => (
       <RecordItem
         record={record}
         key={record._id}
         handleDelete={this.removeRecordFromCollection}
         loadCollection={this.loadCollection}
         editRecordInCollection={this.editRecordInCollection}
-        publicUsername={this.props.publicUsername}
-      />));
+        publicUsername={publicUsername}
+      />
+    ));
   }
 
   addRecordToCollection(record) {
-    if (!this.props.publicUsername) {
-      record.append('username', this.props.authenticatedUser.username);
-      return axios.post(this.props.url, record);
+    const { publicUsername, url, authenticatedUser } = this.props;
+    if (!publicUsername) {
+      record.append('username', authenticatedUser.username);
+      return axios.post(url, record);
     }
     return Promise.resolve('Not allowed.');
   }
 
   removeRecordFromCollection(record) {
-    if (!this.props.publicUsername) {
-      return axios.delete(`${this.props.url}?_id=${record._id}`);
+    const { publicUsername, url } = this.props;
+
+    if (!publicUsername) {
+      return axios.delete(`${url}?_id=${record._id}`);
     }
     return Promise.resolve('Not allowed.');
   }
 
   editRecordInCollection(record) {
-    if (!this.props.publicUsername) {
-      return axios.put(this.props.url, record);
+    const { publicUsername, url } = this.props;
+
+    if (!publicUsername) {
+      return axios.put(url, record);
     }
     return Promise.resolve('Not allowed.');
   }
@@ -106,32 +122,43 @@ class ListItems extends React.Component {
 
   handleGalleryView(e) {
     e.preventDefault();
-    this.setState({ galleryView: !this.state.galleryView });
+    this.setState((state) => ({
+      galleryView: !state.galleryView,
+    }));
   }
 
   loadCollection(publicUsername) {
-    const { authenticatedUser } = this.props;
+    const { sortMode } = this.state;
+    const { authenticatedUser, ...props } = this.props;
+
     if (authenticatedUser && authenticatedUser.username && !publicUsername) {
-      this.props.getCollection(authenticatedUser.username, this.state.sortMode);
+      props.getCollection(authenticatedUser.username, sortMode);
     } else if (publicUsername) {
-      this.props.getCollection(publicUsername, this.state.sortMode);
+      props.getCollection(publicUsername, sortMode);
     } else {
-      this.props.resetCollection();
+      props.resetCollection();
     }
   }
 
   render() {
+    const { galleryView } = this.state;
+    const {
+      publicUsername, collectionHasEntries, newRecord, ...props
+    } = this.props;
+
     const recordItems = this.getRecordItems();
     const firstHalf = recordItems.slice(0, Math.ceil(recordItems.length / 2));
     const secondHalf = recordItems.slice(Math.ceil(recordItems.length / 2));
-    const { publicUsername, collectionHasEntries } = this.props;
+
+    const newTitle = newRecord.title;
+    const newArtist = newRecord.artist;
 
     return (
-      <Grid fluid>
+      <Container fluid>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
             <SortModes
-              galleryView={this.state.galleryView}
+              galleryView={galleryView}
               handleSortMode={this.handleSortMode}
               handleGalleryView={this.handleGalleryView}
             />
@@ -139,46 +166,58 @@ class ListItems extends React.Component {
         </Row>
         <Row>
           <Col lg={12} md={12} sm={12} xs={12}>
-            <Panel>
+            <Card>
               {publicUsername ? (
-                <Panel.Body>
+                <Card.Body>
                   <h4>
-                    You are viewing <strong>{getOwnershipFormat(publicUsername)}</strong> collection.
+                    You are viewing
+                    {' '}
+                    <strong>{getOwnershipFormat(publicUsername)}</strong>
+                    {' '}
+                    collection.
                   </h4>
-                </Panel.Body>) : (
-                  <Panel.Body>
-                    <AddOrEditRecord
-                      addRecordToCollection={this.addRecordToCollection}
-                      loadCollection={this.loadCollection}
-                    />
-                  </Panel.Body>)}
+                </Card.Body>
+              ) : (
+                <Card.Body>
+                  <AddOrEditRecord
+                    newRecord={newRecord}
+                    resetNewCollectionElement={props.resetNewCollectionElement}
+                    addRecordToCollection={this.addRecordToCollection}
+                    loadCollection={this.loadCollection}
+                  />
+                </Card.Body>
+              )}
               {recordItems.length !== 0 ? (
                 <div>
-                  {this.state.galleryView &&
-                    <Grid fluid>
+                  {galleryView
+                    && (
+                    <Container fluid>
                       <Row>
                         <Col lg={6} md={6} sm={6} xs={6}>
-                          <ListGroup componentClass="ul">
+                          <ListGroup as="ul">
                             { firstHalf }
                           </ListGroup>
                         </Col>
                         <Col lg={6} md={6} sm={6} xs={6}>
-                          <ListGroup componentClass="ul">
+                          <ListGroup as="ul">
                             { secondHalf }
                           </ListGroup>
                         </Col>
                       </Row>
-                    </Grid>}
-                  {!this.state.galleryView &&
-                    <ListGroup componentClass="ul">
+                    </Container>
+                    )}
+                  {!galleryView
+                    && (
+                    <ListGroup as="ul">
                       { recordItems }
-                    </ListGroup>}
+                    </ListGroup>
+                    )}
                 </div>
-                ) : (<EmptyCollection publicUsername={publicUsername} collectionHasEntries={collectionHasEntries} />)}
-            </Panel>
+              ) : (<EmptyCollection publicUsername={publicUsername} collectionHasEntries={collectionHasEntries} />)}
+            </Card>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }
@@ -195,6 +234,11 @@ ListItems.propTypes = {
   }),
   publicUsername: PropTypes.string,
   collectionHasEntries: PropTypes.bool.isRequired,
+  newRecord: PropTypes.shape({
+    title: PropTypes.string,
+    artist: PropTypes.string,
+  }),
+  resetNewCollectionElement: PropTypes.func.isRequired,
 };
 
 ListItems.defaultProps = {
@@ -203,17 +247,20 @@ ListItems.defaultProps = {
     email: '',
   },
   publicUsername: null,
+  newRecord: {},
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   records: getRecordsBySearchAndFilter(state),
   collectionHasEntries: state.collection.records ? Object.keys(state.collection.records).length > 1 : false,
   authenticatedUser: state.authenticate.user,
+  newRecord: state.addCollectionElement || {},
 });
 
 const mapDispatchToProps = {
   getCollection,
   resetCollection,
+  resetNewCollectionElement,
 };
 
 export default connect(

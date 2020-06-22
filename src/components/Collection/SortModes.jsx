@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Col, Grid, Row, Glyphicon, OverlayTrigger, Button, ButtonGroup } from 'react-bootstrap';
+import {
+  Col, Container, Row, OverlayTrigger, Button, ButtonGroup,
+} from 'react-bootstrap';
+import { FaThList, FaThLarge } from 'react-icons/fa';
 import SelectFormGroup from './FormComponents/SelectFormGroup';
 import tooltip from '../CommonComponents/Tooltip';
 import SearchField from '../CommonComponents/SearchField';
@@ -20,6 +23,7 @@ export default class SortModes extends React.Component {
   handleSortChange(e) {
     e.preventDefault();
     const { sortModes } = this.state;
+    const { handleSortMode } = this.props;
     const { value } = e.target;
     const keys = Object.keys(sortModes);
 
@@ -28,48 +32,53 @@ export default class SortModes extends React.Component {
       if (sortModes[k] === value) key = k;
     });
 
-    if (key) this.props.handleSortMode(key);
+    if (key) handleSortMode(key);
   }
 
   render() {
+    const { sortModes } = this.state;
+    const { galleryView, handleGalleryView } = this.props;
+
     return (
-      <Grid className="no-padding" fluid>
+      <Container className="no-padding" fluid>
         <Row>
           <Col lg={3} md={3} sm={3} xs={3}>
             <SelectFormGroup
               id="formControlsSort"
               name="sortMode"
               onChange={this.handleSortChange}
-              options={Object.values(this.state.sortModes)}
+              options={Object.values(sortModes)}
             />
           </Col>
-          <Col lg={3} md={3} sm={3} xs={3} className="no-padding">
+          <Col lg={5} md={5} sm={5} xs={5} className="no-padding">
             <SearchField />
           </Col>
-          <Col lg={6} md={6} sm={6} xs={6}>
-            <ButtonGroup className="pull-right">
+          <Col className="text-right" lg={4} md={4} sm={4} xs={4}>
+            <ButtonGroup>
               <OverlayTrigger placement="top" overlay={tooltip('Enable gallery view')}>
                 <Button
+                  variant="outline-dark"
                   className="rm-focus-outline"
-                  active={this.props.galleryView}
-                  onClick={this.props.handleGalleryView}
+                  active={galleryView}
+                  onClick={handleGalleryView}
                 >
-                  <Glyphicon glyph="th-large" />
+                  <FaThLarge />
                 </Button>
               </OverlayTrigger>
               <OverlayTrigger placement="top" overlay={tooltip('Enable list view')}>
                 <Button
+                  variant="outline-dark"
                   className="rm-focus-outline"
-                  active={!this.props.galleryView}
-                  onClick={this.props.handleGalleryView}
+                  active={!galleryView}
+                  onClick={handleGalleryView}
                 >
-                  <Glyphicon glyph="th-list" />
+                  <FaThList />
                 </Button>
               </OverlayTrigger>
             </ButtonGroup>
           </Col>
         </Row>
-      </Grid>
+      </Container>
     );
   }
 }
