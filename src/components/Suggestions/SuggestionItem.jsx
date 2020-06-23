@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Container, Row, Col, Button, ListGroupItem, ButtonGroup, OverlayTrigger,
 } from 'react-bootstrap';
-import { MdClear } from 'react-icons/md';
+import { FaWindowClose } from 'react-icons/fa';
 import tooltip from '../CommonComponents/Tooltip';
 
 export default class SuggestionItem extends React.Component {
@@ -25,22 +25,20 @@ export default class SuggestionItem extends React.Component {
             <Col className="no-padding text-right" lg={2} md={2} sm={2} xs={2}>
               <OverlayTrigger placement="left" overlay={tooltip('Remove suggestion.')}>
                 <Button
-                  variant="outline-dark"
+                  className="p-0"
+                  variant="light"
                   size="sm"
                   onClick={(e) => handleDelete(e, title, artist)}
                 >
-                  <MdClear />
+                  <FaWindowClose />
                 </Button>
               </OverlayTrigger>
             </Col>
           </Row>
           <Row>
             <Col className="no-padding" lg={12} md={12} sm={12} xs={12}>
-              <h5 className="no-margin-bottom">{title}</h5>
+              <h5>{title}</h5>
             </Col>
-          </Row>
-          <Row>
-            <h5 className="no-margin-bottom"><strong>Add to:</strong></h5>
           </Row>
           <Row>
             <Col className="no-padding" lg={12} md={12} sm={12} xs={12}>
@@ -49,13 +47,13 @@ export default class SuggestionItem extends React.Component {
                   variant="success"
                   onClick={(e) => addToCollection(e, title, artist)}
                 >
-                  Collection
+                  Add to collection
                 </Button>
                 <Button
                   variant="outline-dark"
                   onClick={(e) => addToWishlist(e, title, artist)}
                 >
-                  Wishlist
+                  Add to wishlist
                 </Button>
               </ButtonGroup>
             </Col>

@@ -90,6 +90,7 @@ body.waiting * {
 
 .nav-item > .nav-link {
   padding: 15px 0px 15px 0px;
+  cursor: pointer;
 }
 
 .nav-item.active {

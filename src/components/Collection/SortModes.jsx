@@ -44,7 +44,7 @@ export default class SortModes extends React.Component {
         <Row>
           <Col lg={3} md={3} sm={3} xs={3}>
             <SelectFormGroup
-              id="formControlsSort"
+              controlId="formControlsSort"
               name="sortMode"
               onChange={this.handleSortChange}
               options={Object.values(sortModes)}

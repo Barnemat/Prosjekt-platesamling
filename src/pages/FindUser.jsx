@@ -104,7 +104,7 @@ class FindUser extends React.Component {
                   {showWildCardError && <WildCardError />}
                   <form onSubmit={this.handleSubmit}>
                     <DefaultFormGroup
-                      id="formControlsUsername"
+                      controlId="formControlsUsername"
                       name="searchField"
                       value={searchField}
                       type="text"

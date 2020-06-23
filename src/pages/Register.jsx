@@ -265,7 +265,7 @@ class Register extends React.Component {
                   </div>
                   )}
                 <DefaultFormGroup
-                  id="formControlsEmail"
+                  controlId="formControlsEmail"
                   name="email"
                   value={email}
                   type="email"
@@ -289,7 +289,7 @@ class Register extends React.Component {
                   </div>
                   )}
                 <DefaultFormGroup
-                  id="formControlsPassword"
+                  controlId="formControlsPassword"
                   name="password"
                   type="password"
                   label="Password"
@@ -306,7 +306,7 @@ class Register extends React.Component {
                   </div>
                   )}
                 <DefaultFormGroup
-                  id="formControlsPassword2"
+                  controlId="formControlsPassword2"
                   name="retype"
                   type="password"
                   label="Retype Password"

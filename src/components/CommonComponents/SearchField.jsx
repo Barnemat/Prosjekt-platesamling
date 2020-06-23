@@ -42,7 +42,7 @@ class SearchField extends React.Component {
               <DefaultFormGroup
                 className="w-100"
                 classProps="w-100"
-                id="formControlsSearch"
+                controlId="formControlsSearch"
                 name="search"
                 type="text"
                 value={search}

@@ -6,7 +6,7 @@ import {
 } from 'react-bootstrap';
 
 const DefaultFormGroup = ({
-  id,
+  controlId,
   label,
   help,
   validationState,
@@ -15,7 +15,7 @@ const DefaultFormGroup = ({
   classProps,
   ...props
 }) => (
-  <FormGroup as={as || 'div'} className={classProps} controlId={id}>
+  <FormGroup as={as || 'div'} className={classProps} controlId={controlId}>
     {label && <FormLabel>{label}</FormLabel>}
     <FormControl
       className="w-100"
@@ -29,7 +29,7 @@ const DefaultFormGroup = ({
 );
 
 DefaultFormGroup.propTypes = {
-  id: PropTypes.string.isRequired,
+  controlId: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
   help: PropTypes.string,

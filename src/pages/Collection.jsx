@@ -28,15 +28,6 @@ class Collection extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    const {
-      records, suggestions, wishlist, setSuggestions,
-    } = this.props;
-    if (records.length > 0 && wishlist && suggestions.length === 0) {
-      setSuggestions(records, wishlist);
-    }
-  }
-
   render() {
     const { url } = this.state;
     const {
@@ -47,26 +38,27 @@ class Collection extends React.Component {
       <div>
         <Container fluid>
           <Row className="show-grid">
-            <Col lg={2} md={2} sm={12} xs={12}>
+            <Col xl={1} lg={0} md={0} sm={0} xs={0} />
+            <Col xl= {2} lg={3} md={12} sm={12} xs={12}>
               {authenticated
                 && <Filter />}
             </Col>
-            <Col lg={8} md={8} sm={12} xs={12}>
+            <Col xl={6} lg={6} md={12} sm={12} xs={12}>
               {authenticated
                 && <ListItems url={url} />}
               {!authenticated
                 && <SignInJumbotron />}
             </Col>
-            <Col className="no-padding-left" lg={2} md={3} sm={12} xs={12}>
+            <Col className="no-padding-left" xl={2} lg={3} md={12} sm={12} xs={12}>
               {authenticated
                 && (
                 <Suggestions
-                  suggestions={suggestions}
                   records={records}
                   wishlist={wishlist}
                 />
                 )}
             </Col>
+            <Col xl={1} lg={0} md={0} sm={0} xs={0} />
           </Row>
         </Container>
       </div>
@@ -83,14 +75,11 @@ Collection.propTypes = {
   }).isRequired,
   records: PropTypes.array.isRequired,
   wishlist: PropTypes.array.isRequired,
-  suggestions: PropTypes.array.isRequired,
-  setSuggestions: PropTypes.func.isRequired,
   getWishlist: PropTypes.func.isRequired,
   resetWishlist: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
-  setSuggestions,
   getWishlist,
   resetWishlist,
 };
@@ -99,8 +88,7 @@ const mapStateToProps = (state) => ({
   authenticated: state.authenticate.authenticated || false,
   authenticatedUser: state.authenticate.user || { username: '', email: '', public: false },
   records: state.collection.records || [],
-  wishlist: state.wishlist,
-  suggestions: state.suggestions.suggestions,
+  wishlist: state.wishlist
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Collection);

@@ -60,7 +60,7 @@ class WishlistItem extends React.Component {
 
   render() {
     const {
-      record, search, addRecordToCollection, loadWishlist,
+      record, search, addRecordToCollection, loadWishlist
     } = this.props;
 
     const { isAddMode, showWildCardError } = this.state;
@@ -88,11 +88,11 @@ class WishlistItem extends React.Component {
             </Col>
             {!isAddMode
               && (
-              <Col lg={1} md={1} sm={1} xs={1}>
+              <Col lg={1} md={1} sm={1} xs={1} className="text-right">
                 <div>
                   <OverlayTrigger placement="right" overlay={tooltip('Remove record from wishlist')}>
                     <Button
-                      variant="outline-dark"
+                      variant="light"
                       tabIndex={0}
                       className="md-glyph"
                       onClick={this.handleDelete}
@@ -120,6 +120,7 @@ class WishlistItem extends React.Component {
               <Col lg={12} md={12} sm={12} xs={12}>
                 <Card body>
                   <AddOrEditRecord
+                    customId={record._id}
                     newRecord={{}}
                     title={record.title}
                     artist={record.artist}
@@ -148,6 +149,7 @@ WishlistItem.propTypes = {
     title: PropTypes.string.isRequired,
     artist: PropTypes.string,
     format: PropTypes.string,
+    _id: PropTypes.string,
   }).isRequired,
   search: PropTypes.string.isRequired,
   loadWishlist: PropTypes.func.isRequired,

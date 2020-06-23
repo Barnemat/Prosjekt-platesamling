@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ListGroup } from 'react-bootstrap';
 import axios from 'axios';
-import { addRecordToWishlist, setNewCollectionElement } from '../../actions';
+import { addRecordToWishlist, setNewCollectionElement, setSuggestions } from '../../actions';
 import SuggestionItem from './SuggestionItem';
 import { generateRandIndex, setLoadingCursor } from '../../util';
 
@@ -12,22 +12,34 @@ class Suggestions extends React.Component {
     super(props);
 
     this.state = {
-      shouldUpdateOnUnmount: false,
+      shouldUpdateOnUnmount: true,
       suggestionItems: [],
     };
 
     this.getSuggestionItems = this.getSuggestionItems.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAddToCollection = this.handleAddToCollection.bind(this);
     this.handleAddToWishlist = this.handleAddToWishlist.bind(this);
+    this.handleSuggestionUpdate = this.handleSuggestionUpdate.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
     const { suggestions } = this.props;
 
+    this.handleSuggestionUpdate();
+
     if (suggestions.length > 0 && prevState.suggestionItems.length == 0) {
       this.setState({ suggestionItems: this.getSuggestionItems(5, suggestions) });
+    }
+  }
+
+  handleSuggestionUpdate() {
+    const {
+      records, suggestions, wishlist, ...props
+    } = this.props;
+
+    if (records.length > 0 && wishlist && suggestions.length === 0) {
+      props.setSuggestions(records, wishlist);
     }
   }
 
@@ -35,8 +47,8 @@ class Suggestions extends React.Component {
     if (suggestions.length === 0) return;
 
     const randomIndexes = [];
-    for (let i = 0; i < numSuggestions + 1; i++) {
-      randomIndexes.push(generateRandIndex(suggestions.length, randomIndexes));
+    for (let i = 0; i < (numSuggestions <= suggestions.length ? numSuggestions : suggestions.length) ; i++) {
+      randomIndexes.push(generateRandIndex(suggestions.length - 1, randomIndexes));
     }
 
     const suggestionItems = [];
@@ -61,11 +73,6 @@ class Suggestions extends React.Component {
     }
 
     return suggestionItems;
-  }
-
-  handleUpdate(e) {
-    if (e) e.preventDefault();
-    // TODO
   }
 
   handleDelete(e, title, artist) {
@@ -104,11 +111,12 @@ class Suggestions extends React.Component {
   }
 
   componentWillUnmount() {
+    const { shouldUpdateOnUnmount } = this.state;
     const {
-      records, wishlist,
+      records, wishlist, ...props
     } = this.props;
 
-    if (this.state.shouldUpdateOnUnmount) this.props.setSuggestions(records, wishlist);
+    if (shouldUpdateOnUnmount) props.setSuggestions(records, wishlist);
   }
 
   render() {
@@ -132,10 +140,12 @@ Suggestions.defaultProps = {};
 
 const mapDispatchToProps = {
   setNewCollectionElement,
+  setSuggestions,
 };
 
 const mapStateToProps = (state) => ({
   authenticatedUsername: state.authenticate.user.username,
+  suggestions: state.suggestions.suggestions,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Suggestions);

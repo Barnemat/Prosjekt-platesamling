@@ -15,7 +15,7 @@ import { getCollection, resetCollection, resetNewCollectionElement } from '../..
 import { getRecordsBySearchAndFilter } from '../../selectors/collection';
 
 const EmptyCollection = ({ publicUsername, collectionHasEntries }) => (
-  <div className="text-center lead">
+  <div className="text-center lead mb-3">
     {collectionHasEntries
       ? 'The search and/or filter doesn\'t match any records'
       : `${publicUsername ? 'The' : 'Your'} collection is empty.`}
@@ -254,7 +254,7 @@ const mapStateToProps = (state) => ({
   records: getRecordsBySearchAndFilter(state),
   collectionHasEntries: state.collection.records ? Object.keys(state.collection.records).length > 1 : false,
   authenticatedUser: state.authenticate.user,
-  newRecord: state.addCollectionElement || {},
+  newRecord: state.addCollectionElement ? state.addCollectionElement : {},
 });
 
 const mapDispatchToProps = {

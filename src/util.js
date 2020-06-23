@@ -257,8 +257,8 @@ export const getFilter = (records, isWishlist) => {
 
 export const capitalize = (string) => `${string[0].toUpperCase()}${string.substr(1)}`;
 
-export const generateRandIndex = (max, usedIndexes) => { // TODO FIX
-  if (max <= 0) return 0;
+export const generateRandIndex = (max, usedIndexes) => {
+  if (max <= 0 || usedIndexes.length == max) return 0;
   const index = Math.round(Math.random() * max);
   return usedIndexes.includes(index) ? generateRandIndex(max, usedIndexes) : index;
 };
