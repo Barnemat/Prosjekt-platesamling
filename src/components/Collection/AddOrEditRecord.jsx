@@ -14,7 +14,7 @@ export default class AddOrEditRecord extends React.Component {
     super(props);
 
     const {
-      record, edit, title, artist, format, expand, newRecord,
+      record, edit, title, artist, format, expand,
     } = this.props;
 
     this.state = {
@@ -58,7 +58,6 @@ export default class AddOrEditRecord extends React.Component {
 
   componentDidUpdate(prevProps) {
     const { newRecord } = this.props;
-    const expand = Object.keys(newRecord).length > 0;
 
     if (prevProps === this.props) return;
 
@@ -109,13 +108,13 @@ export default class AddOrEditRecord extends React.Component {
           formData.append(key, state[key]);
         }
       } else if (key === 'wikiDesc') {
-        if (selectedCheckboxes.filter(id => id.startsWith('wikiDescCB')).length > 0) {
+        if (selectedCheckboxes.filter((id) => id.startsWith('wikiDescCB')).length > 0) {
           formData.append(key, state[key]);
         } else {
           formData.append(key, '');
         }
       } else if (key === 'wikiImg') {
-        if (selectedCheckboxes.filter(id => id.startsWith('wikiImgCB')).length > 0) {
+        if (selectedCheckboxes.filter((id) => id.startsWith('wikiImgCB')).length > 0) {
           formData.append(key, state[key]);
         } else {
           formData.append(key, '');
@@ -260,7 +259,7 @@ export default class AddOrEditRecord extends React.Component {
   }
 
   handleCheckbox(e) {
-    e.persist()
+    e.persist();
     const { id } = e.target;
     const { selectedCheckboxes: checkedBoxes, wikiReqDesc, wikiReqImg } = this.state;
 
@@ -441,6 +440,7 @@ AddOrEditRecord.propTypes = {
     artist: PropTypes.string,
   }).isRequired,
   customId: PropTypes.string,
+  resetNewCollectionElement: PropTypes.func,
 };
 
 AddOrEditRecord.defaultProps = {
@@ -457,4 +457,5 @@ AddOrEditRecord.defaultProps = {
   format: 'CD',
   disableWishlistFields: false,
   customId: '',
+  resetNewCollectionElement: null,
 };

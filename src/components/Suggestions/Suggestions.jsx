@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ListGroup } from 'react-bootstrap';
 import axios from 'axios';
-import { addRecordToWishlist, setNewCollectionElement, setSuggestions } from '../../actions';
+import { setNewCollectionElement, setSuggestions } from '../../actions';
 import SuggestionItem from './SuggestionItem';
 import { generateRandIndex, setLoadingCursor } from '../../util';
 
@@ -24,13 +24,48 @@ class Suggestions extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { suggestions } = this.props;
+    const { suggestions } = this.props;
 
     this.handleSuggestionUpdate();
 
-    if (suggestions.length > 0 && prevState.suggestionItems.length == 0) {
+    if (suggestions.length > 0 && prevState.suggestionItems.length === 0) {
       this.setState({ suggestionItems: this.getSuggestionItems(5, suggestions) });
     }
+  }
+
+  componentWillUnmount() {
+    const { shouldUpdateOnUnmount } = this.state;
+    const {
+      records, wishlist, ...props
+    } = this.props;
+
+    if (shouldUpdateOnUnmount) props.setSuggestions(records, wishlist);
+  }
+
+  getSuggestionItems(numSuggestions, suggestions) {
+    if (suggestions.length === 0) return [];
+
+    const randomIndexes = [];
+    for (let i = 0; i < (numSuggestions <= suggestions.length ? numSuggestions : suggestions.length); i += 1) {
+      randomIndexes.push(generateRandIndex(suggestions.length - 1, randomIndexes));
+    }
+
+    return randomIndexes.map((index) => {
+      const suggestion = suggestions[index];
+      const artist = Object.keys(suggestion)[0];
+      const title = suggestion[artist];
+
+      return (
+        <SuggestionItem
+          key={index}
+          artist={artist}
+          title={title}
+          addToWishlist={this.handleAddToWishlist}
+          addToCollection={this.handleAddToCollection}
+          handleDelete={this.handleDelete}
+        />
+      );
+    });
   }
 
   handleSuggestionUpdate() {
@@ -43,43 +78,11 @@ class Suggestions extends React.Component {
     }
   }
 
-  getSuggestionItems(numSuggestions, suggestions) {
-    if (suggestions.length === 0) return;
-
-    const randomIndexes = [];
-    for (let i = 0; i < (numSuggestions <= suggestions.length ? numSuggestions : suggestions.length) ; i++) {
-      randomIndexes.push(generateRandIndex(suggestions.length - 1, randomIndexes));
-    }
-
-    const suggestionItems = [];
-    let i = 0;
-    for (const index in randomIndexes) {
-      const suggestion = suggestions[index];
-      const artist = Object.keys(suggestion)[0];
-      const title = suggestion[artist];
-
-      suggestionItems.push(
-        <SuggestionItem
-          key={i}
-          artist={artist}
-          title={title}
-          addToWishlist={this.handleAddToWishlist}
-          addToCollection={this.handleAddToCollection}
-          handleDelete={this.handleDelete}
-        />,
-      );
-
-      i += 1;
-    }
-
-    return suggestionItems;
-  }
-
   handleDelete(e, title, artist) {
     const { suggestionItems } = this.state;
 
     for (let i = 0; i < suggestionItems.length; i += 1) {
-      if (suggestionItems[i].props.title == title && suggestionItems[i].props.artist == artist) {
+      if (suggestionItems[i].props.title === title && suggestionItems[i].props.artist === artist) {
         suggestionItems[i] = (<span key={suggestionItems[i].key} />);
       }
     }
@@ -110,15 +113,6 @@ class Suggestions extends React.Component {
       });
   }
 
-  componentWillUnmount() {
-    const { shouldUpdateOnUnmount } = this.state;
-    const {
-      records, wishlist, ...props
-    } = this.props;
-
-    if (shouldUpdateOnUnmount) props.setSuggestions(records, wishlist);
-  }
-
   render() {
     const { suggestionItems } = this.state;
 
@@ -130,13 +124,14 @@ class Suggestions extends React.Component {
   }
 }
 
+/* eslint-disable react/forbid-prop-types */
 Suggestions.propTypes = {
   suggestions: PropTypes.array.isRequired,
   records: PropTypes.array.isRequired,
   wishlist: PropTypes.array.isRequired,
+  authenticatedUsername: PropTypes.string.isRequired,
 };
-
-Suggestions.defaultProps = {};
+/* eslint-enable react/forbid-prop-types */
 
 const mapDispatchToProps = {
   setNewCollectionElement,

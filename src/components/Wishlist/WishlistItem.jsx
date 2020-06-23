@@ -60,7 +60,7 @@ class WishlistItem extends React.Component {
 
   render() {
     const {
-      record, search, addRecordToCollection, loadWishlist
+      record, search, addRecordToCollection, loadWishlist,
     } = this.props;
 
     const { isAddMode, showWildCardError } = this.state;
@@ -119,6 +119,7 @@ class WishlistItem extends React.Component {
             <Row>
               <Col lg={12} md={12} sm={12} xs={12}>
                 <Card body>
+                  {/* eslint-disable no-underscore-dangle */}
                   <AddOrEditRecord
                     customId={record._id}
                     newRecord={{}}
@@ -131,6 +132,7 @@ class WishlistItem extends React.Component {
                     expand
                     disableWishlistFields
                   />
+                  {/* eslint-enable no-underscore-dangle */}
                 </Card>
               </Col>
             </Row>

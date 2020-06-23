@@ -6,7 +6,7 @@ import ListItems from '../components/Collection/ListItems';
 import Filter from '../components/Filter/Filter';
 import SignInJumbotron from '../components/CommonComponents/SignInJumbotron';
 import Suggestions from '../components/Suggestions/Suggestions';
-import { setSuggestions, getWishlist, resetWishlist } from '../actions';
+import { getWishlist, resetWishlist } from '../actions';
 
 class Collection extends React.Component {
   constructor(props) {
@@ -19,19 +19,20 @@ class Collection extends React.Component {
 
   componentDidMount() {
     const {
-      authenticatedUser, getWishlist, resetWishlist,
+      authenticatedUser, ...props
     } = this.props;
+
     if (authenticatedUser && authenticatedUser.username) {
-      getWishlist(authenticatedUser.username);
+      props.getWishlist(authenticatedUser.username);
     } else {
-      resetWishlist();
+      props.resetWishlist();
     }
   }
 
   render() {
     const { url } = this.state;
     const {
-      authenticated, suggestions, records, wishlist,
+      authenticated, records, wishlist,
     } = this.props;
 
     return (
@@ -39,7 +40,7 @@ class Collection extends React.Component {
         <Container fluid>
           <Row className="show-grid">
             <Col xl={1} lg={0} md={0} sm={0} xs={0} />
-            <Col xl= {2} lg={3} md={12} sm={12} xs={12}>
+            <Col xl={2} lg={3} md={12} sm={12} xs={12}>
               {authenticated
                 && <Filter />}
             </Col>
@@ -73,8 +74,10 @@ Collection.propTypes = {
     email: PropTypes.string.isRequired,
     public: PropTypes.bool.isRequired,
   }).isRequired,
+  /* eslint-disable react/forbid-prop-types */
   records: PropTypes.array.isRequired,
   wishlist: PropTypes.array.isRequired,
+  /* eslint-enable react/forbid-prop-types */
   getWishlist: PropTypes.func.isRequired,
   resetWishlist: PropTypes.func.isRequired,
 };
@@ -88,7 +91,7 @@ const mapStateToProps = (state) => ({
   authenticated: state.authenticate.authenticated || false,
   authenticatedUser: state.authenticate.user || { username: '', email: '', public: false },
   records: state.collection.records || [],
-  wishlist: state.wishlist
+  wishlist: state.wishlist,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Collection);

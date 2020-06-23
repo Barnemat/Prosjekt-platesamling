@@ -8,7 +8,7 @@ export function setNewCollectionElement(title, artist) {
   };
 }
 
-export function resetNewCollectionElement(title, artist) {
+export function resetNewCollectionElement() {
   return {
     type: 'RESET_NEW_COLLECTION_ELEMENT',
   };

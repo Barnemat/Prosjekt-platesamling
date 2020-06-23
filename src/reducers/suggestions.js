@@ -1,4 +1,4 @@
-export default function (state = {}, action) {
+export default (state = {}, action) => {
   switch (action.type) {
     case 'SET_SUGGESTIONS':
       return { ...state, suggestions: action.payload };
@@ -11,4 +11,4 @@ export default function (state = {}, action) {
     default:
       return state;
   }
-}
+};

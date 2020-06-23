@@ -72,7 +72,9 @@ const sendWikiDiscographyRequest = (query) => new Promise((resolve, reject) => {
       sendWikiRequest(params)
         .then((sectionRes) => {
           const { sections } = sectionRes.data.parse;
-          const discographyIndex = Object.keys(sections).reduce((res, section) => (sections[section].line.toLowerCase() === 'discography' ? sections[section].index : res), 0);
+          const discographyIndex = Object.keys(sections).reduce((res, section) => (
+            sections[section].line.toLowerCase() === 'discography' ? sections[section].index : res
+          ), 0);
 
           const queryParams = {
             action: 'parse',
@@ -101,15 +103,15 @@ const sendWikiDiscographyRequest = (query) => new Promise((resolve, reject) => {
               resolve(res);
             })
             .catch((queryErr) => {
-              resolve([]);
+              reject(queryErr);
             });
         })
         .catch((sectionErr) => {
-          resolve([]);
+          reject(sectionErr);
         });
     })
     .catch((err) => {
-      resolve([]);
+      reject(err);
     });
 });
 
@@ -121,7 +123,7 @@ export const requestAlbumSuggestions = (records, wishlist) => {
 
   const length = distinctArtists.length >= 3 ? 3 : distinctArtists.length;
   const randomIndexes = [];
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < length; i += 1) {
     randomIndexes.push(generateRandIndex(distinctArtists.length, randomIndexes));
   }
 
@@ -136,14 +138,15 @@ export const requestAlbumSuggestions = (records, wishlist) => {
         const albums = res
           .reduce((acc, album) => [...acc, ...album], [])
           .filter((album) => {
-            for (const key in album) {
-              return !albumsInCollection.includes(album[key].toLowerCase()) && !albumsInWishlist.includes(album[key].toLowerCase());
-            }
+            const key = Object.keys(album)[0];
+            return albumsInCollection.includes(
+              album[key].toLowerCase(),
+            ) || albumsInWishlist.includes(album[key].toLowerCase());
           });
         resolve(albums);
       })
-      .catch(() => {
-        reject('Could not find any suggestions');
+      .catch((err) => {
+        reject(err);
       });
   });
 };

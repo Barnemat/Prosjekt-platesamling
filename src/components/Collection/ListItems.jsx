@@ -150,9 +150,6 @@ class ListItems extends React.Component {
     const firstHalf = recordItems.slice(0, Math.ceil(recordItems.length / 2));
     const secondHalf = recordItems.slice(Math.ceil(recordItems.length / 2));
 
-    const newTitle = newRecord.title;
-    const newArtist = newRecord.artist;
-
     return (
       <Container fluid>
         <Row>

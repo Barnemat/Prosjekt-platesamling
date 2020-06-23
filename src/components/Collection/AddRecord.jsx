@@ -88,7 +88,7 @@ export default class AddRecord extends React.Component {
       <form onSubmit={(e) => handleSubmit(e, this.addRecordSubmit)}>
         {showWildCardError && <WildCardError />}
         <TitleFormGroup
-          controlId={'title' + customId}
+          controlId={`title${customId}`}
           name="title"
           value={title}
           label={largeForm ? 'The name of your record:' : 'Add a record to your collection:'}
@@ -103,7 +103,7 @@ export default class AddRecord extends React.Component {
         <Collapse in={largeForm}>
           <div>
             <DefaultFormGroup
-              controlId={'artist' + customId}
+              controlId={`artist${customId}`}
               name="artist"
               value={artist}
               type="text"
@@ -113,7 +113,7 @@ export default class AddRecord extends React.Component {
               disabled={disableWishlistFields}
             />
             <SelectFormGroup
-              controlId={'format' + customId}
+              controlId={`format${customId}`}
               name="format"
               value={format}
               label="The format of the record (e.g. LP, EP, CD):"
@@ -122,7 +122,7 @@ export default class AddRecord extends React.Component {
             />
             <FormGroup>
               <FormCheck
-                id={'wikiDescCB' + customId}
+                id={`wikiDescCB${customId}`}
                 inline
               >
                 <FormCheck.Input
@@ -131,7 +131,7 @@ export default class AddRecord extends React.Component {
                     handleCheckbox(e);
                     handleSearchRequest();
                   }}
-                  checked={selectedCheckboxes.indexOf('wikiDescCB' + customId) !== -1}
+                  checked={selectedCheckboxes.indexOf(`wikiDescCB${customId}`) !== -1}
                 />
                 <FormCheck.Label
                   onClick={(e) => {
@@ -143,7 +143,7 @@ export default class AddRecord extends React.Component {
                 </FormCheck.Label>
               </FormCheck>
               <FormCheck
-                id={'wikiImgCB' + customId}
+                id={`wikiImgCB${customId}`}
                 inline
               >
                 <FormCheck.Input
@@ -153,7 +153,7 @@ export default class AddRecord extends React.Component {
                     handleImgRequest();
                   }}
                   disabled={!allowImgReq}
-                  checked={selectedCheckboxes.indexOf('wikiImgCB' + customId) !== -1}
+                  checked={selectedCheckboxes.indexOf(`wikiImgCB${customId}`) !== -1}
                 />
                 <FormCheck.Label
                   onClick={(e) => {
@@ -189,7 +189,7 @@ export default class AddRecord extends React.Component {
             />
             <FormGroup>
               <Form.File
-                id={'image' + customId}
+                id={`image${customId}`}
                 name="image"
                 type="file"
                 label="Upload an image of the record:"
@@ -221,7 +221,7 @@ export default class AddRecord extends React.Component {
               </Row>
             </Container>
             )}
-            <FormGroup controlId={'notes' + format + artist + title}>
+            <FormGroup controlId={`notes${format}${artist}${title}`}>
               <FormLabel>Add your own notes here:</FormLabel>
               <FormControl
                 className="vresize"
@@ -390,6 +390,7 @@ TitleFormGroup.propTypes = {
   handleReset: PropTypes.func.isRequired,
   toggleLargeForm: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  controlId: PropTypes.string.isRequired,
 };
 
 TitleFormGroup.defaultProps = {
