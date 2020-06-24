@@ -50,7 +50,7 @@ class Suggestions extends React.Component {
       randomIndexes.push(generateRandIndex(suggestions.length - 1, randomIndexes));
     }
 
-    return randomIndexes.map((index) => {
+    return randomIndexes.filter((index) => index > -1).map((index) => {
       const suggestion = suggestions[index];
       const artist = Object.keys(suggestion)[0];
       const title = suggestion[artist];

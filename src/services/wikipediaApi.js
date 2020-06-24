@@ -139,9 +139,10 @@ export const requestAlbumSuggestions = (records, wishlist) => {
           .reduce((acc, album) => [...acc, ...album], [])
           .filter((album) => {
             const key = Object.keys(album)[0];
-            return albumsInCollection.includes(
+
+            return !albumsInCollection.includes(
               album[key].toLowerCase(),
-            ) || albumsInWishlist.includes(album[key].toLowerCase());
+            ) && !albumsInWishlist.includes(album[key].toLowerCase());
           });
         resolve(albums);
       })

@@ -221,7 +221,7 @@ export default class AddRecord extends React.Component {
               </Row>
             </Container>
             )}
-            <FormGroup controlId={`notes${format}${artist}${title}`}>
+            <FormGroup controlId={`notes${customId}`}>
               <FormLabel>Add your own notes here:</FormLabel>
               <FormControl
                 className="vresize"

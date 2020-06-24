@@ -17,13 +17,13 @@ class Collection extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
     const {
-      authenticatedUser, ...props
+      authenticatedUser, wishlist, ...props
     } = this.props;
 
     if (authenticatedUser && authenticatedUser.username) {
-      props.getWishlist(authenticatedUser.username);
+      if (wishlist.length === 0) props.getWishlist(authenticatedUser.username);
     } else {
       props.resetWishlist();
     }
