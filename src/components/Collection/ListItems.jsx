@@ -11,11 +11,11 @@ import AddOrEditRecord from './AddOrEditRecord';
 import RecordItem from './RecordItem';
 import SortModes from './SortModes';
 import { sortArrayOfObjects, getOwnershipFormat } from '../../util';
-import { getCollection, resetCollection } from '../../actions';
+import { getCollection, resetCollection, resetNewCollectionElement } from '../../actions';
 import { getRecordsBySearchAndFilter } from '../../selectors/collection';
 
 const EmptyCollection = ({ publicUsername, collectionHasEntries }) => (
-  <div className="text-center lead">
+  <div className="text-center lead mb-3">
     {collectionHasEntries
       ? 'The search and/or filter doesn\'t match any records'
       : `${publicUsername ? 'The' : 'Your'} collection is empty.`}
@@ -52,6 +52,12 @@ class ListItems extends React.Component {
   componentDidMount() {
     const { publicUsername } = this.props;
     this.loadCollection(publicUsername);
+  }
+
+  componentWillUnmount() {
+    const { ...props } = this.props;
+
+    props.resetNewCollectionElement();
   }
 
   getRecordItems() {
@@ -136,7 +142,9 @@ class ListItems extends React.Component {
 
   render() {
     const { galleryView } = this.state;
-    const { publicUsername, collectionHasEntries } = this.props;
+    const {
+      publicUsername, collectionHasEntries, newRecord, ...props
+    } = this.props;
 
     const recordItems = this.getRecordItems();
     const firstHalf = recordItems.slice(0, Math.ceil(recordItems.length / 2));
@@ -169,6 +177,8 @@ class ListItems extends React.Component {
               ) : (
                 <Card.Body>
                   <AddOrEditRecord
+                    newRecord={newRecord}
+                    resetNewCollectionElement={props.resetNewCollectionElement}
                     addRecordToCollection={this.addRecordToCollection}
                     loadCollection={this.loadCollection}
                   />
@@ -221,6 +231,11 @@ ListItems.propTypes = {
   }),
   publicUsername: PropTypes.string,
   collectionHasEntries: PropTypes.bool.isRequired,
+  newRecord: PropTypes.shape({
+    title: PropTypes.string,
+    artist: PropTypes.string,
+  }),
+  resetNewCollectionElement: PropTypes.func.isRequired,
 };
 
 ListItems.defaultProps = {
@@ -229,17 +244,20 @@ ListItems.defaultProps = {
     email: '',
   },
   publicUsername: null,
+  newRecord: {},
 };
 
 const mapStateToProps = (state) => ({
   records: getRecordsBySearchAndFilter(state),
   collectionHasEntries: state.collection.records ? Object.keys(state.collection.records).length > 1 : false,
   authenticatedUser: state.authenticate.user,
+  newRecord: state.addCollectionElement ? state.addCollectionElement : {},
 });
 
 const mapDispatchToProps = {
   getCollection,
   resetCollection,
+  resetNewCollectionElement,
 };
 
 export default connect(

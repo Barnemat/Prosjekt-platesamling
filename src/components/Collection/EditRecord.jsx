@@ -107,7 +107,7 @@ export default class EditRecord extends React.Component {
             <Row>
               <Col lg={5} md={5} sm={5} xs={12}>
                 <DefaultFormGroup
-                  id="formControlsTitle"
+                  controlId="formControlsTitle"
                   name="title"
                   label="Title:"
                   value={title}
@@ -118,7 +118,7 @@ export default class EditRecord extends React.Component {
               </Col>
               <Col lg={5} md={4} sm={5} xs={12}>
                 <DefaultFormGroup
-                  id="formControlsArtist"
+                  controlId="formControlsArtist"
                   name="artist"
                   label="Artist:"
                   value={artist}
@@ -158,7 +158,7 @@ export default class EditRecord extends React.Component {
               <Col lg={6} md={6} sm={6} xs={12}>
                 <h5><b>Format:</b></h5>
                 <SelectFormGroup
-                  id="formControlsFormat"
+                  controlId="formControlsFormat"
                   name="format"
                   value={format}
                   onChange={handleChange}

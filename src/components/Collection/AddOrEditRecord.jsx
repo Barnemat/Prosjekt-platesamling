@@ -56,6 +56,20 @@ export default class AddOrEditRecord extends React.Component {
     this.toggleLargeForm = this.toggleLargeForm.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    const { newRecord } = this.props;
+
+    if (prevProps === this.props) return;
+
+    if (Object.keys(newRecord).length > 0 && newRecord.title && newRecord.artist) {
+      this.setState({
+        largeForm: true,
+        title: newRecord.title,
+        artist: newRecord.artist,
+      });
+    }
+  }
+
   setWildCardError() {
     this.setState({ showWildCardError: true });
   }
@@ -81,7 +95,7 @@ export default class AddOrEditRecord extends React.Component {
     setLoadingCursor(true);
 
     const { ignoreRecordImg, selectedCheckboxes, ...state } = this.state;
-    const { record, edit } = this.props;
+    const { record, edit, resetNewCollectionElement } = this.props;
     const keys = ['title', 'artist', 'format', 'rating', 'wikiHref', 'wikiDesc', 'wikiImg', 'notes', 'image'];
     const formData = new FormData();
 
@@ -94,13 +108,13 @@ export default class AddOrEditRecord extends React.Component {
           formData.append(key, state[key]);
         }
       } else if (key === 'wikiDesc') {
-        if (selectedCheckboxes.includes('wikiDescCB')) {
+        if (selectedCheckboxes.filter((id) => id.startsWith('wikiDescCB')).length > 0) {
           formData.append(key, state[key]);
         } else {
           formData.append(key, '');
         }
       } else if (key === 'wikiImg') {
-        if (selectedCheckboxes.includes('wikiImgCB')) {
+        if (selectedCheckboxes.filter((id) => id.startsWith('wikiImgCB')).length > 0) {
           formData.append(key, state[key]);
         } else {
           formData.append(key, '');
@@ -110,6 +124,7 @@ export default class AddOrEditRecord extends React.Component {
       }
     });
 
+    if (resetNewCollectionElement) resetNewCollectionElement();
     submitFunction(formData);
   }
 
@@ -138,10 +153,12 @@ export default class AddOrEditRecord extends React.Component {
     }
 
     const {
-      title, artist, format, expand, handleReset,
+      title, artist, format, expand, handleReset, resetNewCollectionElement,
     } = this.props;
 
     if (handleReset) handleReset(submitted);
+
+    if (resetNewCollectionElement) resetNewCollectionElement();
 
     this.setState({
       title: title || '',
@@ -242,6 +259,7 @@ export default class AddOrEditRecord extends React.Component {
   }
 
   handleCheckbox(e) {
+    e.persist();
     const { id } = e.target;
     const { selectedCheckboxes: checkedBoxes, wikiReqDesc, wikiReqImg } = this.state;
 
@@ -249,9 +267,9 @@ export default class AddOrEditRecord extends React.Component {
       checkedBoxes.push(id);
       this.setState({
         selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: id === 'wikiDescCB' || wikiReqDesc,
+        wikiReqDesc: id.startsWith('wikiDescCB') || wikiReqDesc,
         wikiReqImg: {
-          req: id === 'wikiImgCB' || wikiReqImg.req,
+          req: id.startsWith('wikiImgCB') || wikiReqImg.req,
           searchTerm: wikiReqImg.searchTerm,
         },
       });
@@ -259,9 +277,9 @@ export default class AddOrEditRecord extends React.Component {
       checkedBoxes.splice(checkedBoxes.indexOf(id), 1);
       this.setState({
         selectedCheckboxes: checkedBoxes,
-        wikiReqDesc: id === 'wikiDescCB' ? false : wikiReqDesc,
+        wikiReqDesc: id.startsWith('wikiDescCB') ? false : wikiReqDesc,
         wikiReqImg: {
-          req: id === 'wikiImgCB' ? false : wikiReqImg.req,
+          req: id.startsWith('wikiImgCB') ? false : wikiReqImg.req,
           searchTerm: wikiReqImg.searchTerm,
         },
       });
@@ -340,6 +358,7 @@ export default class AddOrEditRecord extends React.Component {
       addRecordToCollection,
       loadCollection,
       disableWishlistFields,
+      customId,
     } = this.props;
     const recordImg = edit && record.image ? record.image.data : undefined;
 
@@ -362,6 +381,7 @@ export default class AddOrEditRecord extends React.Component {
         handleFileUpload={this.handleFileUpload}
         handleRemoveImg={this.handleRemoveImg}
         setWildCardError={this.setWildCardError}
+        customId={customId}
         {...this.state}
       />
     ) : (
@@ -381,6 +401,7 @@ export default class AddOrEditRecord extends React.Component {
         toggleLargeForm={this.toggleLargeForm}
         setWildCardError={this.setWildCardError}
         disableWishlistFields={disableWishlistFields}
+        customId={customId}
         {...this.state}
       />
     );
@@ -414,6 +435,12 @@ AddOrEditRecord.propTypes = {
   format: PropTypes.string,
   expand: PropTypes.bool,
   disableWishlistFields: PropTypes.bool,
+  newRecord: PropTypes.shape({
+    title: PropTypes.string,
+    artist: PropTypes.string,
+  }).isRequired,
+  customId: PropTypes.string,
+  resetNewCollectionElement: PropTypes.func,
 };
 
 AddOrEditRecord.defaultProps = {
@@ -429,4 +456,6 @@ AddOrEditRecord.defaultProps = {
   artist: '',
   format: 'CD',
   disableWishlistFields: false,
+  customId: '',
+  resetNewCollectionElement: null,
 };

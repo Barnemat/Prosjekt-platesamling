@@ -81,12 +81,14 @@ export default class AddRecord extends React.Component {
       handleSearchRequest,
       handleImgRequest,
       disableWishlistFields,
+      customId,
     } = this.props;
 
     return (
       <form onSubmit={(e) => handleSubmit(e, this.addRecordSubmit)}>
         {showWildCardError && <WildCardError />}
         <TitleFormGroup
+          controlId={`title${customId}`}
           name="title"
           value={title}
           label={largeForm ? 'The name of your record:' : 'Add a record to your collection:'}
@@ -101,7 +103,7 @@ export default class AddRecord extends React.Component {
         <Collapse in={largeForm}>
           <div>
             <DefaultFormGroup
-              id="formControlsArtist"
+              controlId={`artist${customId}`}
               name="artist"
               value={artist}
               type="text"
@@ -111,17 +113,16 @@ export default class AddRecord extends React.Component {
               disabled={disableWishlistFields}
             />
             <SelectFormGroup
-              id="formControlsFormat"
+              controlId={`format${customId}`}
               name="format"
               value={format}
               label="The format of the record (e.g. LP, EP, CD):"
               onChange={handleChange}
               options={getValidFormatTypes()}
-              disabled={disableWishlistFields}
             />
             <FormGroup>
               <FormCheck
-                id="wikiDescCB"
+                id={`wikiDescCB${customId}`}
                 inline
               >
                 <FormCheck.Input
@@ -130,7 +131,7 @@ export default class AddRecord extends React.Component {
                     handleCheckbox(e);
                     handleSearchRequest();
                   }}
-                  checked={selectedCheckboxes.indexOf('wikiDescCB') !== -1}
+                  checked={selectedCheckboxes.indexOf(`wikiDescCB${customId}`) !== -1}
                 />
                 <FormCheck.Label
                   onClick={(e) => {
@@ -142,7 +143,7 @@ export default class AddRecord extends React.Component {
                 </FormCheck.Label>
               </FormCheck>
               <FormCheck
-                id="wikiImgCB"
+                id={`wikiImgCB${customId}`}
                 inline
               >
                 <FormCheck.Input
@@ -152,7 +153,7 @@ export default class AddRecord extends React.Component {
                     handleImgRequest();
                   }}
                   disabled={!allowImgReq}
-                  checked={selectedCheckboxes.indexOf('wikiImgCB') !== -1}
+                  checked={selectedCheckboxes.indexOf(`wikiImgCB${customId}`) !== -1}
                 />
                 <FormCheck.Label
                   onClick={(e) => {
@@ -188,7 +189,7 @@ export default class AddRecord extends React.Component {
             />
             <FormGroup>
               <Form.File
-                id="formControlsImage"
+                id={`image${customId}`}
                 name="image"
                 type="file"
                 label="Upload an image of the record:"
@@ -220,7 +221,7 @@ export default class AddRecord extends React.Component {
               </Row>
             </Container>
             )}
-            <FormGroup controlId="formControlsNotes">
+            <FormGroup controlId={`notes${customId}`}>
               <FormLabel>Add your own notes here:</FormLabel>
               <FormControl
                 className="vresize"
@@ -296,14 +297,17 @@ AddRecord.propTypes = {
   setWildCardError: PropTypes.func.isRequired,
   toggleLargeForm: PropTypes.func.isRequired,
   disableWishlistFields: PropTypes.bool,
+  customId: PropTypes.string,
 };
 
 AddRecord.defaultProps = {
   image: null,
   disableWishlistFields: false,
+  customId: '',
 };
 
 const TitleFormGroup = ({
+  controlId,
   value,
   glyph,
   label,
@@ -315,7 +319,7 @@ const TitleFormGroup = ({
   disabled,
   ...rest
 }) => (
-  <FormGroup controlId="formControlsTitle">
+  <FormGroup controlId={controlId}>
     <Container fluid>
       <Row>
         <Col className="no-padding" lg={11} md={11} sm={11} xs={11}>
@@ -386,6 +390,7 @@ TitleFormGroup.propTypes = {
   handleReset: PropTypes.func.isRequired,
   toggleLargeForm: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  controlId: PropTypes.string.isRequired,
 };
 
 TitleFormGroup.defaultProps = {

@@ -101,7 +101,7 @@ export default class AddToWishlist extends React.Component {
           <form onSubmit={this.handleSubmit}>
             {showWildCardError && <WildCardError />}
             <DefaultFormGroup
-              id="formControlsTitle"
+              controlId="formControlsTitleW"
               name="title"
               value={title}
               type="text"
@@ -110,7 +110,7 @@ export default class AddToWishlist extends React.Component {
               onChange={this.handleChange}
             />
             <DefaultFormGroup
-              id="formControlsArtist"
+              controlId="formControlsArtistW"
               name="artist"
               value={artist}
               type="text"
@@ -119,7 +119,7 @@ export default class AddToWishlist extends React.Component {
               onChange={this.handleChange}
             />
             <SelectFormGroup
-              id="formControlsFormat"
+              controlId="formControlsFormatW"
               name="format"
               label="The format of the record (e.g. LP, EP, CD):"
               onChange={this.handleChange}

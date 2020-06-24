@@ -6,14 +6,14 @@ import {
 } from 'react-bootstrap';
 
 const SelectFormGroup = ({
-  id,
+  controlId,
   label,
   help,
   options,
   value,
   ...props
 }) => (
-  <FormGroup controlId={id}>
+  <FormGroup controlId={controlId}>
     {label && <FormLabel>{label}</FormLabel>}
     <FormControl as="select" defaultValue={value} {...props}>
       {options.map((item) => <option key={item} value={item}>{item}</option>)}
@@ -23,7 +23,7 @@ const SelectFormGroup = ({
 );
 
 SelectFormGroup.propTypes = {
-  id: PropTypes.string.isRequired,
+  controlId: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   options: PropTypes.arrayOf(PropTypes.string).isRequired,
   label: PropTypes.string,

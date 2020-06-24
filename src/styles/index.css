@@ -21,6 +21,14 @@ body.waiting * {
   padding-right: 0;
 }
 
+.no-padding-left {
+  padding-left: 0;
+}
+
+.no-margin-bottom {
+  margin-bottom: 0;
+}
+
 .vresize {
   resize: vertical;
 }
@@ -82,6 +90,7 @@ body.waiting * {
 
 .nav-item > .nav-link {
   padding: 15px 0px 15px 0px;
+  cursor: pointer;
 }
 
 .nav-item.active {

@@ -369,7 +369,7 @@ export default class CurrentUserPage extends React.Component {
           && <WildCardError />}
         <form onSubmit={this.handleEmailSubmit} onReset={this.handleEmailReset}>
           <DefaultFormGroup
-            id="formControlsEmailPassword"
+            controlId="formControlsEmailPassword"
             name="confirmEmailPassword"
             value={confirmEmailPassword}
             type="password"
@@ -387,7 +387,7 @@ export default class CurrentUserPage extends React.Component {
             </div>
             )}
           <DefaultFormGroup
-            id="formControlsEmail"
+            controlId="formControlsEmail"
             name="newEmail"
             value={newEmail}
             type="email"
@@ -440,7 +440,7 @@ export default class CurrentUserPage extends React.Component {
           onReset={this.handlePasswordReset}
         >
           <DefaultFormGroup
-            id="formControlsPasswordConfirm"
+            controlId="formControlsPasswordConfirm"
             name="confirmPasswordEdit"
             value={confirmPasswordEdit}
             type="password"
@@ -458,7 +458,7 @@ export default class CurrentUserPage extends React.Component {
             </div>
             )}
           <DefaultFormGroup
-            id="formControlsPassword"
+            controlId="formControlsPassword"
             name="newPassword"
             value={newPassword}
             type="password"
@@ -477,7 +477,7 @@ export default class CurrentUserPage extends React.Component {
             </div>
             )}
           <DefaultFormGroup
-            id="formControlsPasswordRetype"
+            controlId="formControlsPasswordRetype"
             name="newPasswordRetype"
             value={newPasswordRetype}
             type="password"

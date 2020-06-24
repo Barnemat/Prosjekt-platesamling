@@ -42,10 +42,12 @@ class ListWishlistItems extends React.Component {
 
   getWishlistItems() {
     const { wishlist } = this.props;
+    if (wishlist.length === 0) return [];
+
     return wishlist.map((record) => (
       <WishlistItem
-        record={record}
         key={record._id}
+        record={record}
         handleDelete={this.removeRecordFromWishlist}
         loadWishlist={this.loadWishlist}
         addRecordToCollection={this.addRecordToCollection}

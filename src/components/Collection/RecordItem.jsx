@@ -168,7 +168,7 @@ const ExpandedView = ({
             )}
         </Row>
         <Row>
-          <Col lg={8} md={8} sm={8} xs={8}>
+          <Col lg={8} md={8} sm={8} xs={8} className="mt-2">
             <DateAdded date={record.date} />
           </Col>
           <Col className="text-right" lg={4} md={4} sm={4} xs={4}>
@@ -238,17 +238,6 @@ const CommonInformation = ({
         {!publicUsername
         && (
         <div>
-          <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
-            <Button
-              variant="light"
-              tabIndex={0}
-              className="standard-glyph md-glyph"
-              onClick={handleShowModal}
-              onKeyUp={(e) => e.key.toLowerCase() === 'enter' && handleShowModal(e)}
-            >
-              <FaTrashAlt />
-            </Button>
-          </OverlayTrigger>
           <OverlayTrigger placement="left" overlay={tooltip('Edit record')}>
             <Button
               variant="light"
@@ -258,6 +247,17 @@ const CommonInformation = ({
               onKeyUp={(e) => e.key.toLowerCase() === 'enter' && handleEdit(e)}
             >
               <FaPen />
+            </Button>
+          </OverlayTrigger>
+          <OverlayTrigger placement="right" overlay={tooltip('Remove record')}>
+            <Button
+              variant="light"
+              tabIndex={0}
+              className="standard-glyph md-glyph"
+              onClick={handleShowModal}
+              onKeyUp={(e) => e.key.toLowerCase() === 'enter' && handleShowModal(e)}
+            >
+              <FaTrashAlt />
             </Button>
           </OverlayTrigger>
         </div>
@@ -417,6 +417,7 @@ class RecordItem extends React.Component {
           {isEditMode
             && (
             <AddOrEditRecord
+              newRecord={{}}
               record={record}
               handleShowModal={this.handleShowModal}
               handleReset={this.handleReset}
