@@ -61,7 +61,7 @@ class ListItems extends React.Component {
   }
 
   getRecordItems() {
-    const { sortMode } = this.state;
+    const { sortMode, galleryView } = this.state;
     const { records, publicUsername } = this.props;
 
     const type = Object.keys(sortMode)[0];
@@ -75,6 +75,7 @@ class ListItems extends React.Component {
         loadCollection={this.loadCollection}
         editRecordInCollection={this.editRecordInCollection}
         publicUsername={publicUsername}
+        galleryView={galleryView}
       />
     ));
   }
@@ -190,12 +191,12 @@ class ListItems extends React.Component {
                     && (
                     <Container fluid>
                       <Row>
-                        <Col lg={6} md={6} sm={6} xs={6}>
+                        <Col className={galleryView ? 'p-0' : ''} lg={6} md={6} sm={6} xs={6}>
                           <ListGroup as="ul">
                             { firstHalf }
                           </ListGroup>
                         </Col>
-                        <Col lg={6} md={6} sm={6} xs={6}>
+                        <Col className={galleryView ? 'p-0' : ''} lg={6} md={6} sm={6} xs={6}>
                           <ListGroup as="ul">
                             { secondHalf }
                           </ListGroup>

@@ -96,3 +96,9 @@ body.waiting * {
 .nav-item.active {
   background-color: #292E33;
 }
+
+@media screen and (max-width: 1300px) {
+  .p-below-xl {
+    padding: 0px 0px 0px 0px;
+  }
+}

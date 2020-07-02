@@ -8,7 +8,7 @@ import { FaTrashAlt, FaPen } from 'react-icons/fa';
 import { TiStarOutline, TiStarFullOutline } from 'react-icons/ti';
 import Rating from 'react-rating';
 import { setLoadingCursor, getSplittedStringsForSearchFormatting } from '../../util';
-import noRecordImg from '../../assets/img/no_record_img.png';
+import noRecordImg from '../../assets/img/logo-vanlig.png';
 import tooltip from '../CommonComponents/Tooltip';
 import WildCardError from '../CommonComponents/WildCardError';
 import AddOrEditRecord from './AddOrEditRecord';
@@ -21,20 +21,21 @@ const MinimizedView = ({
   handleShowModal,
   search,
   publicUsername,
+  galleryView,
 }) => (
   <Row>
     {record.wikiImg || image
       ? (
-        <Col lg={2} md={4} sm={4} xs={12}>
+        <Col className={galleryView ? 'p-0' : ''} lg={2} md={4} sm={4} xs={12}>
           <Image src={image ? `data:image/jpeg;base64,${image}` : record.wikiImg} rounded fluid />
         </Col>
       )
       : (
-        <Col lg={2} md={4} sm={4} xs={12}>
+        <Col className={galleryView ? 'p-0' : ''} lg={2} md={4} sm={4} xs={12}>
           <Image src={noRecordImg} rounded fluid />
         </Col>
       )}
-    <Col lg={10} md={8} sm={8} xs={12}>
+    <Col className={galleryView ? 'p-0' : ''} lg={10} md={8} sm={8} xs={12}>
       <Container fluid>
         <CommonInformation
           title={record.title}
@@ -60,18 +61,20 @@ const MinimizedView = ({
           </Col>
         </Row>
         <Row>
-          <Col lg={8} md={8} sm={8} xs={8}>
+          <Col>
             <DateAdded date={record.date} small />
           </Col>
-          <Col className="text-right" lg={4} md={4} sm={4} xs={4}>
-            <Button
-              variant="outline-dark"
-              size="sm"
-              onClick={(e) => e.preventDefault()}
-            >
-              Show more
-            </Button>
-          </Col>
+          {!galleryView && (
+            <Col className="text-right" lg={4} md={4} sm={4} xs={4}>
+              <Button
+                variant="outline-dark"
+                size="sm"
+                onClick={(e) => e.preventDefault()}
+              >
+                Show more
+              </Button>
+            </Col>
+          )}
         </Row>
       </Container>
     </Col>
@@ -95,6 +98,7 @@ MinimizedView.propTypes = {
   handleEdit: PropTypes.func.isRequired,
   handleShowModal: PropTypes.func.isRequired,
   publicUsername: PropTypes.string,
+  galleryView: PropTypes.bool.isRequired,
 };
 
 MinimizedView.defaultProps = {
@@ -224,7 +228,7 @@ const CommonInformation = ({
   return (
     <Row>
       <Col lg={10} md={9} sm={10} xs={9}>
-        <h4>
+        <h5>
           {artistStrings[0]}
           <span className="yellow-bg">{artistStrings[1]}</span>
           {artistStrings[2]}
@@ -232,9 +236,9 @@ const CommonInformation = ({
           {titleStrings[0]}
           <span className="yellow-bg">{titleStrings[1]}</span>
           {titleStrings[2]}
-        </h4>
+        </h5>
       </Col>
-      <Col className="text-right" lg={2} md={3} sm={2} xs={3}>
+      <Col className="p-0 text-right" lg={2} md={3} sm={2} xs={3}>
         {!publicUsername
         && (
         <div>
@@ -302,14 +306,14 @@ class RecordItem extends React.Component {
 
   toggleExpand() {
     const { isEditMode } = this.state;
-    const { record } = this.props;
+    const { record, galleryView } = this.props;
     const {
       notes,
       wikiDesc,
       wikiImg,
     } = record;
 
-    if ((notes || wikiDesc || wikiImg) || isEditMode) {
+    if ((notes || wikiDesc || wikiImg) && !(isEditMode || galleryView)) {
       this.setState((state) => ({
         expand: !state.expand,
         showWildCardError: false,
@@ -372,12 +376,12 @@ class RecordItem extends React.Component {
       showModal, expand, isEditMode, showWildCardError,
     } = this.state;
     const {
-      record, search, publicUsername, editRecordInCollection,
+      record, search, publicUsername, editRecordInCollection, galleryView,
     } = this.props;
     const image = record.image ? record.image.data : undefined;
 
     return (
-      <ListGroupItem className="darker-onhover">
+      <ListGroupItem className="darker-onhover rm-p-below-xl">
         <Modal show={showModal} onHide={this.handleHideModal}>
           <Modal.Header closeButton>
             <Modal.Title>Remove record</Modal.Title>
@@ -392,7 +396,7 @@ class RecordItem extends React.Component {
           </Modal.Footer>
         </Modal>
         <Container onClick={this.toggleExpand} fluid>
-          {(expand && !isEditMode)
+          {(expand && !isEditMode && !galleryView)
             && (
             <ExpandedView
               record={record}
@@ -412,6 +416,7 @@ class RecordItem extends React.Component {
               handleEdit={this.handleEdit}
               handleShowModal={this.handleShowModal}
               publicUsername={publicUsername}
+              galleryView={galleryView}
             />
             )}
           {isEditMode
@@ -450,6 +455,7 @@ RecordItem.propTypes = {
   handleDelete: PropTypes.func.isRequired,
   editRecordInCollection: PropTypes.func.isRequired,
   publicUsername: PropTypes.string,
+  galleryView: PropTypes.bool.isRequired,
 };
 
 RecordItem.defaultProps = {
