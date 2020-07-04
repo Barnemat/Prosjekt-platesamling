@@ -247,7 +247,7 @@ class Register extends React.Component {
                 {wildCardError
                   && <WildCardError />}
                 <DefaultFormGroup
-                  id="formControlsUsername"
+                  controlId="formControlsUsername"
                   name="username"
                   value={username}
                   type="text"

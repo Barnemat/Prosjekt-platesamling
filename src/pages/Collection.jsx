@@ -25,7 +25,7 @@ class Collection extends React.Component {
     if (authenticatedUser && authenticatedUser.username) {
       if (wishlist.length === 0) props.getWishlist(authenticatedUser.username);
     } else {
-      props.resetWishlist();
+      if (wishlist.length > 0) props.resetWishlist();
     }
   }
 
